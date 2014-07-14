@@ -37,7 +37,7 @@ module RJade
 				when :root
 					append_childrens.call(0)
 
-				when :data
+				when :text
 					buff << root.data
 
 				when :tag

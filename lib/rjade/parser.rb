@@ -242,7 +242,7 @@ module RJade
 
 				when /\A\|\s(.*)\Z/
 					# piped text
-					node = append_node :data
+					node = append_node :text
 					node.data = $1
 
 				else
@@ -289,7 +289,7 @@ module RJade
 
 				when /\A( ?)(.*)\Z/
 					# Text content
-					text = append_node :data
+					text = append_node :text
 					text.data = $2
 
 			end
