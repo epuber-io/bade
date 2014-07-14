@@ -2,7 +2,7 @@
 require_relative 'node'
 
 
-module JadeRuby
+module RJade
 	class Parser
 		class SyntaxError < StandardError
 			attr_reader :error, :file, :line, :lineno, :column

@@ -1,5 +1,5 @@
 
-module JadeRuby
+module RJade
 	class Node
 
 		# @return [Int] line number

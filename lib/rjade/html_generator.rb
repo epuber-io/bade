@@ -1,5 +1,5 @@
 
-module JadeRuby
+module RJade
 	class HTMLGenerator
 
 		# @param [Node] root node

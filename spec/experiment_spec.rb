@@ -1,9 +1,9 @@
 require 'rspec'
 
-require_relative '../lib/jade_ruby/parser'
-require_relative '../lib/jade_ruby/html_generator'
+require_relative '../lib/rjade/parser'
+require_relative '../lib/rjade/html_generator'
 
-module JadeRuby
+module RJade
 	describe do
 
 		parser = Parser.new
