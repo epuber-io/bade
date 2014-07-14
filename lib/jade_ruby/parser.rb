@@ -184,7 +184,7 @@ module JadeRuby
 
 				when /\A\/!( ?)/
 					# HTML comment
-					@stacks.last << [:html, :comment, [:slim, :text, parse_text_block($', @indents.last + $1.size + 2)]]
+					@stacks.last << [:html, :comment, [:slim, :data, parse_text_block($', @indents.last + $1.size + 2)]]
 
 				when /\A\/\[\s*(.*?)\s*\]\s*\Z/
 					# HTML conditional comment
@@ -199,7 +199,7 @@ module JadeRuby
 				when /\A([\|'])( ?)/
 					# Found a text block.
 					trailing_ws = $1 == "'"
-					@stacks.last << [:slim, :text, parse_text_block($', @indents.last + $2.size + 1)]
+					@stacks.last << [:slim, :data, parse_text_block($', @indents.last + $2.size + 1)]
 					@stacks.last << [:static, ' '] if trailing_ws
 
 				when /\A</
@@ -242,8 +242,8 @@ module JadeRuby
 
 				when /\A\|\s(.*)\Z/
 					# piped text
-					node = append_node :text
-					node.text = $1
+					node = append_node :data
+					node.data = $1
 
 				else
 					syntax_error 'Unknown line indicator'
@@ -254,7 +254,7 @@ module JadeRuby
 
 		def parse_tag(tag)
 			tag_node = append_node :tag, add: true
-			tag_node.text = tag
+			tag_node.data = tag
 
 			case @line
 				when /\A\s*:\s*/
@@ -289,8 +289,8 @@ module JadeRuby
 
 				when /\A( ?)(.*)\Z/
 					# Text content
-					text = append_node :text
-					text.text = $2
+					text = append_node :data
+					text.data = $2
 
 			end
 		end

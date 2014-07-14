@@ -2,17 +2,19 @@
 module JadeRuby
 	class Node
 
-		# @return [Symbol]
-		#
-		attr_accessor :type
-
 		# @return [Int] line number
 		#
 		attr_accessor :lineno
 
+
+		# @return [Symbol]
+		#
+		attr_accessor :type
+
 		# @return [String]
 		#
-		attr_accessor :text
+		attr_accessor :data
+
 
 		# @return [Node]
 		#

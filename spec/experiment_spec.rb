@@ -32,7 +32,7 @@ c aaaa
 
 			result = parser.parse(str)
 
-			result_html = HTMLGenerator.node_to_html(result, new_line: "\n", indent: '\t')
+			result_html = HTMLGenerator.node_to_html(result, new_line: '', indent: '')
 
 			expect(result_html).to eq '<a>baf<b>haf<ab>ad</ab></b></a><c>aaaa<d>abc</d></c>'
 		end

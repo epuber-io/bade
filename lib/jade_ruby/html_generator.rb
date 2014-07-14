@@ -37,13 +37,13 @@ module JadeRuby
 				when :root
 					append_childrens.call(0)
 
-				when :text
-					buff << root.text
+				when :data
+					buff << root.data
 
 				when :tag
-					buff << "<#{root.text}>" + new_line
+					buff << "<#{root.data}>" + new_line
 					append_childrens.call(1)
-					buff << "</#{root.text}>" + new_line
+					buff << "</#{root.data}>" + new_line
 			end
 
 			buff
