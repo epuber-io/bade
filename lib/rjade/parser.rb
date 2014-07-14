@@ -153,10 +153,9 @@ module RJade
 				# so we'll just forget about the stack that the previous line pushed.
 				@stacks.pop if expecting_indentation
 
-				if indent < @indents.last
-					while 1 < @stacks[indent].length
-						@stacks[indent].pop
-					end
+				# Remove old stacks we don't need
+				while indent < @stacks[indent].length - 1
+					@stacks[indent].pop
 				end
 
 				# This line was deindented.
@@ -280,12 +279,6 @@ module RJade
 					# Closed tag. Do nothing
 					@line = $'
 					syntax_error('Unexpected text after closed tag') unless @line.empty?
-
-				when /\A\s*\Z/
-					# Empty content
-					content = [:multi]
-					tag << content
-					@stacks << content
 
 				when /\A( ?)(.*)\Z/
 					# Text content
