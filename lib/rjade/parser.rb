@@ -193,11 +193,10 @@ module RJade
 					# Slim comment
 					parse_comment_block
 
-				when /\A([\|'])( ?)/
+				when /\A\| (.*)\Z/
 					# Found a text block.
-					trailing_ws = $1 == "'"
-					@stacks.last << [:slim, :data, parse_text_block($', @indents.last + $2.size + 1)]
-					@stacks.last << [:static, ' '] if trailing_ws
+					text_node = append_node :text
+					text_node.data = $1
 
 				when /\A</
 					# Inline html

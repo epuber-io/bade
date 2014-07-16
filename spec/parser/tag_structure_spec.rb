@@ -52,4 +52,17 @@ html
 
 		assert_html expected, source
 	end
+
+
+
+	it 'should parse piped text' do
+		source = '
+| text
+a
+	| a_text1'
+
+		expected = 'text<a>a_text1</a>'
+
+		assert_html expected, source
+	end
 end
