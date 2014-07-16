@@ -65,4 +65,15 @@ a(href = 'href_text', id = 'id_text') abc_text_haha
 
 		assert_html expected, source
 	end
+
+	it 'should parse attributes with double quoted attributes' do
+		source = '
+a(href = "href_text", id = "id_text") abc_text_haha
+	b(class = "aaa") bbb
+'
+
+		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
+
+		assert_html expected, source
+	end
 end
