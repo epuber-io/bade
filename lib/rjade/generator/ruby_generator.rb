@@ -3,15 +3,15 @@ require_relative 'generator'
 module RJade
 	class RubyGenerator < Generator
 
-		START_STRING =	'
-						lambda {
-							_buff = []
-						'
+		BUFF_NAME = '_buff'
+		START_STRING =	"
+lambda {
+	#{BUFF_NAME} = []
+"
 
-		END_STRING =	'
-							_buff.join
-						}
-						'
+		END_STRING =	"
+	#{BUFF_NAME}.join
+}"
 
 		# @param [Node] root
 		#
@@ -40,7 +40,7 @@ module RJade
 			@buff << START_STRING
 
 
-			node_to_lambda_array(root)
+			visit_node(root)
 
 
 			@buff << END_STRING
@@ -66,36 +66,42 @@ module RJade
 
 			prepended_text = indent_text + text + new_line_text
 
-			@buff << "_buff << '#{prepended_text}'\n"
+			escape_double_quotes(prepended_text)
+
+			if prepended_text.length > 0
+				@buff << "\t#{BUFF_NAME} << \"" + prepended_text + '"'
+			end
 		end
 
-		def node_to_lambda_array(root)
+		def visit_node(current_node)
 
 			append_childrens = lambda { |indent_plus|
-				root.childrens.each { |node|
-					node_to_lambda_array(node)
+				current_node.childrens.each { |node|
+					@indent += indent_plus
+					visit_node(node)
+					@indent -= indent_plus
 				}
 			}
 
-			case root.type
+			case current_node.type
 				when :root
 					append_childrens.call(0)
 
 				when :text
-					print_text root.data
+					print_text current_node.data
 
 				when :tag
-					attributes = formatted_attributes root
+					attributes = formatted_attributes current_node
 
 					if attributes.length > 0
-						print_text "<#{root.data} #{attributes}>", new_line: true, indent: true
+						print_text "<#{current_node.data} #{attributes}>", new_line: true, indent: true
 					else
-						print_text "<#{root.data}>", new_line: true, indent: true
+						print_text "<#{current_node.data}>", new_line: true, indent: true
 					end
 
 					append_childrens.call(1)
 
-					print_text "</#{root.data}>", new_line: true, indent: true
+					print_text "</#{current_node.data}>", new_line: true, indent: true
 			end
 		end
 
@@ -112,6 +118,10 @@ module RJade
 			}
 
 			attributes.join ' '
+		end
+
+		def escape_double_quotes(str)
+			str.gsub!(/"/, '\"')
 		end
 	end
 end
