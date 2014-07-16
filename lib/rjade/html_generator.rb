@@ -41,12 +41,35 @@ module RJade
 					buff << root.data
 
 				when :tag
-					buff << "<#{root.data}>" + new_line
+					attributes = formatted_attributes root
+
+					if attributes.length > 0
+						buff << "<#{root.data} #{attributes}>" + new_line
+					else
+						buff << "<#{root.data}>" + new_line
+					end
+
 					append_childrens.call(1)
+
 					buff << "</#{root.data}>" + new_line
 			end
 
 			buff
+		end
+
+		# @param [Node] tag_node
+		#
+		# @return [String] formatted attributes
+		#
+		def self.formatted_attributes(tag_node)
+
+			attributes = tag_node.childrens.select { |child|
+				child.type == :tag_attribute
+			}.map { |attr|
+				"#{attr.data}=\"#{attr.childrens.first.data}\""
+			}
+
+			attributes.join ' '
 		end
 	end
 end

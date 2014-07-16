@@ -255,6 +255,8 @@ module RJade
 			tag_node = append_node :tag, add: true
 			tag_node.data = tag
 
+			parse_attributes(tag_node)
+
 			case @line
 				when /\A\s*:\s*/
 					# Block expansion
@@ -288,54 +290,60 @@ module RJade
 			end
 		end
 
-		def parse_attributes(attributes)
+		def parse_attributes(tag_node)
 			# Check to see if there is a delimiter right after the tag name
-			delimiter = nil
-			if @line =~ @attr_delim_re
-				delimiter = options[:attr_delims][$1]
+
+			# between tag name and attribute must not be space
+			# and skip when is nothing other
+			if @line =~ /\A\s/ or @line =~ /\A\Z/
+				return
+			end
+
+			if @line =~ /\A\(/
 				@line = $'
 			end
 
-			if delimiter
-				boolean_attr_re = /#{ATTR_NAME}(?=(\s|#{Regexp.escape delimiter}|\Z))/
-				end_re = /\A\s*#{Regexp.escape delimiter}/
-			end
+			end_re = /\A\s*\)/
 
 			while true
 				case @line
-					when /\A\s*\*(?=[^\s]+)/
-						# Splat attribute
-						@line = $'
-						attributes << [:slim, :splat, parse_ruby_code(delimiter)]
 					when QUOTED_ATTR_RE
 						# Value is quoted (static)
 						@line = $'
-						attributes << [:html, :attr, $1,
-									   [:escape, $2.empty?, [:slim, :interpolate, parse_quoted_attribute($3)]]]
+
+						attr_node = append_node :tag_attribute, add: true
+						attr_node.data = $1
+
+						attr_text_node = append_node :text, add: false
+						attr_text_node.data = parse_quoted_attribute($3)
+
+						@stacks[@indents.last].pop
+
 					when CODE_ATTR_RE
 						# Value is ruby code
 						@line = $'
 						name = $1
 						escape = $2.empty?
 						value = parse_ruby_code(delimiter)
-						syntax_error!('Invalid empty attribute') if value.empty?
+						syntax_error('Invalid empty attribute') if value.empty?
 						attributes << [:html, :attr, name, [:slim, :attrvalue, escape, value]]
-					else
-						break unless delimiter
 
+					when /\A\s*,/
+						# args delimiter
+						@line = $'
+						next
+
+					else
 						case @line
-							when boolean_attr_re
-								# Boolean attribute
-								@line = $'
-								attributes << [:html, :attr, $1, [:multi]]
 							when end_re
 								# Find ending delimiter
 								@line = $'
 								break
+
 							else
 								# Found something where an attribute should be
 								@line.lstrip!
-								syntax_error!('Expected attribute') unless @line.empty?
+								syntax_error('Expected attribute') unless @line.empty?
 
 								# Attributes span multiple lines
 								@stacks.last << [:newline]
@@ -344,6 +352,35 @@ module RJade
 						end
 				end
 			end
+		end
+
+		def parse_quoted_attribute(quote)
+			value, count = '', 0
+
+			until @line.empty? || (count == 0 && @line[0] == quote[0])
+				if @line =~ /\A\\\Z/
+					value << ' '
+					expect_next_line # TODO
+				else
+					if count > 0
+						if @line[0] == ?{
+							count += 1
+						elsif @line[0] == ?}
+							count -= 1
+						end
+					elsif @line =~ /\A#\{/
+						value << @line.slice!(0)
+						count = 1
+					end
+					value << @line.slice!(0)
+				end
+			end
+
+			syntax_error("Expected closing brace }") if count != 0
+			syntax_error("Expected closing quote #{quote}") if @line[0] != quote[0]
+			@line.slice!(0) # remove closing bracket for attributes
+
+			value
 		end
 
 
