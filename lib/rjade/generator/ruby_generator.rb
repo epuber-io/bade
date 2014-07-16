@@ -102,6 +102,9 @@ lambda {
 					append_childrens.call(1)
 
 					print_text "</#{current_node.data}>", new_line: true, indent: true
+
+				when :code
+					@buff << current_node.data
 			end
 		end
 

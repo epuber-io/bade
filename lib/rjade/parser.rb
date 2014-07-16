@@ -204,13 +204,11 @@ module RJade
 					@stacks.last << [:multi, [:slim, :interpolate, @line], block]
 					@stacks << block
 
-				when /\A-/
+				when /\A-\s(.*)\Z/
 					# Found a code block.
 					# We expect the line to be broken or the next line to be indented.
-					@line.slice!(0)
-					block = [:multi]
-					@stacks.last << [:slim, :control, parse_broken_line, block]
-					@stacks << block
+					code_node = append_node :code
+					code_node.data = $1
 
 				when /\A=(=?)(['<>]*)/
 					# Found an output block.
