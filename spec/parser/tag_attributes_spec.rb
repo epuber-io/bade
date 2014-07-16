@@ -68,7 +68,7 @@ a(href = 'href_text', id = 'id_text') abc_text_haha
 
 	it 'should parse attributes with double quoted attributes' do
 		source = '
-a(href = "href_text", id = "id_text") abc_text_haha
+a(href = "href_text", id="id_text") abc_text_haha
 	b(class = "aaa") bbb
 '
 

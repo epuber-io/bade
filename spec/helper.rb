@@ -1,7 +1,8 @@
 require 'rspec'
 
 require_relative '../lib/rjade/parser'
-require_relative '../lib/rjade/html_generator'
+require_relative '../lib/rjade/generator/html_generator'
+require_relative '../lib/rjade/generator/ruby_generator'
 
 
 
@@ -19,7 +20,7 @@ module RJade::Spec
 
 		result = parser.parse(source)
 
-		RJade::HTMLGenerator.node_to_html(result, new_line: '', indent: '')
+		RJade::RubyGenerator.node_to_lambda(result, new_line: '', indent: '').call
 	end
 
 	def assert_html(expectation, source)

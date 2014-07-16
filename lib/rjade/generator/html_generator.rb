@@ -1,12 +1,17 @@
+require_relative 'generator'
 
 module RJade
-	class HTMLGenerator
+	class HTMLGenerator < Generator
 
 		# @param [Node] root node
 		# @return [String]
 		#
-		def self.node_to_html(root, new_line: "\n", indent: "\t")
-			node_to_html_array(root, new_line: new_line, indent: indent).join
+		def self.node_to_lambda(root, new_line: "\n", indent: "\t")
+			str = node_to_html_array(root, new_line: new_line, indent: indent).join
+
+			lambda {
+				str
+			}
 		end
 
 

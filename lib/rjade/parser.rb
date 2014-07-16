@@ -33,8 +33,6 @@ module RJade
 			@tab_re = "\t"
 			@tab = ' '
 
-
-
 			reset
 		end
 
