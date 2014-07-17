@@ -6,7 +6,9 @@ module RJade
 
 		attr_forw_accessor :name, :data
 
-		attr_accessor :attributes
+		# @return [Array<TagAttributeNode>]
+		#
+		attr_reader :attributes
 
 		def initialize(*args)
 			super(*args)
@@ -26,7 +28,7 @@ module RJade
 	end
 
 
-	class TagAttribute < Node
+	class TagAttributeNode < Node
 		register_type :tag_attribute
 
 		attr_forw_accessor :name, :data
