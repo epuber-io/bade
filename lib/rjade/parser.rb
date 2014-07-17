@@ -311,10 +311,8 @@ module RJade
 						@line = $'
 
 						attr_node = append_node :tag_attribute, add: true
-						attr_node.data = $1
-
-						attr_text_node = append_node :text, add: false
-						attr_text_node.data = parse_quoted_attribute($3)
+						attr_node.name = $1
+						attr_node.value = parse_quoted_attribute($3)
 
 						@stacks[@indents.last].pop
 

@@ -82,7 +82,7 @@ lambda {
 
 			prepended_text = indent_text + text + new_line_text
 
-			escape_double_quotes(prepended_text)
+			escape_double_quotes!(prepended_text)
 
 			if prepended_text.length > 0
 				@buff << "\t#{BUFF_NAME} << \"" + prepended_text + '"'
@@ -129,17 +129,16 @@ lambda {
 		# @return [String] formatted attributes
 		#
 		def formatted_attributes(tag_node)
-
-			attributes = tag_node.childrens.select { |child|
-				child.type == :tag_attribute
-			}.map { |attr|
-				"#{attr.data}=\"#{attr.childrens.first.data}\""
-			}
-
-			attributes.join ' '
+			tag_node.attributes.map { |attr|
+				"#{attr.name}=\"#{attr.value}\""
+			}.join ' '
 		end
 
-		def escape_double_quotes(str)
+		# @param [String] str
+		#
+		# @return [Void]
+		#
+		def escape_double_quotes!(str)
 			str.gsub!(/"/, '\"')
 		end
 	end

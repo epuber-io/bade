@@ -1,67 +1,11 @@
 
-class Object
-	def self.attr_forw_accessor(name, forw_name)
-		define_method(name) {
-			self.send(forw_name)
-		}
-		define_method(name.to_s + '=') { |*args|
-			self.send(forw_name.to_s + '=', *args)
-		}
-	end
-end
-
-registered_types = {}
-
+require_relative 'node/base_node'
+require_relative 'node/tag_node'
 
 module RJade
+
+	# Extend Node class, so we can instantiate typed class
 	class Node
-
-		# @return [Int] line number
-		#
-		attr_accessor :lineno
-
-
-		# @return [Symbol]
-		#
-		attr_accessor :type
-
-		# @return [String]
-		#
-		attr_accessor :data
-
-
-		# @return [Node]
-		#
-		attr_accessor :parent
-
-		# @return [Array<Node>]
-		#
-		attr_accessor :childrens
-
-
-		# @param [Node] parent
-		#
-		def initialize(type, parent = nil)
-			@type = type
-			@childrens = []
-
-			if parent
-				parent << self
-				@parent = parent
-			end
-		end
-
-		def << (node)
-			if node.is_a? Symbol
-				Node.new(node, self)
-			else
-				@childrens << node
-			end
-
-			self
-		end
-
-
 		def self.create(type, parent)
 			klass = self.registered_types[type]
 
@@ -71,37 +15,8 @@ module RJade
 
 			klass.new(type, parent)
 		end
-
-
-		protected
-
-		@@registered_types = {}
-
-		# @return [Hash<Symbol, Class>]
-		def self.registered_types
-			@@registered_types
-		end
-
-		# @param [Symbol] type
-		#
-		def self.register_type(type)
-			puts "Registering #{type.inspect} for class #{self}"
-
-			self.registered_types[type] = self
-		end
 	end
 
-
-
-
-	class TagNode < Node
-		register_type :tag
-		attr_forw_accessor :name, :data
-	end
-
-	class TagAttribute < Node
-		register_type :tag_attribute
-	end
 
 	class TextNode < Node
 		register_type :text
