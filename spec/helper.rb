@@ -11,22 +11,23 @@ module RJade::Spec
 
 	# Render source to html
 	#
+	# @param [String] expectation
 	# @param [String] source
 	#
-	# @return [String]
-	#
-	def render(source)
-		parser = RJade::Parser.new
-
-		result = parser.parse(source)
-
-		RJade::RubyGenerator.node_to_lambda(result, new_line: '', indent: '').call
-	end
-
 	def assert_html(expectation, source)
 
-		result = render(source)
+		parser = RJade::Parser.new
 
-		expect(result).to eq expectation
+		parsed = parser.parse(source)
+
+		lam = RJade::RubyGenerator.node_to_lambda(parsed, new_line: '', indent: '')
+
+		str = lam.call
+
+		if str != expectation
+			puts RJade::RubyGenerator.node_to_lambda_string(parsed, new_line: '', indent: '')
+		end
+
+		expect(lam.call).to eq expectation
 	end
 end

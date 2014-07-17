@@ -118,7 +118,7 @@ module RJade
 		#
 		def append_node(type, indent: @indents.last, add: false)
 			parent = @stacks[indent].last
-			node = Node.new(type, parent)
+			node = Node.create(type, parent)
 			node.lineno = @lineno
 
 			if add
@@ -209,7 +209,7 @@ module RJade
 				when /\A-\s(.*)\Z/
 					# Found a code block.
 					# We expect the line to be broken or the next line to be indented.
-					code_node = append_node :code
+					code_node = append_node :ruby_code
 					code_node.data = $1
 
 				when /\A=(=?)(['<>]*)/
