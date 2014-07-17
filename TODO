@@ -1,0 +1,41 @@
+
+# TODO
+
+- Before creating lambda string make syntax tree flat (to array), then some optimizations can be done
+
+- Everything has indent logic
+	- `//` : text after and below with higher indent is in comment
+	- same with text (`|`)
+
+
+## Language
+
+### To implement
+
+- classes (`tag.class_name`)
+- id (`tag#id_text`)
+
+- div implicitly (class, id)
+
+- tag attribute values as code
+
+- comments: `//`
+- html comments: `//!`
+
+- mixins
+    - call `+mixin_name(attribute1, named_attribute1: value1)
+    			div
+    				| normal block content to mixin OR
+                &chapter
+                	p content to named block`
+    - define `mixin mixin_name(attribute1, named_attribute1: default_value)
+    			div.chapter_content
+    				&chapter    // calling block, can be used .nil? for inspecting if was the block defined`
+
+### To think
+
+- footnotes
+- links
+    - to different location in book and same file
+    - to website
+

@@ -77,5 +77,6 @@ module RJade
 
 			self.registered_types[type] = klass
 		end
+
 	end
 end
