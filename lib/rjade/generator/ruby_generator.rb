@@ -15,9 +15,20 @@ lambda {
 
 		# @param [Node] root
 		#
+		# @return [Proc]
+		#
 		def self.node_to_lambda(root, new_line: "\n", indent: "\t", filename: '')
 			generator = self.new(new_line, indent)
 			generator.generate_lambda(root, filename)
+		end
+
+		# @param [Node] root
+		#
+		# @return [String]
+		#
+		def self.node_to_lambda_string(root, new_line: "\n", indent: "\t", filename: '')
+			generator = self.new(new_line, indent)
+			generator.generate_lambda_string(root)
 		end
 
 
@@ -30,10 +41,17 @@ lambda {
 			@indent_string = indent_string
 		end
 
-		# @param [Node] root
 		# @param [String] filename
 		#
 		def generate_lambda(root, filename)
+			eval(generate_lambda_string(root), nil, filename)
+		end
+
+		# @param [Node] root
+		#
+		# @return [String] string to parse with Ruby
+		#
+		def generate_lambda_string(root)
 			@buff = []
 			@indent = 0
 
@@ -45,9 +63,7 @@ lambda {
 
 			@buff << END_STRING
 
-			str = @buff.join("\n")
-
-			eval(str, nil, filename)
+			@buff.join("\n")
 		end
 
 		# @param [String] text
@@ -94,16 +110,16 @@ lambda {
 					attributes = formatted_attributes current_node
 
 					if attributes.length > 0
-						print_text "<#{current_node.data} #{attributes}>", new_line: true, indent: true
+						print_text "<#{current_node.name} #{attributes}>", new_line: true, indent: true
 					else
-						print_text "<#{current_node.data}>", new_line: true, indent: true
+						print_text "<#{current_node.name}>", new_line: true, indent: true
 					end
 
 					append_childrens.call(1)
 
-					print_text "</#{current_node.data}>", new_line: true, indent: true
+					print_text "</#{current_node.name}>", new_line: true, indent: true
 
-				when :code
+				when :ruby_code
 					@buff << current_node.data
 			end
 		end

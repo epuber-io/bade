@@ -258,7 +258,7 @@ module RJade
 			end
 
 			tag_node = append_node :tag, add: true
-			tag_node.data = tag
+			tag_node.name = tag
 
 			parse_attributes(tag_node)
 
