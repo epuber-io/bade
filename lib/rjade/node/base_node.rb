@@ -73,7 +73,7 @@ module RJade
 		# @param [Class] klass  registering class
 		#
 		def self.register_type(type, klass = self)
-			raise StandardError, "Class #{klass} should be subclass of #{self}" unless klass < Node
+			raise StandardError, "Class #{klass} should be subclass of #{self}" unless klass <= Node
 
 			self.registered_types[type] = klass
 		end

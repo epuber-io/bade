@@ -4,6 +4,13 @@ require_relative 'node/tag_node'
 
 module RJade
 
+	Node.register_type :text
+	Node.register_type :newline
+	Node.register_type :ruby_code
+
+
+
+
 	# Extend Node class, so we can instantiate typed class
 	class Node
 		def self.create(type, parent)
@@ -15,19 +22,6 @@ module RJade
 
 			klass.new(type, parent)
 		end
-	end
-
-
-	class TextNode < Node
-		register_type :text
-	end
-
-	class NewLineNode < Node
-		register_type :newline
-	end
-
-	class RubyCode < Node
-		register_type :ruby_code
 	end
 
 end
