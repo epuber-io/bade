@@ -24,6 +24,7 @@ a(href = 'href_text') abc
 		assert_html expected, source
 	end
 
+
 	it 'should parse two attributes' do
 		source = "
 a(href = 'href_text', id = 'id_text')
@@ -34,6 +35,7 @@ a(href = 'href_text', id = 'id_text')
 		assert_html expected, source
 	end
 
+
 	it 'should parse two attributes and text' do
 		source = "
 a(href = 'href_text', id = 'id_text') abc_text_haha
@@ -43,6 +45,7 @@ a(href = 'href_text', id = 'id_text') abc_text_haha
 
 		assert_html expected, source
 	end
+
 
 	it 'should parse two attributes without spaces' do
 		source = "

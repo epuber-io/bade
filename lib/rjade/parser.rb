@@ -60,7 +60,7 @@ module RJade
 		QUOTED_ATTR_RE = /#{ATTR_NAME}\s*=(=?)\s*("|')/
 		CODE_ATTR_RE = /#{ATTR_NAME}\s*=(=?)\s*/
 
-		TAG_RE = /\A([a-zA-Z0-9]+)/
+		TAG_RE = /\A(#{WORD_RE}+(?::#{WORD_RE}+)?)/
 
 		def reset(lines = nil, stacks = nil)
 			# Since you can indent however you like in Slim, we need to keep a list
@@ -86,6 +86,8 @@ module RJade
 
 			@lineno = 0
 			@lines = lines
+
+			# @return [String]
 			@line = @orig_line = nil
 		end
 
@@ -246,24 +248,28 @@ module RJade
 			append_node :newline
 		end
 
+		# @param [String] tag  tag name
+		#
 		def parse_tag(tag)
+
+			if tag =~ /(:)\Z/
+				tag.gsub! /:\Z/, ''
+				@line.prepend ':'
+			end
+
 			tag_node = append_node :tag, add: true
 			tag_node.data = tag
 
 			parse_attributes(tag_node)
 
 			case @line
-				when /\A\s*:\s*/
+				when /\A:\s+/
 					# Block expansion
 					@line = $'
 					(@line =~ TAG_RE) || syntax_error('Expected tag')
 					@line = $' if $1
-					content = [:multi]
-					tag << content
-					i = @stacks.size
-					@stacks << content
+
 					parse_tag($&)
-					@stacks.delete_at(i)
 
 				when /\A\s*=(=?)/
 					# Handle output code
@@ -290,12 +296,10 @@ module RJade
 
 			# between tag name and attribute must not be space
 			# and skip when is nothing other
-			if @line =~ /\A\s/ or @line =~ /\A\Z/
-				return
-			end
-
 			if @line =~ /\A\(/
 				@line = $'
+			else
+				return
 			end
 
 			end_re = /\A\s*\)/
@@ -342,7 +346,7 @@ module RJade
 
 								# Attributes span multiple lines
 								@stacks.last << [:newline]
-								syntax_error!("Expected closing delimiter #{delimiter}") if @lines.empty?
+								syntax_error("Expected closing delimiter #{delimiter}") if @lines.empty?
 								next_line
 						end
 				end
