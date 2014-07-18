@@ -40,8 +40,10 @@
                 	p content to named block`
     
     - define `mixin mixin_name(attribute1, named_attribute1: default_value)
+    			div.default
+    				&default_block.call
     			div.chapter_content
-    				&chapter    // calling block, can be used .nil? for inspecting if was the block defined`
+    				&chapter.call      // calling block, can be used .nil? for inspecting if was the block defined`
 
 ### To think
 

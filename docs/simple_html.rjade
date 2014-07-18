@@ -1,0 +1,12 @@
+
+doctype html
+
+html
+	head
+		title Text
+	body
+		p text
+			| and another text
+
+		.div_class
+			img(src: 'baf')
