@@ -3,9 +3,19 @@
 
 - Before creating lambda string make syntax tree flat (to array), then some optimizations can be done
 
+- Skip every empty lines, even with different indent (code can be much readable)
+
 - Everything has indent logic
 	- `//` : text after and below with higher indent is in comment
 	- same with text (`|`)
+
+- Required indent is one tab (for now)
+
+
+## Name
+
+- Bade
+- Libre
 
 
 ## Language
@@ -15,7 +25,7 @@
 - classes (`tag.class_name`)
 - id (`tag#id_text`)
 
-- div implicitly (class, id)
+- div implicitly (class `.div_class_name`, id `#div_id_text`)
 
 - tag attribute values as code
 
@@ -28,6 +38,7 @@
     				| normal block content to mixin OR
                 &chapter
                 	p content to named block`
+    
     - define `mixin mixin_name(attribute1, named_attribute1: default_value)
     			div.chapter_content
     				&chapter    // calling block, can be used .nil? for inspecting if was the block defined`

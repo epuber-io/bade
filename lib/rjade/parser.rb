@@ -309,12 +309,9 @@ module RJade
 					when QUOTED_ATTR_RE
 						# Value is quoted (static)
 						@line = $'
-
-						attr_node = append_node :tag_attribute, add: true
+						attr_node = append_node :tag_attribute
 						attr_node.name = $1
 						attr_node.value = parse_quoted_attribute($3)
-
-						@stacks[@indents.last].pop
 
 					when CODE_ATTR_RE
 						# Value is ruby code
