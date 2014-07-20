@@ -7,9 +7,10 @@
 
 - Everything has indent logic
 	- `//` : text after and below with higher indent is in comment
-	- same with text (`|`)
 
 - Required indent is one tab (for now)
+
+- tab size is 4
 
 
 ## Name
@@ -44,6 +45,7 @@
     				&default_block.call
     			div.chapter_content
     				&chapter.call      // calling block, can be used .nil? for inspecting if was the block defined`
+
 
 ### To think
 

@@ -66,7 +66,20 @@ a
 		assert_html expected, source
 	end
 
+	it 'should parse advanced piped text' do
+		source = '
+| text
+	text2
+	 text3
+	  text4
+a
+	| a_text1
+		a_text2'
 
+		expected = 'texttext2 text3  text4<a>a_text1a_text2</a>'
+
+		assert_html expected, source
+	end
 
 	it 'should parse block expansion' do
 		source = 'a: b text'

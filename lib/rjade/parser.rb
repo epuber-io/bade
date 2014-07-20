@@ -116,10 +116,12 @@ module RJade
 		#
 		# @param [Symbol] type
 		#
-		def append_node(type, indent: @indents.last, add: false)
+		def append_node(type, indent: @indents.last, add: false, data: nil)
 			parent = @stacks[indent].last
 			node = Node.create(type, parent)
 			node.lineno = @lineno
+
+			node.data = data
 
 			if add
 				@stacks[indent] << node
@@ -195,10 +197,9 @@ module RJade
 					# Slim comment
 					parse_comment_block
 
-				when /\A\| (.*)\Z/
+				when /\A\| /
 					# Found a text block.
-					text_node = append_node :text
-					text_node.data = $1
+					parse_text_block $', @indents.last + 1
 
 				when /\A</
 					# Inline html
@@ -235,11 +236,6 @@ module RJade
 					# Found a HTML tag.
 					@line = $' if $1
 					parse_tag($&)
-
-				when /\A\|\s(.*)\Z/
-					# piped text
-					node = append_node :text
-					node.data = $1
 
 				else
 					syntax_error 'Unknown line indicator'
@@ -377,49 +373,33 @@ module RJade
 			value
 		end
 
-
-		def parse_text_block(first_line = nil, text_indent = nil)
-			result = [:multi]
+		def parse_text_block(first_line, text_indent = nil)
 			if !first_line || first_line.empty?
 				text_indent = nil
 			else
-				result << [:slim, :interpolate, first_line]
+				first_line_tag = append_node :text
+				first_line_tag.data = first_line
 			end
 
-			empty_lines = 0
 			until @lines.empty?
 				if @lines.first =~ /\A\s*\Z/
 					next_line
-					result << [:newline]
-					empty_lines += 1 if text_indent
+					append_node :newline
 				else
 					indent = get_indent(@lines.first)
 					break if indent <= @indents.last
 
-					if empty_lines > 0
-						result << ([:newline] * empty_lines)
-						empty_lines = 0
-					end
-
 					next_line
-					@line.lstrip!
 
-					# The text block lines must be at least indented
-					# as deep as the first line.
-					offset = text_indent ? indent - text_indent : 0
-					if offset < 0
-						syntax_error("Text line not indented deep enough.\n" +
-										 'The first text line defines the necessary text indentation.')
-					end
+					@line = @line[text_indent ... @line.length]
 
-					result << [:newline] << [:slim, :interpolate, (text_indent ? "\n" : '') + (' ' * offset) + @line]
+					append_node :text, data: @line
 
 					# The indentation of first line of the text block
 					# determines the text base indentation.
 					text_indent ||= indent
 				end
 			end
-			result
 		end
 
 
