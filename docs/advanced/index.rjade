@@ -1,0 +1,12 @@
+
+import 'mixins'
+
++body('index')
+	&head
+		meta(name: 'name', value: 'index')
+
+	h1 Example page
+
+	p|
+		Why do you use some shitty template engines, try this!
+		I don't know name yet, but it will be awesome

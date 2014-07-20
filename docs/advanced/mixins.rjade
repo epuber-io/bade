@@ -1,0 +1,14 @@
+
+mixin body(title, css_paths: [], script_paths: [])
+	%doctype xml
+	%doctype html
+
+	html
+		head
+			title= title
+
+			&head.safe_call
+
+		body
+			&block.call
+
