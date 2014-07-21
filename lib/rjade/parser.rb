@@ -26,15 +26,21 @@ module RJade
 			end
 		end
 
+		# Initialize
+		#
+		# Available options:
+		#   :tabsize [Int]    default 4
+		#   :file [String]    default nil
+		#
 		def initialize(options = {})
 
 			tabsize = options.delete(:tabsize) { 4 }
-
+			@tabsize = tabsize
 
 			@tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize-1}}\t/
 			@tab = '\1' + ' ' * tabsize
 
-			@tabsize = tabsize
+			@options = options
 
 			reset
 		end
@@ -238,9 +244,10 @@ module RJade
 					@stacks.last << [:html, :condcomment, $1, block]
 					@stacks << block
 
-				when /\A\//
+				when /\A\/\//
 					# Slim comment
-					parse_comment_block
+					append_node :comment, add: true
+					parse_text_block $'
 
 				when /\A\| /
 					# Found a text block.

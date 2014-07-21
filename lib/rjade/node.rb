@@ -7,7 +7,7 @@ module RJade
 	Node.register_type :text
 	Node.register_type :newline
 	Node.register_type :ruby_code
-
+	Node.register_type :comment
 
 
 

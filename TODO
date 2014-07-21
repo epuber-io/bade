@@ -6,11 +6,6 @@
 - Skip every empty lines, even with different indent (code can be much readable)
 
 - Everything has indent logic
-	- `//` : text after and below with higher indent is in comment
-
-- Required indent is one tab (for now)
-
-- tab size is 4
 
 
 ## Name
@@ -30,7 +25,6 @@
 
 - tag attribute values as code
 
-- comments: `//`
 - html comments: `//!`
 
 - mixins
