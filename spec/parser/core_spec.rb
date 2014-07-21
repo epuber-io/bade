@@ -4,7 +4,6 @@ require_relative '../../lib/rjade/parser'
 
 module RJade
 
-
 	describe Parser do
 		context '#get_indent' do
 
@@ -42,6 +41,32 @@ module RJade
 				assert_indent "\ta", 4
 			end
 
+		end
+
+
+		context '#remove_indent!' do
+			def assert_remove(indent, string, expected_string, options = {})
+				sut = Parser.new(options)
+
+				string_dup = string.dup
+
+				sut.remove_indent! string_dup, indent
+
+				expect(string_dup).to eq expected_string
+			end
+
+			it 'removes spaces' do
+				assert_remove 4, '    abc', 'abc'
+				assert_remove 3, '    abc', ' abc'
+				assert_remove 2, '    abc', '  abc'
+				assert_remove 1, '    abc', '   abc'
+				assert_remove 0, '    abc', '    abc'
+			end
+
+			it 'removes tabs' do
+				assert_remove 4, "\tabc", 'abc', :tabsize => 4
+				assert_remove 4, "\t\tabc", 'abc', :tabsize => 2
+			end
 		end
 	end
 end

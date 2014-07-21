@@ -30,11 +30,11 @@ module RJade
 
 			tabsize = options.delete(:tabsize) { 4 }
 
+
 			@tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize-1}}\t/
 			@tab = '\1' + ' ' * tabsize
 
 			@tabsize = tabsize
-			@options = options
 
 			reset
 		end
@@ -105,15 +105,16 @@ module RJade
 		# Calculate indent for line
 		#
 		# @param [String] line
+		#
 		# @return [Int] indent size
 		#
 		def get_indent(line)
 			count = 0
 
 			line.each_char do |char|
-				if char.match /\A /
+				if char == ' '
 					count += 1
-				elsif char.match /\A\t/
+				elsif char == "\t"
 					count += @tabsize
 				else
 					break
@@ -129,8 +130,27 @@ module RJade
 		# @param [Int] indent
 		#
 		def remove_indent!(line, indent)
-			line.gsub!(/\A\t/, ' ' * @tabsize)
-			line.slice!(indent .. line.length)
+			count = 0
+			line.each_char do |char|
+
+				if indent <= 0
+					break
+				elsif char == ' '
+					indent -= 1
+				elsif char == "\t"
+					if indent - @tabsize < 0
+						raise StandardError, 'malformed tabs'
+					end
+
+					indent -= @tabsize
+				else
+					break
+				end
+
+				count += 1
+			end
+
+			line[0 ... line.length] = line[count ... line.length]
 		end
 
 		# Append element to stacks and result tree
@@ -166,7 +186,8 @@ module RJade
 			indent = get_indent(line)
 
 			# left strip, similar to String#lstrip
-			@line = line[indent ... line.length]
+			remove_indent!(line, indent)
+			@line = line
 
 			# If there's more stacks than indents, it means that the previous
 			# line is expecting this line to be indented.
@@ -174,16 +195,10 @@ module RJade
 
 			if indent > @indents.last
 				@indents << indent
-				@stacks << @stacks.last
 			else
 				# This line was *not* indented more than the line before,
 				# so we'll just forget about the stack that the previous line pushed.
 				@stacks.pop if expecting_indentation
-
-				# Remove old stacks we don't need
-				while indent < @stacks[indent].length - 1
-					@stacks[indent].pop
-				end
 
 				# This line was deindented.
 				# Now we're have to go through the all the indents and figure out
@@ -191,6 +206,11 @@ module RJade
 				while indent < @indents.last
 					@indents.pop
 					@stacks.pop
+				end
+
+				# Remove old stacks we don't need
+				while not @stacks[indent].nil? and indent < @stacks[indent].length - 1
+					@stacks[indent].pop
 				end
 
 				# This line's indentation happens lie "between" two other line's
@@ -224,7 +244,7 @@ module RJade
 
 				when /\A\| /
 					# Found a text block.
-					parse_text_block $', @indents.last + 1
+					parse_text_block $', @indents.last + @tabsize
 
 				when /\A</
 					# Inline html
@@ -304,10 +324,9 @@ module RJade
 					@line = $'
 					syntax_error('Unexpected text after closed tag') unless @line.empty?
 
-				when /\A( ?)(.*)\Z/
+				when /\A( ?)/
 					# Text content
-					text = append_node :text
-					text.data = $2
+					append_node :text, data: $'
 
 			end
 		end
@@ -402,8 +421,7 @@ module RJade
 			if !first_line || first_line.empty?
 				text_indent = nil
 			else
-				first_line_tag = append_node :text
-				first_line_tag.data = first_line
+				append_node :text, :data => first_line
 			end
 
 			until @lines.empty?
@@ -416,7 +434,7 @@ module RJade
 
 					next_line
 
-					@line = @line[text_indent ... @line.length]
+					remove_indent!(@line, text_indent ? text_indent : indent)
 
 					append_node :text, data: @line
 
@@ -426,7 +444,6 @@ module RJade
 				end
 			end
 		end
-
 
 
 		# ----------- Errors ---------------
