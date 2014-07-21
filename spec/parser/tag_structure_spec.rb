@@ -231,4 +231,18 @@ b b_text
 			assert_html expected, source
 		end
 	end
+
+	context 'id and classes' do
+		it 'should parse both' do
+			source = 'a.class_name#id_name text'
+			expected = '<a class="class_name" id="id_name">text</a>'
+			assert_html expected, source
+		end
+
+		it 'should parse both' do
+			source = 'a#id_name.class_name text'
+			expected = '<a id="id_name" class="class_name">text</a>'
+			assert_html expected, source
+		end
+	end
 end
