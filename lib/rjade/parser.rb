@@ -63,11 +63,14 @@ module RJade
 
 
 		WORD_RE = ''.respond_to?(:encoding) ? '\p{Word}' : '\w'
-		ATTR_NAME = "\\A\\s*(#{WORD_RE}(?:#{WORD_RE}|:|-)*)"
-		QUOTED_ATTR_RE = /#{ATTR_NAME}\s*=(=?)\s*("|')/
-		CODE_ATTR_RE = /#{ATTR_NAME}\s*=(=?)\s*/
+		NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)"
 
-		TAG_RE = /\A(#{WORD_RE}+(?::#{WORD_RE}+)?)/
+		ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}"
+		QUOTED_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*=(=?)\s*("|')/
+		CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*=(=?)\s*/
+
+		TAG_RE = /\A#{NAME_RE_STRING}/
+		CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/
 
 		def reset(lines = nil, stacks = nil)
 			# Since you can indent however you like in Slim, we need to keep a list
@@ -262,7 +265,6 @@ module RJade
 
 				when /\A-\s(.*)\Z/
 					# Found a code block.
-					# We expect the line to be broken or the next line to be indented.
 					code_node = append_node :ruby_code
 					code_node.data = $1
 
@@ -290,6 +292,10 @@ module RJade
 					@line = $' if $1
 					parse_tag($&)
 
+				when /\A\./
+					# Found class name -> implicit div
+					parse_tag('div')
+
 				else
 					syntax_error 'Unknown line indicator'
 			end
@@ -306,10 +312,16 @@ module RJade
 				@line.prepend ':'
 			end
 
-			tag_node = append_node :tag, add: true
-			tag_node.name = tag
+			if tag.is_a? Node
+				tag_node = tag
+			else
+				tag_node = append_node :tag, add: true
+				tag_node.name = tag
+			end
 
 			parse_attributes(tag_node)
+
+			puts @line
 
 			case @line
 				when /\A:\s+/
@@ -331,6 +343,15 @@ module RJade
 					# Closed tag. Do nothing
 					@line = $'
 					syntax_error('Unexpected text after closed tag') unless @line.empty?
+
+				when CLASS_TAG_RE
+					# Class name
+					attr_node = append_node :tag_attribute
+					attr_node.name = 'class'
+					attr_node.value = $1
+					@line = $'
+
+					parse_tag tag_node
 
 				when /\A( ?)/
 					# Text content

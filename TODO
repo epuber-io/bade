@@ -9,6 +9,8 @@
 
 - normal comments should appear in code (for debugging purpose)
 
+- merging all attributes with same name (eg class names)
+
 
 ## Name
 
