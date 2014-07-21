@@ -27,11 +27,14 @@ module RJade
 		end
 
 		def initialize(options = {})
-			@options = options
 
-			# we support only tabs now
-			@tab_re = "\t"
-			@tab = ' '
+			tabsize = options.delete(:tabsize) { 4 }
+
+			@tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize-1}}\t/
+			@tab = '\1' + ' ' * tabsize
+
+			@tabsize = tabsize
+			@options = options
 
 			reset
 		end
@@ -52,8 +55,6 @@ module RJade
 		end
 
 
-
-		private
 
 		WORD_RE = ''.respond_to?(:encoding) ? '\p{Word}' : '\w'
 		ATTR_NAME = "\\A\\s*(#{WORD_RE}(?:#{WORD_RE}|:|-)*)"
@@ -107,16 +108,40 @@ module RJade
 		# @return [Int] indent size
 		#
 		def get_indent(line)
-			# Figure out the indentation. Kinda ugly/slow way to support tabs,
-			# but remember that this is only done at parsing time.
-			line[/\A[ \t]*/].gsub(@tab_re, @tab).size
+			count = 0
+
+			line.each_char do |char|
+				if char.match /\A /
+					count += 1
+				elsif char.match /\A\t/
+					count += @tabsize
+				else
+					break
+				end
+			end
+
+			count
+		end
+
+		# Remove indent
+		#
+		# @param [String] line
+		# @param [Int] indent
+		#
+		def remove_indent!(line, indent)
+			line.gsub!(/\A\t/, ' ' * @tabsize)
+			line.slice!(indent .. line.length)
 		end
 
 		# Append element to stacks and result tree
 		#
 		# @param [Symbol] type
 		#
-		def append_node(type, indent: @indents.last, add: false, data: nil)
+		def append_node(type, indent: @indents.length, add: false, data: nil)
+			while indent >= @stacks.length
+				@stacks << @stacks.last.dup
+			end
+
 			parent = @stacks[indent].last
 			node = Node.create(type, parent)
 			node.lineno = @lineno
