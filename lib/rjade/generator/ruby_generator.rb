@@ -121,6 +121,11 @@ lambda {
 
 				when :ruby_code
 					@buff << current_node.data
+
+				when :html_comment
+					print_text '<!-- '
+					append_childrens.call 0
+					print_text ' -->'
 			end
 		end
 

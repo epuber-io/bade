@@ -234,9 +234,10 @@ module RJade
 		def parse_line_indicators
 			case @line
 
-				when /\A\/!( ?)/
+				when /\A\/\/! /
 					# HTML comment
-					@stacks.last << [:html, :comment, [:slim, :data, parse_text_block($', @indents.last + $1.size + 2)]]
+					append_node :html_comment, add: true
+					parse_text_block $'
 
 				when /\A\/\[\s*(.*?)\s*\]\s*\Z/
 					# HTML conditional comment

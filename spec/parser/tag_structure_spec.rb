@@ -168,4 +168,35 @@ a text
 			assert_html expected, source
 		end
 	end
+
+
+	context 'html comments' do
+		it 'should parse html comments' do
+			source = '//! html comment'
+			expected = '<!-- html comment -->'
+			assert_html expected, source
+		end
+
+		it 'should parse multi lined comments' do
+			source = '
+//! html comment
+	_nested
+'
+			expected = '<!-- html comment_nested -->'
+
+			assert_html expected, source
+		end
+
+		it 'should parse multi lined comments in between tags' do
+			source = '
+a text
+//! html comment
+	_nested
+b b_text
+'
+			expected = '<a>text</a><!-- html comment_nested --><b>b_text</b>'
+
+			assert_html expected, source
+		end
+	end
 end

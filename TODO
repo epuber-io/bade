@@ -7,6 +7,8 @@
 
 - Everything has indent logic
 
+- normal comments should appear in code (for debugging purpose)
+
 
 ## Name
 
@@ -24,8 +26,6 @@
 - div implicitly (class `.div_class_name`, id `#div_id_text`)
 
 - tag attribute values as code
-
-- html comments: `//!`
 
 - mixins
     - call `+mixin_name(attribute1, named_attribute1: value1)
