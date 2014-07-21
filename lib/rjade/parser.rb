@@ -71,6 +71,7 @@ module RJade
 
 		TAG_RE = /\A#{NAME_RE_STRING}/
 		CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/
+		ID_TAG_RE = /\A##{NAME_RE_STRING}/
 
 		def reset(lines = nil, stacks = nil)
 			# Since you can indent however you like in Slim, we need to keep a list
@@ -294,7 +295,11 @@ module RJade
 
 				when /\A\./
 					# Found class name -> implicit div
-					parse_tag('div')
+					parse_tag 'div'
+
+				when /\A#/
+					# Found id name -> implicit div
+					parse_tag 'div'
 
 				else
 					syntax_error 'Unknown line indicator'
@@ -320,8 +325,6 @@ module RJade
 			end
 
 			parse_attributes(tag_node)
-
-			puts @line
 
 			case @line
 				when /\A:\s+/
@@ -349,6 +352,16 @@ module RJade
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'class'
 					attr_node.value = $1
+					@line = $'
+
+					parse_tag tag_node
+
+				when ID_TAG_RE
+					# Id name
+					attr_node = append_node :tag_attribute
+					attr_node.name = 'id'
+					attr_node.value = $1
+
 					@line = $'
 
 					parse_tag tag_node

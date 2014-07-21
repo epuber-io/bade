@@ -201,20 +201,34 @@ b b_text
 	end
 
 
-	context 'div implicit tag' do
-		it 'should parse tags with only class name' do
-			source = '.class_name text'
-			expected = '<div class="class_name">text</div>'
-			assert_html expected, source
-		end
-
+	context 'class' do
 		it 'should parse tag with class name' do
 			source = 'a.class_name text'
 			expected = '<a class="class_name">text</a>'
 			assert_html expected, source
 		end
 
+		it 'should parse tags with only class name' do
+			source = '.class_name text'
+			expected = '<div class="class_name">text</div>'
+			assert_html expected, source
+		end
+
 		it 'should merge all classes to one attribute item'
-		
+	end
+
+
+	context 'id' do
+		it 'should parse tag with id name' do
+			source = 'a#id_name text'
+			expected = '<a id="id_name">text</a>'
+			assert_html expected, source
+		end
+
+		it 'should parse tags with only id name' do
+			source = '#id_name text'
+			expected = '<div id="id_name">text</div>'
+			assert_html expected, source
+		end
 	end
 end

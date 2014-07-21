@@ -11,6 +11,8 @@
 
 - merging all attributes with same name (eg class names)
 
+- add tests for combining class names and ids
+
 
 ## Name
 
@@ -21,11 +23,6 @@
 ## Language
 
 ### To implement
-
-- classes (`tag.class_name`)
-- id (`tag#id_text`)
-
-- div implicitly (class `.div_class_name`, id `#div_id_text`)
 
 - tag attribute values as code
 
