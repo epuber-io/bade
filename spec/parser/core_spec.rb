@@ -134,6 +134,17 @@ module RJade
 			it 'parse blocks' do
 				assert_ruby_code '  hash.map { |baf| baf, baf }  ', 'hash.map { |baf| baf, baf }'
 			end
+
+			it 'parse multi lined code' do
+				source = '
+test code multi lined
+	code
+'
+
+				expected = 'test code multi lined
+	code'
+				assert_ruby_code source, expected
+			end
 		end
 	end
 end

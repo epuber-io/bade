@@ -163,6 +163,14 @@ module RJade
 			line[0 ... line.length] = line[count ... line.length]
 		end
 
+		# @param [String] string
+		#
+		# @return [String]
+		#
+		def single_quote(string)
+			%('#{string}')
+		end
+
 		# Append element to stacks and result tree
 		#
 		# @param [Symbol] type
@@ -351,7 +359,7 @@ module RJade
 					# Class name
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'class'
-					attr_node.value = $1
+					attr_node.value = single_quote($1)
 					@line = $'
 
 					parse_tag tag_node
@@ -360,7 +368,7 @@ module RJade
 					# Id name
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'id'
-					attr_node.value = $1
+					attr_node.value = single_quote($1)
 
 					@line = $'
 
@@ -388,21 +396,12 @@ module RJade
 
 			while true
 				case @line
-					when QUOTED_ATTR_RE
-						# Value is quoted (static)
+					when CODE_ATTR_RE
+						# Value ruby code
 						@line = $'
 						attr_node = append_node :tag_attribute
 						attr_node.name = $1
-						attr_node.value = parse_quoted_attribute($3)
-
-					when CODE_ATTR_RE
-						# Value is ruby code
-						@line = $'
-						name = $1
-						escape = $2.empty?
-						value = parse_ruby_code(delimiter)
-						syntax_error('Invalid empty attribute') if value.empty?
-						attributes << [:html, :attr, name, [:slim, :attrvalue, escape, value]]
+						attr_node.value = parse_ruby_code(',)')
 
 					when /\A\s*,/
 						# args delimiter
@@ -488,9 +487,10 @@ module RJade
 		end
 
 		# Parse ruby code, ended with outer delimiters
+		#
 		# @param [String] outer_delimiters
 		#
-		# @return [String] parsed ruby code
+		# @return [Void] parsed ruby code
 		#
 		def parse_ruby_code(outer_delimiters)
 			code = ''
@@ -509,12 +509,15 @@ module RJade
 				case char
 					when RUBY_START_DELIMITERS_RE
 						if RUBY_NOT_NESTABLE_DELIMITERS.include?(char) && delimiters.last == char
+							# end char of not nestable delimiter
 							delimiters.pop
 						else
+							# diving
 							delimiters << char
 						end
 
 					when RUBY_END_DELIMITERS_RE
+						# rising
 						if char == RUBY_DELIMITERS_REVERSE[delimiters.last]
 							delimiters.pop
 						end
@@ -536,11 +539,13 @@ module RJade
 			'{' => '}'
 		}.freeze
 
-		RUBY_NOT_NESTABLE_DELIMITERS = %w(' " |).freeze
+		RUBY_QUOTES = %w(' ").freeze
 
-		RUBY_START_DELIMITERS = %w(\( [ { | ' ").freeze
-		RUBY_END_DELIMITERS = %w(\) ] } | ' ").freeze
-		RUBY_ALL_DELIMITERS = RUBY_START_DELIMITERS + RUBY_END_DELIMITERS
+		RUBY_NOT_NESTABLE_DELIMITERS = (RUBY_QUOTES + %w( | )).freeze
+
+		RUBY_START_DELIMITERS = (%w(\( [ {) + RUBY_NOT_NESTABLE_DELIMITERS).freeze
+		RUBY_END_DELIMITERS = (%w(\) ] }) + RUBY_NOT_NESTABLE_DELIMITERS).freeze
+		RUBY_ALL_DELIMITERS = (RUBY_START_DELIMITERS + RUBY_END_DELIMITERS).uniq.freeze
 
 		RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join('')}]/
 		RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join('')}]/

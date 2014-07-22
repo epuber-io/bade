@@ -82,10 +82,10 @@ lambda {
 
 			prepended_text = indent_text + text + new_line_text
 
-			escape_double_quotes!(prepended_text)
+#			escape_double_quotes!(prepended_text)
 
 			if prepended_text.length > 0
-				@buff << "\t#{BUFF_NAME} << \"" + prepended_text + '"'
+				@buff << "\t#{BUFF_NAME} << " + '%Q(' + prepended_text + ')'
 			end
 		end
 
@@ -135,7 +135,7 @@ lambda {
 		#
 		def formatted_attributes(tag_node)
 			tag_node.attributes.map { |attr|
-				"#{attr.name}=\"#{attr.value}\""
+				"#{attr.name}=\"\#{#{attr.value}}\""
 			}.join ' '
 		end
 

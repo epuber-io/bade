@@ -22,8 +22,6 @@
 
 ### To implement
 
-- tag attribute values as code
-
 - mixins
     - call `+mixin_name(attribute1, named_attribute1: value1)
     			div
@@ -38,7 +36,7 @@
     				&chapter.call      // calling block, can be used .nil? for inspecting if was the block defined`
 
 
-### To think
+### To think about
 
 - footnotes
 - links
