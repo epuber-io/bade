@@ -3,10 +3,12 @@ require_relative 'generator'
 module RJade
 	class RubyGenerator < Generator
 
-		BUFF_NAME = '_buff'
+		BUFF_NAME = '___buff'
+		MIXINS_NAME = '___mixins'
 		START_STRING =	"
 lambda {
 	#{BUFF_NAME} = []
+	#{MIXINS_NAME} = {}
 "
 
 		END_STRING =	"
@@ -126,6 +128,14 @@ lambda {
 					print_text '<!-- '
 					append_childrens.call 0
 					print_text ' -->'
+
+				when :mixin_declaration
+					@buff << "#{MIXINS_NAME}['#{current_node.data}'] = lambda {"
+					append_childrens.call 0
+					@buff << '}'
+
+				when :mixin_call
+					@buff << "#{MIXINS_NAME}['#{current_node.data}'].call"
 			end
 		end
 

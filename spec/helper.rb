@@ -16,28 +16,22 @@ module RJade::Spec
 	#
 	def assert_html(expectation, source)
 
+
+		parser = RJade::Parser.new
+
+		parsed = parser.parse(source)
+
 		begin
-			parser = RJade::Parser.new
-
-			parsed = parser.parse(source)
-
 			lam = RJade::RubyGenerator.node_to_lambda(parsed, new_line: '', indent: '')
 
 			str = lam.call
 
-			if str != expectation
-				raise 'test error'
-			end
+			expect(str).to eq expectation
 
 		rescue
 			puts RJade::RubyGenerator.node_to_lambda_string(parsed, new_line: '', indent: '')
 
 			raise
 		end
-
-
-
-
-		expect(lam.call).to eq expectation
 	end
 end

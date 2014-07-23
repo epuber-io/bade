@@ -35,6 +35,8 @@
     			div.chapter_content
     				&chapter.call      // calling block, can be used .nil? for inspecting if was the block defined`
 
+- code result `/==?/`
+
 
 ### To think about
 

@@ -26,6 +26,8 @@ module RJade
 			end
 		end
 
+		class ParserInternalError < StandardError; end
+
 		# Initialize
 		#
 		# Available options:
@@ -246,6 +248,14 @@ module RJade
 		def parse_line_indicators
 			case @line
 
+				when /\Amixin #{NAME_RE_STRING}/
+					@line = $'
+					parse_mixin_declaration($1)
+
+				when /\A\+#{NAME_RE_STRING}/
+					@line = $'
+					parse_mixin_call($1)
+
 				when /\A\/\/! /
 					# HTML comment
 					append_node :html_comment, add: true
@@ -314,6 +324,61 @@ module RJade
 			end
 
 			append_node :newline
+		end
+
+		def parse_mixin_call(mixin_name)
+			mixin_node = append_node :mixin_call, add: true
+			mixin_node.data = mixin_name
+
+			parse_mixin_params
+		end
+
+		def parse_mixin_declaration(mixin_name)
+			mixin_node = append_node :mixin_declaration, add: true
+			mixin_node.data = mixin_name
+
+			parse_mixin_params
+		end
+
+		def parse_mixin_params
+			# between tag name and attribute must not be space
+			# and skip when is nothing other
+			if @line =~ /\A\(/
+				@line = $'
+			else
+				return
+			end
+
+			end_re = /\A\s*\)/
+
+			while true
+				case @line
+					when CODE_ATTR_RE
+						# Value ruby code
+						@line = $'
+						attr_node = append_node :mixin_key_param
+						attr_node.name = $1
+						attr_node.value = parse_ruby_code(',)')
+
+					when /\A\s*#{NAME_RE_STRING}/
+						@line = $'
+						attr_node = append_node :mixin_param
+						attr_node.name = $1
+
+					when /\A\s*,/
+						# args delimiter
+						@line = $'
+						next
+
+					when end_re
+						# Find ending delimiter
+						@line = $'
+						break
+
+					else
+						syntax_error('wrong mixin attribute syntax')
+				end
+			end
 		end
 
 		# @param [String] tag  tag name

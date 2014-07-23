@@ -1,6 +1,7 @@
 
 require_relative 'node/base_node'
 require_relative 'node/tag_node'
+require_relative 'parser'
 
 module RJade
 
@@ -19,11 +20,18 @@ module RJade
 			klass = self.registered_types[type]
 
 			if klass.nil?
-				raise StandardError, "undefined type for #{type.inspect}"
+				raise Parser::ParserInternalError, "undefined type for #{type.inspect}"
 			end
 
 			klass.new(type, parent)
 		end
 	end
 
+	class MixinDeclarationNode < Node
+		register_type :mixin_declaration
+	end
+
+	class MixinCallNode < Node
+		register_type :mixin_call
+	end
 end
