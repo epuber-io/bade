@@ -17,4 +17,15 @@ describe Parser do
 		assert_html expected, source
 	end
 
+
+	it 'parse output from ruby code' do
+		source = '
+div
+	!= "abc".upcase
+'
+		expected = '<div>ABC</div>'
+
+		assert_html expected, source
+	end
+
 end

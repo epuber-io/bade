@@ -249,10 +249,12 @@ module RJade
 			case @line
 
 				when /\Amixin #{NAME_RE_STRING}/
+					# Mixin declaration
 					@line = $'
 					parse_mixin_declaration($1)
 
 				when /\A\+#{NAME_RE_STRING}/
+					# Mixin call
 					@line = $'
 					parse_mixin_call($1)
 
@@ -287,16 +289,12 @@ module RJade
 					code_node = append_node :ruby_code
 					code_node.data = $1
 
-				when /\A=(=?)(['<>]*)/
+				when /\A!=/
 					# Found an output block.
 					# We expect the line to be broken or the next line to be indented.
 					@line = $'
-					trailing_ws = $2.include?('\'') || $2.include?('>')
-					block = [:multi]
-					@stacks.last << [:static, ' '] if $2.include?('<')
-					@stacks.last << [:slim, :output, $1.empty?, parse_broken_line, block]
-					@stacks.last << [:static, ' '] if trailing_ws
-					@stacks << block
+					output_node = append_node :output
+					output_node.data = parse_ruby_code("\n")
 
 				when /\A(\w+):\s*\Z/
 					# Embedded template detected. It is treated as block.

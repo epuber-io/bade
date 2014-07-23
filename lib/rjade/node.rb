@@ -12,6 +12,8 @@ module RJade
 	Node.register_type :comment
 	Node.register_type :html_comment
 
+	Node.register_type :output
+
 
 
 	# Extend Node class, so we can instantiate typed class

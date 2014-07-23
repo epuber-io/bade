@@ -136,6 +136,9 @@ lambda {
 
 				when :mixin_call
 					@buff << "#{MIXINS_NAME}['#{current_node.data}'].call"
+
+				when :output
+					print_text "\#{#{current_node.data}}"
 			end
 		end
 

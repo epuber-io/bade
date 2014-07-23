@@ -11,6 +11,9 @@
 
 - merging all attributes with same name (eg class names)
 
+- escaped thins
+	- output (`=`)
+
 
 ## Name
 
@@ -35,7 +38,8 @@
     			div.chapter_content
     				&chapter.call      // calling block, can be used .nil? for inspecting if was the block defined`
 
-- code result `/==?/`
+- interpolation `#{}`
+- unescaped interpolation `#{{}}`
 
 
 ### To think about
