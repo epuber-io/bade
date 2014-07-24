@@ -130,12 +130,14 @@ lambda {
 					print_text ' -->'
 
 				when :mixin_declaration
-					@buff << "#{MIXINS_NAME}['#{current_node.data}'] = lambda {"
+					params = formatted_mixin_params(current_node)
+					@buff << "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"
 					append_childrens.call 0
 					@buff << '}'
 
 				when :mixin_call
-					@buff << "#{MIXINS_NAME}['#{current_node.data}'].call"
+					params = formatted_mixin_params(current_node)
+					@buff << "#{MIXINS_NAME}['#{current_node.data}'].call(#{params})"
 
 				when :output
 					print_text "\#{#{current_node.data}}"
@@ -150,6 +152,16 @@ lambda {
 			tag_node.attributes.map { |attr|
 				"#{attr.name}=\"\#{#{attr.value}}\""
 			}.join ' '
+		end
+
+		# @param [MixinCommonNode] mixin_node
+		#
+		# @return [String] formatted params
+		#
+		def formatted_mixin_params(mixin_node)
+			mixin_node.params.map { |param|
+				param.data
+			}.join(', ')
 		end
 
 		# @param [String] str

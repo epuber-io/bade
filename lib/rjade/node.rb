@@ -14,7 +14,7 @@ module RJade
 
 	Node.register_type :output
 
-
+	Node.register_type :mixin_param
 
 	# Extend Node class, so we can instantiate typed class
 	class Node
@@ -29,11 +29,33 @@ module RJade
 		end
 	end
 
-	class MixinDeclarationNode < Node
+
+	class MixinCommonNode < Node
+
+		# @return [Array<Node>]
+		#
+		attr_reader :params
+
+		def initialize(*args)
+			super(*args)
+
+			@params = []
+		end
+
+		def << (node)
+			if node.type == :mixin_param || node.type == :mixin_key_param
+				@params << node
+			else
+				super(node)
+			end
+		end
+	end
+
+	class MixinDeclarationNode < MixinCommonNode
 		register_type :mixin_declaration
 	end
 
-	class MixinCallNode < Node
+	class MixinCallNode < MixinCommonNode
 		register_type :mixin_call
 	end
 end

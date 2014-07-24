@@ -270,11 +270,11 @@ module RJade
 					@stacks << block
 
 				when /\A\/\//
-					# Slim comment
+					# Comment
 					append_node :comment, add: true
 					parse_text_block $'
 
-				when /\A\| /
+				when /\A\|( ?)/
 					# Found a text block.
 					parse_text_block $', @indents.last + @tabsize
 
@@ -328,17 +328,53 @@ module RJade
 			mixin_node = append_node :mixin_call, add: true
 			mixin_node.data = mixin_name
 
-			parse_mixin_params
+			parse_mixin_call_params
+		end
+
+		def parse_mixin_call_params
+			# between tag name and attribute must not be space
+			# and skip when is nothing other
+			if @line =~ /\A\(/
+				@line = $'
+			else
+				return
+			end
+
+			end_re = /\A\s*\)/
+
+			while true
+				case @line
+					when CODE_ATTR_RE
+						@line = $'
+						attr_node = append_node :mixin_key_param
+						attr_node.name = $1
+						attr_node.value = parse_ruby_code(',)')
+
+					when /\A\s*,/
+						# args delimiter
+						@line = $'
+						next
+
+					when end_re
+						# Find ending delimiter
+						@line = $'
+						break
+
+					else
+						attr_node = append_node :mixin_param
+						attr_node.data = parse_ruby_code(',)')
+				end
+			end
 		end
 
 		def parse_mixin_declaration(mixin_name)
 			mixin_node = append_node :mixin_declaration, add: true
 			mixin_node.data = mixin_name
 
-			parse_mixin_params
+			parse_mixin_declaration_params
 		end
 
-		def parse_mixin_params
+		def parse_mixin_declaration_params
 			# between tag name and attribute must not be space
 			# and skip when is nothing other
 			if @line =~ /\A\(/
@@ -361,7 +397,7 @@ module RJade
 					when /\A\s*#{NAME_RE_STRING}/
 						@line = $'
 						attr_node = append_node :mixin_param
-						attr_node.name = $1
+						attr_node.data = $1
 
 					when /\A\s*,/
 						# args delimiter

@@ -28,6 +28,31 @@ mixin mixin_name()
 			assert_html expected, source
 		end
 
+		it 'parse mixin declaration and call, brackets can be omitted' do
+			source = '
+mixin mixin_name
+	div
+
++mixin_name
+'
+
+			expected = '<div></div>'
+
+			assert_html expected, source
+		end
+
+		it 'parse mixin declaration and call with parameters' do
+			source = '
+mixin mixin_name(param)
+	div
+		!= param
+
++mixin_name("abc")
+'
+			expected = '<div>abc</div>'
+			assert_html expected, source
+		end
+
 
 
 
