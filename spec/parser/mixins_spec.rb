@@ -41,7 +41,7 @@ mixin mixin_name
 			assert_html expected, source
 		end
 
-		it 'parse mixin declaration and call with parameters' do
+		it 'parse mixin declaration and call with one normal parameter' do
 			source = '
 mixin mixin_name(param)
 	div
@@ -50,6 +50,23 @@ mixin mixin_name(param)
 +mixin_name("abc")
 '
 			expected = '<div>abc</div>'
+			assert_html expected, source
+		end
+
+		it 'parse mixin declaration and call with more normal parameters' do
+			source = '
+mixin mixin_name(param1, param2, param3)
+	div
+		!= param1
+	p
+		!= param2
+	a
+		!= param3
+
++mixin_name("abc","abc".upcase,"ASD")'
+
+			expected = '<div>abc</div><p>ABC</p><a>ASD</a>'
+
 			assert_html expected, source
 		end
 
