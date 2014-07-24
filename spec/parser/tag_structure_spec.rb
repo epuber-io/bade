@@ -80,6 +80,14 @@ a
 		assert_html expected, source
 	end
 
+	it 'should parse piped text started on next line' do
+		source = '
+|
+	text aaa'
+		expected = 'text aaa'
+		assert_html expected, source
+	end
+
 	context 'block expansion' do
 		it 'should parse block expansion' do
 			source   = 'a: b text'
