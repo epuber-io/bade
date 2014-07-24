@@ -159,9 +159,24 @@ lambda {
 		# @return [String] formatted params
 		#
 		def formatted_mixin_params(mixin_node)
-			mixin_node.params.map { |param|
+			params = mixin_node.params
+			result = []
+
+
+			# normal params
+			result += params.select { |param|
+				param.type == :mixin_param
+			}.map { |param|
 				param.data
-			}.join(', ')
+			}
+
+			result += params.select { |param|
+				param.type == :mixin_key_param
+			}.map { |param|
+				"#{param.name}: #{param.value}"
+			}
+
+			result.join(', ')
 		end
 
 		# @param [String] str

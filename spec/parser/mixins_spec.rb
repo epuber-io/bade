@@ -70,6 +70,24 @@ mixin mixin_name(param1, param2, param3)
 			assert_html expected, source
 		end
 
+		it 'parse mixin declaration and call with several normal and several keyed parameters' do
+			source = '
+mixin mixin_name(a, b, c = "abc", d = {})
+	a
+		!= a
+	b
+		!= b
+	c
+		!= c
+	d
+		!= d.to_s
+
++mixin_name("aa", "bb", c = "cc")
+'
+
+			expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'
+			assert_html expected, source
+		end
 
 
 

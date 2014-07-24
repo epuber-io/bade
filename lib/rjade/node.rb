@@ -16,6 +16,7 @@ module RJade
 
 	Node.register_type :mixin_param
 
+
 	# Extend Node class, so we can instantiate typed class
 	class Node
 		def self.create(type, parent)
@@ -57,5 +58,14 @@ module RJade
 
 	class MixinCallNode < MixinCommonNode
 		register_type :mixin_call
+	end
+
+
+	class MixinKeyedParamNode < Node
+		register_type :mixin_key_param
+
+		attr_forw_accessor :name, :data
+
+		attr_accessor :value
 	end
 end
