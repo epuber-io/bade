@@ -3,8 +3,8 @@ require_relative 'generator'
 module RJade
 	class RubyGenerator < Generator
 
-		BUFF_NAME = '___buff'
-		MIXINS_NAME = '___mixins'
+		BUFF_NAME = '__buff'
+		MIXINS_NAME = '__mixins'
 		START_STRING =	"
 lambda {
 	#{BUFF_NAME} = []

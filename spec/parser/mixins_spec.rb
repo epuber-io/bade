@@ -89,7 +89,19 @@ mixin mixin_name(a, b, c = "abc", d = {})
 			assert_html expected, source
 		end
 
+		it 'parse mixin with custom blocks' do
+			source = '
+mixin m(a)
+	head
+		&head.call
 
++m("aa")
+	block head
+		a text
+'
+			expected = '<head><a>text</a></head>'
+			assert_html expected, source
+		end
 
 
 
@@ -99,14 +111,15 @@ mixin mixin_name(a, b, c = "abc", d = {})
 		it 'experiments' do
 			__mixins = {}
 
-			__mixins['aaa'] = lambda { |__blocks, arg, something: 10|
-				__blocks.each { |_, block|
-					block.call
-				}
+			__mixins['aaa'] = lambda { |arg, something: 10, default_block: nil, other_block: nil|
+				this = __mixins['aaa']
 
-				puts __mixins['aaa'].parameters.inspect
+				default_block.call unless default_block.nil?
+				other_block.call unless other_block.nil?
 
-				str = __mixins['aaa'].parameters.first(2).last.last.to_s
+				puts this.parameters.inspect
+
+				str = this.parameters.first(2).last.last.to_s
 
 				puts eval(str)
 
@@ -114,14 +127,11 @@ mixin mixin_name(a, b, c = "abc", d = {})
 				puts something
 			}
 
-			__mixins['aaa'].call({
-									 'default' => lambda {
-										 puts 'default block'
-									 },
-									 'head' => lambda {
-										 puts 'head block'
-									 }
-								 }, 'fdfs', something: 100)
+			__mixins['aaa'].call('fdfs', something: 100, default_block: lambda {
+				puts 'default block'
+			}, other_block: lambda {
+				puts 'other block'
+			})
 		end
 
 	end
