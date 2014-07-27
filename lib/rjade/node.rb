@@ -96,7 +96,6 @@ module RJade
 					@default_block = Node.create(:mixin_block, self)
 				end
 
-				puts node.type.inspect
 				@default_block << node
 			end
 		end

@@ -14,7 +14,7 @@ module RJade::Spec
 	# @param [String] expectation
 	# @param [String] source
 	#
-	def assert_html(expectation, source)
+	def assert_html(expectation, source, print_error_if_error: true)
 
 
 		parser = RJade::Parser.new
@@ -29,7 +29,9 @@ module RJade::Spec
 			expect(str).to eq expectation
 
 		rescue Exception
-			puts RJade::RubyGenerator.node_to_lambda_string(parsed, new_line: '', indent: '')
+			if print_error_if_error
+				puts RJade::RubyGenerator.node_to_lambda_string(parsed, new_line: '', indent: '')
+			end
 
 			raise
 		end

@@ -1,6 +1,8 @@
 
 module RJade
 	module Runtime
+		class RuntimeError < ::StandardError; end
+
 		class Block
 
 			# @return [Proc]
@@ -24,11 +26,15 @@ module RJade
 
 			def call!(*args)
 				if @block.nil?
-					raise "`#{@name}` must have block definition"
+					raise RuntimeError, "`#{@name}` must have block definition"
 				else
 					@block.call(*args)
 				end
 			end
 		end
+	end
+
+	def block(name, &block)
+		Runtime::Block.new(name, &block)
 	end
 end

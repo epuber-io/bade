@@ -102,6 +102,18 @@ mixin m()
 			assert_html expected, source
 		end
 
+
+		it 'should raise error on required block' do
+			source = '
+mixin m()
+	- default_block.call!
++m()
+'
+			expect {
+				assert_html nil, source, print_error_if_error: false
+			}.to raise_error RJade::Runtime::RuntimeError
+		end
+
 		it 'parse mixin with custom blocks'
 # 			source = '
 # mixin m(a, &head)
