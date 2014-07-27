@@ -142,7 +142,7 @@ mixin m(a, &head)
 	block head
 		a text
 '
-			expected = ' <default><a>text in default block</a></default><head><a>text</a></head>'
+			expected = '<default><a>text in default block</a></default><head><a>text</a></head>'
 			assert_html expected, source
 		end
 
