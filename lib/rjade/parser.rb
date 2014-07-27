@@ -258,6 +258,15 @@ module RJade
 					@line = $'
 					parse_mixin_call($1)
 
+				when /\Ablock #{NAME_RE_STRING}/
+					@line = $'
+					if @stacks.last.last.type == :mixin_call
+						append_node :mixin_block, data: $1, add: true
+					else
+						# keyword block used outside of mixin call
+						parse_tag($&)
+					end
+
 				when /\A\/\/! /
 					# HTML comment
 					append_node :html_comment, add: true

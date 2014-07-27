@@ -22,6 +22,8 @@
 
 - mixins should parse text after calling: `+mixin_name('ds') some text`
 
+- rewrite mixins.md document
+
 
 ## Name
 

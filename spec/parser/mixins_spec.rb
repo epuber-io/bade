@@ -114,19 +114,45 @@ mixin m()
 			}.to raise_error RJade::Runtime::RuntimeError
 		end
 
-		it 'parse mixin with custom blocks'
-# 			source = '
-# mixin m(a, &head)
-# 	head
-# 		- head.call
-#
-# +m("aa")
-# 	block head
-# 		a text
-# '
-# 			expected = '<head><a>text</a></head>'
-# 			assert_html expected, source
-# 		end
+		it 'parse mixin with custom blocks' do
+			source = '
+mixin m(a, &head)
+	head
+		- head.call
+
++m("aa")
+	block head
+		a text
+'
+			expected = '<head><a>text</a></head>'
+			assert_html expected, source
+		end
+
+		it 'parse mixin with default block and custom block' do
+			source = '
+mixin m(a, &head)
+	default
+		- default_block.call
+	head
+		- head.call
+
++m("aa")
+	a text in default block
+
+	block head
+		a text
+'
+			expected = ' <default><a>text in default block</a></default><head><a>text</a></head>'
+			assert_html expected, source
+		end
+
+		it 'block keyword can be used outside of mixin call' do
+			source = '
+block
+	| text'
+			expected = '<block>text</block>'
+			assert_html expected, source
+		end
 
 
 
