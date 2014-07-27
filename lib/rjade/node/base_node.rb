@@ -75,4 +75,10 @@ module RJade
 		end
 
 	end
+
+	class KeyValueNode < Node
+		attr_forw_accessor :name, :data
+
+		attr_accessor :value
+	end
 end

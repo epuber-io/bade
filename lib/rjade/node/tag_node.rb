@@ -29,12 +29,5 @@ module RJade
 		end
 	end
 
-
-	class TagAttributeNode < Node
-		register_type :tag_attribute
-
-		attr_forw_accessor :name, :data
-
-		attr_accessor :value
-	end
+	KeyValueNode.register_type :tag_attribute
 end
