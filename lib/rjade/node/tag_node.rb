@@ -21,6 +21,7 @@ module RJade
 		#
 		def << (node)
 			if node.type == :tag_attribute
+				node.parent = self
 				@attributes << node
 			else
 				super

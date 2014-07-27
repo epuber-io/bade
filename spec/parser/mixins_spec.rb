@@ -89,19 +89,32 @@ mixin mixin_name(a, b, c = "abc", d = {})
 			assert_html expected, source
 		end
 
-		it 'parse mixin with custom blocks' do
+		it 'parse mixin with default block' do
 			source = '
-mixin m(a)
-	head
-		&head.call
+mixin m()
+	default
+		- default_block.call
 
-+m("aa")
-	block head
-		a text
++m()
+	| text
 '
-			expected = '<head><a>text</a></head>'
+			expected = '<default>text</default>'
 			assert_html expected, source
 		end
+
+		it 'parse mixin with custom blocks'
+# 			source = '
+# mixin m(a, &head)
+# 	head
+# 		- head.call
+#
+# +m("aa")
+# 	block head
+# 		a text
+# '
+# 			expected = '<head><a>text</a></head>'
+# 			assert_html expected, source
+# 		end
 
 
 

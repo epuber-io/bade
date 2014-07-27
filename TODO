@@ -20,6 +20,8 @@
 	- mixins (keyed)
 	- tags
 
+- mixins should parse text after calling: `+mixin_name('ds') some text`
+
 
 ## Name
 
@@ -58,6 +60,8 @@
 - checking existence of keyed parameters
 
 - checking of existence named blocks
+
+- multiple parameters of same name (maybe it will won't parse by Ruby)
 
 
 #### runtime class Block

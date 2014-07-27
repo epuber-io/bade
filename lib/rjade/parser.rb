@@ -396,8 +396,11 @@ module RJade
 
 					when /\A\s*#{NAME_RE_STRING}/
 						@line = $'
-						attr_node = append_node :mixin_param
-						attr_node.data = $1
+						append_node :mixin_param, data: $1
+
+					when /\A\s*&#{NAME_RE_STRING}/
+						@line = $'
+						append_node :mixin_block_param, data: $1
 
 					when /\A\s*,/
 						# args delimiter

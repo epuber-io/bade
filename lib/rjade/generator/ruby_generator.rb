@@ -1,4 +1,5 @@
 require_relative 'generator'
+require_relative '../runtime/block'
 
 module RJade
 	class RubyGenerator < Generator
@@ -56,6 +57,7 @@ lambda {
 		def generate_lambda_string(root)
 			@buff = []
 			@indent = 0
+			@code_indent = 1
 
 			@buff << START_STRING
 
@@ -70,7 +72,7 @@ lambda {
 
 		# @param [String] text
 		#
-		def print_text(text, indent: false, new_line: false)
+		def buff_print_text(text, indent: false, new_line: false)
 			indent_text = ''
 			new_line_text = ''
 
@@ -87,60 +89,68 @@ lambda {
 #			escape_double_quotes!(prepended_text)
 
 			if prepended_text.length > 0
-				@buff << "\t#{BUFF_NAME} << " + '%Q(' + prepended_text + ')'
+				buff_code "#{BUFF_NAME} << " + '%Q(' + prepended_text + ')'
 			end
 		end
 
-		def visit_node(current_node)
+		def buff_code(text)
+			@buff << "\t" * @code_indent + text
+		end
 
-			append_childrens = lambda { |indent_plus|
-				current_node.childrens.each { |node|
-					@indent += indent_plus
-					visit_node(node)
-					@indent -= indent_plus
-				}
+		def visit_node_childrens(current_node)
+			current_node.childrens.each { |node|
+				visit_node(node)
 			}
+		end
 
+		def visit_node(current_node)
 			case current_node.type
 				when :root
-					append_childrens.call(0)
+					visit_node_childrens(current_node)
 
 				when :text
-					print_text current_node.data
+					buff_print_text current_node.data
 
 				when :tag
 					attributes = formatted_attributes current_node
 
 					if attributes.length > 0
-						print_text "<#{current_node.name} #{attributes}>", new_line: true, indent: true
+						buff_print_text "<#{current_node.name} #{attributes}>", new_line: true, indent: true
 					else
-						print_text "<#{current_node.name}>", new_line: true, indent: true
+						buff_print_text "<#{current_node.name}>", new_line: true, indent: true
 					end
 
-					append_childrens.call(1)
+					indent {
+						visit_node_childrens(current_node)
+					}
 
-					print_text "</#{current_node.name}>", new_line: true, indent: true
+					buff_print_text "</#{current_node.name}>", new_line: true, indent: true
 
 				when :ruby_code
-					@buff << current_node.data
+					buff_code current_node.data
 
 				when :html_comment
-					print_text '<!-- '
-					append_childrens.call 0
-					print_text ' -->'
+					buff_print_text '<!-- '
+					visit_node_childrens(current_node)
+					buff_print_text ' -->'
 
 				when :mixin_declaration
 					params = formatted_mixin_params(current_node)
-					@buff << "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"
-					append_childrens.call 0
-					@buff << '}'
+					buff_code "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"
+
+					indent {
+						blocks_name_declaration(current_node)
+						visit_node_childrens(current_node)
+					}
+
+					buff_code '}'
 
 				when :mixin_call
 					params = formatted_mixin_params(current_node)
-					@buff << "#{MIXINS_NAME}['#{current_node.data}'].call(#{params})"
+					buff_code "#{MIXINS_NAME}['#{current_node.data}'].call(#{params})"
 
 				when :output
-					print_text "\#{#{current_node.data}}"
+					buff_print_text "\#{#{current_node.data}}"
 			end
 		end
 
@@ -154,6 +164,12 @@ lambda {
 			}.join ' '
 		end
 
+		def indent(plus = 1)
+			@code_indent += plus
+			yield
+			@code_indent -= plus
+		end
+
 		# @param [MixinCommonNode] mixin_node
 		#
 		# @return [String] formatted params
@@ -161,6 +177,25 @@ lambda {
 		def formatted_mixin_params(mixin_node)
 			params = mixin_node.params
 			result = []
+
+
+
+			if mixin_node.type == :mixin_call
+				buff_code '__blocks = {}'
+
+				mixin_node.blocks.each { |block|
+					block_name = block.data ? block.data : 'default_block'
+					buff_code "__blocks['#{block_name}'] = RJade::Runtime::Block.new('#{block_name}') {"
+					indent {
+						visit_node_childrens(block)
+					}
+					buff_code '}'
+				}
+
+				result << '__blocks'
+			elsif mixin_node.type == :mixin_declaration
+				result << '__blocks'
+			end
 
 
 			# normal params
@@ -178,6 +213,27 @@ lambda {
 
 			result.join(', ')
 		end
+
+
+		# @param [String] block_name
+		#
+		def block_name_declaration(block_name)
+			buff_code "#{block_name} = __blocks.delete('#{block_name}') { RJade::Runtime::Block.new('#{block_name}') }"
+		end
+
+		# @param [MixinDeclarationNode] mixin_node
+		#
+		def blocks_name_declaration(mixin_node)
+			mixin_node.params.select { |param|
+				param.type == :mixin_block_param
+			}.each { |param|
+				block_name_declaration(param.data)
+			}
+
+			block_name_declaration('default_block')
+		end
+
+
 
 		# @param [String] str
 		#

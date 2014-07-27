@@ -36,7 +36,7 @@ module RJade
 		#
 		attr_accessor :childrens
 
-
+		# @param [Symbol] type
 		# @param [Node] parent
 		#
 		def initialize(type, parent = nil)
@@ -45,18 +45,14 @@ module RJade
 
 			if parent
 				parent << self
-				@parent = parent
 			end
 		end
 
 		# @param [Node] node
 		#
 		def << (node)
-			if node.is_a? Symbol
-				Node.new(node, self)
-			else
-				@childrens << node
-			end
+			node.parent = self
+			@childrens << node
 
 			self
 		end

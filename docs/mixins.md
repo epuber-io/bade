@@ -20,7 +20,7 @@ Example:
 
 ```ruby
 
-__mixins['mixin_name'] = lambda { |param1, key_param1: 'value1', default_block: nil, block_with_custom_name: nil|
+__mixins['mixin_name'] = lambda { |__blocks, param1, key_param1: 'value1'|
 	
 }
 
@@ -34,11 +34,12 @@ Parameter `default_block` should be there always
 Calling is simple, we just pass in all parameters plus given blocks.
 
 ```ruby
-__mixins['mixin_name'].call('param1_value', key_param1: 'value', default_block: lambda {
-	
-}, block_with_custom_name: lambda {
-	
-})
+__blocks = {}
+__blocks['default_block'] = RJade::Runtime::Block.new('default_block') {
+
+}
+...
+__mixins['mixin_name'].call(__blocks, 'param1_value', key_param1: 'value')
 ```
 
 
@@ -54,7 +55,7 @@ __mixins['mixin_name'].call('param1_value', key_param1: 'value', default_block: 
 
 ## define
 
-`mixin mixin_name(attribute1, named_attribute1 = default_value)
+`mixin mixin_name(attribute1, named_attribute1 = default_value, &chapter)
 	div.default
 		- default_block.call // calling block, can be used .nil? for inspecting if was the block defined
 	div.chapter_content

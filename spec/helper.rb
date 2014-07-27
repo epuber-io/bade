@@ -28,7 +28,7 @@ module RJade::Spec
 
 			expect(str).to eq expectation
 
-		rescue
+		rescue Exception
 			puts RJade::RubyGenerator.node_to_lambda_string(parsed, new_line: '', indent: '')
 
 			raise

@@ -15,6 +15,8 @@ module RJade
 	Node.register_type :output
 
 	Node.register_type :mixin_param
+	Node.register_type :mixin_block_param
+	Node.register_type :mixin_block
 
 
 	# Extend Node class, so we can instantiate typed class
@@ -38,26 +40,66 @@ module RJade
 		attr_reader :params
 
 		def initialize(*args)
-			super(*args)
+			super
 
 			@params = []
 		end
 
 		def << (node)
-			if node.type == :mixin_param || node.type == :mixin_key_param
+			if allowed_parameter_types.include?(node.type)
+				node.parent = self
 				@params << node
 			else
-				super(node)
+				super
 			end
 		end
 	end
 
 	class MixinDeclarationNode < MixinCommonNode
 		register_type :mixin_declaration
+
+		def allowed_parameter_types
+			[:mixin_param, :mixin_key_param, :mixin_block_param]
+		end
 	end
 
 	class MixinCallNode < MixinCommonNode
 		register_type :mixin_call
+
+		attr_reader :blocks
+
+		attr_reader :default_block
+
+		def initialize(*args)
+			super
+
+			@blocks = []
+		end
+
+		def allowed_parameter_types
+			[:mixin_param, :mixin_key_param]
+		end
+
+		def << (node)
+			if allowed_parameter_types.include?(node.type)
+				node.parent = self
+				@params << node
+			elsif node.type == :mixin_block
+				node.parent = self
+				@blocks << node
+			else
+				if @default_block.nil?
+					if node.type == :newline
+						return self
+					end
+
+					@default_block = Node.create(:mixin_block, self)
+				end
+
+				puts node.type.inspect
+				@default_block << node
+			end
+		end
 	end
 
 
