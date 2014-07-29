@@ -1,6 +1,6 @@
 
 require_relative 'node'
-
+require_relative 'ruby_extensions/string'
 
 module RJade
 	class Parser
@@ -120,56 +120,7 @@ module RJade
 		# @return [Int] indent size
 		#
 		def get_indent(line)
-			count = 0
-
-			line.each_char do |char|
-				if char == ' '
-					count += 1
-				elsif char == "\t"
-					count += @tabsize
-				else
-					break
-				end
-			end
-
-			count
-		end
-
-		# Remove indent
-		#
-		# @param [String] line
-		# @param [Int] indent
-		#
-		def remove_indent!(line, indent)
-			count = 0
-			line.each_char do |char|
-
-				if indent <= 0
-					break
-				elsif char == ' '
-					indent -= 1
-				elsif char == "\t"
-					if indent - @tabsize < 0
-						raise StandardError, 'malformed tabs'
-					end
-
-					indent -= @tabsize
-				else
-					break
-				end
-
-				count += 1
-			end
-
-			line[0 ... line.length] = line[count ... line.length]
-		end
-
-		# @param [String] string
-		#
-		# @return [String]
-		#
-		def single_quote(string)
-			%('#{string}')
+			line.get_indent(@tabsize)
 		end
 
 		# Append element to stacks and result tree
@@ -204,8 +155,8 @@ module RJade
 
 			indent = get_indent(line)
 
-			# left strip, similar to String#lstrip
-			remove_indent!(line, indent)
+			# left strip
+			line.remove_indent!(indent, @tabsize)
 			@line = line
 
 			# If there's more stacks than indents, it means that the previous
@@ -446,7 +397,7 @@ module RJade
 				tag_node.name = tag
 			end
 
-			parse_attributes(tag_node)
+			parse_tag_attributes
 
 			case @line
 				when /\A:\s+/
@@ -473,7 +424,7 @@ module RJade
 					# Class name
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'class'
-					attr_node.value = single_quote($1)
+					attr_node.value = $1.single_quote
 					@line = $'
 
 					parse_tag tag_node
@@ -482,20 +433,20 @@ module RJade
 					# Id name
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'id'
-					attr_node.value = single_quote($1)
+					attr_node.value = $1.single_quote
 
 					@line = $'
 
 					parse_tag tag_node
 
-				when /\A( ?)/
+				when /\A /
 					# Text content
 					append_node :text, data: $'
 
 			end
 		end
 
-		def parse_attributes(tag_node)
+		def parse_tag_attributes
 			# Check to see if there is a delimiter right after the tag name
 
 			# between tag name and attribute must not be space
@@ -560,7 +511,7 @@ module RJade
 
 					next_line
 
-					remove_indent!(@line, text_indent ? text_indent : indent)
+					@line.remove_indent!(text_indent ? text_indent : indent, @tabsize)
 
 					append_node :text, data: @line
 
