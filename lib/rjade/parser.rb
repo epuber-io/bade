@@ -337,6 +337,10 @@ module RJade
 			mixin_node.data = mixin_name
 
 			parse_mixin_call_params
+
+			if @line =~ /\A /
+				append_node :text, data: $'
+			end
 		end
 
 		def parse_mixin_call_params
@@ -453,7 +457,7 @@ module RJade
 
 					parse_tag($&)
 
-				when /\A\s*=(=?)/
+				when /\A\s*=/
 					# Handle output code
 					@line = $'
 					block = [:multi]
@@ -537,35 +541,6 @@ module RJade
 						end
 				end
 			end
-		end
-
-		def parse_quoted_attribute(quote)
-			value, count = '', 0
-
-			until @line.empty? || (count == 0 && @line[0] == quote[0])
-				if @line =~ /\A\\\Z/
-					value << ' '
-					expect_next_line # TODO
-				else
-					if count > 0
-						if @line[0] == ?{
-							count += 1
-						elsif @line[0] == ?}
-							count -= 1
-						end
-					elsif @line =~ /\A#\{/
-						value << @line.slice!(0)
-						count = 1
-					end
-					value << @line.slice!(0)
-				end
-			end
-
-			syntax_error("Expected closing brace }") if count != 0
-			syntax_error("Expected closing quote #{quote}") if @line[0] != quote[0]
-			@line.slice!(0) # remove closing bracket for attributes
-
-			value
 		end
 
 		def parse_text_block(first_line, text_indent = nil)

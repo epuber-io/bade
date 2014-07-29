@@ -155,6 +155,16 @@ block
 		end
 
 
+		it 'parse text after mixin call' do
+			source = '
+mixin m()
+	a
+		- default_block.call
+
++m() text'
+			expected = '<a>text</a>'
+			assert_html expected, source
+		end
 
 
 
