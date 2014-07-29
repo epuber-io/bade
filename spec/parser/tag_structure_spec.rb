@@ -177,7 +177,6 @@ a text
 		end
 	end
 
-
 	context 'html comments' do
 		it 'should parse html comments' do
 			source = '//! html comment'
@@ -208,7 +207,6 @@ b b_text
 		end
 	end
 
-
 	context 'class' do
 		it 'should parse tag with class name' do
 			source = 'a.class_name text'
@@ -224,7 +222,6 @@ b b_text
 
 		it 'should merge all classes to one attribute item'
 	end
-
 
 	context 'id' do
 		it 'should parse tag with id name' do

@@ -72,7 +72,7 @@ mixin mixin_name(param1, param2, param3)
 
 		it 'parse mixin declaration and call with several normal and several keyed parameters' do
 			source = '
-mixin mixin_name(a, b, c = "abc", d = {})
+mixin mixin_name(a, b, c: "abc", d: {})
 	a
 		!= a
 	b
@@ -82,7 +82,7 @@ mixin mixin_name(a, b, c = "abc", d = {})
 	d
 		!= d.to_s
 
-+mixin_name("aa", "bb", c = "cc")
++mixin_name("aa", "bb", c: "cc")
 '
 
 			expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'

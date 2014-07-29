@@ -6,7 +6,7 @@ describe Parser do
 
 	it 'should parse one attribute' do
 		source = "
-a(href = 'href_text')
+a(href: 'href_text')
 "
 
 		expected = '<a href="href_text"></a>'
@@ -16,7 +16,7 @@ a(href = 'href_text')
 
 	it 'should parse one attribute and text after' do
 		source = "
-a(href = 'href_text') abc
+a(href: 'href_text') abc
 "
 
 		expected = '<a href="href_text">abc</a>'
@@ -27,7 +27,7 @@ a(href = 'href_text') abc
 
 	it 'should parse two attributes' do
 		source = "
-a(href = 'href_text', id = 'id_text')
+a(href: 'href_text', id : 'id_text')
 "
 
 		expected = '<a href="href_text" id="id_text"></a>'
@@ -38,7 +38,7 @@ a(href = 'href_text', id = 'id_text')
 
 	it 'should parse two attributes and text' do
 		source = "
-a(href = 'href_text', id = 'id_text') abc_text_haha
+a(href: 'href_text', id : 'id_text') abc_text_haha
 "
 
 		expected = '<a href="href_text" id="id_text">abc_text_haha</a>'
@@ -49,7 +49,7 @@ a(href = 'href_text', id = 'id_text') abc_text_haha
 
 	it 'should parse two attributes without spaces' do
 		source = "
-a(href='href_text',id='id_text')
+a(href:'href_text',id:'id_text')
 "
 
 		expected = '<a href="href_text" id="id_text"></a>'
@@ -60,8 +60,8 @@ a(href='href_text',id='id_text')
 
 	it 'should parse two attributes and text nested' do
 		source = "
-a(href = 'href_text', id = 'id_text') abc_text_haha
-	b(class = 'aaa') bbb
+a(href : 'href_text', id : 'id_text') abc_text_haha
+	b(class : 'aaa') bbb
 "
 
 		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
@@ -71,8 +71,8 @@ a(href = 'href_text', id = 'id_text') abc_text_haha
 
 	it 'should parse attributes with double quoted attributes' do
 		source = '
-a(href = "href_text", id="id_text") abc_text_haha
-	b(class = "aaa") bbb
+a(href : "href_text", id:"id_text") abc_text_haha
+	b(class : "aaa") bbb
 '
 
 		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
