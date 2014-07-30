@@ -1,4 +1,9 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in Epuber.gemspec
-gemspec
+
+gem 'activesupport', '>= 3.2.15'
+
+# dev
+gem 'bundler', '~> 1.6'
+gem 'rake'
+gem 'rspec'
