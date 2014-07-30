@@ -2,6 +2,7 @@
 
 require_relative 'lib/rjade'
 
+
 Gem::Specification.new do |spec|
 	spec.name        = 'rjade'
 	spec.version     = RJade::VERSION
