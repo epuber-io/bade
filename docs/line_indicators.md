@@ -11,7 +11,7 @@ Piped text is for adding simple not changed text. Each following line indented g
 
 ```
 | This is text block.
-	Text will be also in same text block.
+    Text will be also in same text block.
 
 | Text
         will have indetation
@@ -42,7 +42,8 @@ Control code is line indicator for controling template at runtime (conditions, i
 - end
 ```
 
-Unfortunately you have to write `end`, `}` and all that stuff. In future this error will be removed, hopefully.
+Unfortunately you have to write `end`, `}` and all that stuff. In future this inconvenience will be improved, hopefully.
+
 
 ## Tag `<text>`
 
