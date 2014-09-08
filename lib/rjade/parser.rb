@@ -222,12 +222,6 @@ module RJade
 					append_node :html_comment, add: true
 					parse_text_block $'
 
-				when /\A\/\[\s*(.*?)\s*\]\s*\Z/
-					# HTML conditional comment
-					block = [:multi]
-					@stacks.last << [:html, :condcomment, $1, block]
-					@stacks << block
-
 				when /\A\/\//
 					# Comment
 					append_node :comment, add: true
