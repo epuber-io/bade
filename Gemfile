@@ -1,9 +1,7 @@
 source 'https://rubygems.org'
 
+group :tests, :development do
+	gem 'bundler'
+	gem 'rspec'
+end
 
-gem 'activesupport', '>= 3.2.15'
-
-# dev
-gem 'bundler', '~> 1.6'
-gem 'rake'
-gem 'rspec'
