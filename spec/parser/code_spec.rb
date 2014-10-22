@@ -1,6 +1,6 @@
 require_relative '../helper'
 
-include RJade::Spec
+include Bade::Spec
 
 describe Parser do
 

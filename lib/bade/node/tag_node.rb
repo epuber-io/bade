@@ -1,6 +1,6 @@
 require_relative 'base_node'
 
-module RJade
+module Bade
 
 	class TagNode < Node
 		register_type :tag

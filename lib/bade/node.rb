@@ -4,7 +4,7 @@ require_relative 'node/tag_node'
 require_relative 'node/mixin_node'
 require_relative 'parser'
 
-module RJade
+module Bade
 
 	Node.register_type :text
 	Node.register_type :newline

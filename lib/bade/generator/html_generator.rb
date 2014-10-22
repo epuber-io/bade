@@ -1,6 +1,6 @@
 require_relative 'generator'
 
-module RJade
+module Bade
 	class HTMLGenerator < Generator
 
 		# @param [Node] root node

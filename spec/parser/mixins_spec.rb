@@ -1,6 +1,6 @@
 require_relative '../helper'
 
-include RJade::Spec
+include Bade::Spec
 
 describe Parser do
 	context 'mixins' do
@@ -111,7 +111,7 @@ mixin m()
 '
 			expect {
 				assert_html nil, source, print_error_if_error: false
-			}.to raise_error RJade::Runtime::RuntimeError
+			}.to raise_error Bade::Runtime::RuntimeError
 		end
 
 		it 'parse mixin with custom blocks' do

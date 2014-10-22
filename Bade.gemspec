@@ -1,10 +1,10 @@
 # coding: utf-8
 
-require_relative 'lib/rjade'
+require_relative 'lib/bade'
 
 Gem::Specification.new do |spec|
 	spec.name        = 'rjade'
-	spec.version     = RJade::VERSION
+	spec.version     = Bade::VERSION
 	spec.authors     = ['Roman Kříž']
 	spec.email       = ['samnung@gmail.com']
 	spec.summary     = %q{Reimplementation of Jade in Ruby.}

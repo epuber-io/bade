@@ -1,6 +1,6 @@
 require_relative '../node'
 
-module RJade
+module Bade
 	class Generator
 
 		# @param [Node] root

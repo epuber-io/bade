@@ -1,5 +1,5 @@
 
-module RJade
+module Bade
 	module Runtime
 		class RuntimeError < ::StandardError; end
 

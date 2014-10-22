@@ -1,7 +1,7 @@
 require_relative 'generator'
 require_relative '../runtime/block'
 
-module RJade
+module Bade
 	class RubyGenerator < Generator
 
 		BUFF_NAME = '__buff'

@@ -11,7 +11,7 @@ class Object
 end
 
 
-module RJade
+module Bade
 	class Node
 
 		# @return [Symbol]

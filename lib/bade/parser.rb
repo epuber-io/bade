@@ -2,7 +2,7 @@
 require_relative 'node'
 require_relative 'ruby_extensions/string'
 
-module RJade
+module Bade
 	class Parser
 		class SyntaxError < StandardError
 			attr_reader :error, :file, :line, :lineno, :column
