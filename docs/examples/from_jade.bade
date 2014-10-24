@@ -10,10 +10,11 @@ html(lang: "en")
 	body
 		h1 Jade - node template engine
 		#container.col
-			if youAreUsingJade
+			- if youAreUsingJade
 				p You are amazing
-			else
+			- else
 				p Get on it!
+			- end
 			p|
 				Jade is a terse and simple
 				templating language with a

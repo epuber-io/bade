@@ -1,5 +1,5 @@
 
-require_relative '../../lib/rjade/ruby_extensions/string'
+require_relative '../../lib/bade/ruby_extensions/string'
 
 describe String do
 	context '#get_indent' do

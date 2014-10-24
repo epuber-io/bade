@@ -3,11 +3,11 @@
 require_relative 'lib/bade'
 
 Gem::Specification.new do |spec|
-	spec.name        = 'rjade'
+	spec.name        = 'bade'
 	spec.version     = Bade::VERSION
 	spec.authors     = ['Roman Kříž']
 	spec.email       = ['samnung@gmail.com']
-	spec.summary     = %q{Reimplementation of Jade in Ruby.}
+	spec.summary     = %q{Implementation of templating language for Ruby.}
 	spec.homepage    = ''
 	spec.license     = 'MIT'
 

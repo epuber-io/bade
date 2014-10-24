@@ -1,6 +1,6 @@
 require 'rspec'
 
-require_relative '../../lib/rjade/parser'
+require_relative '../../lib/bade/parser'
 
 module RJade
 

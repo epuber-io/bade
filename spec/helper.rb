@@ -1,8 +1,8 @@
 require 'rspec'
 
-require_relative '../lib/rjade/parser'
-require_relative '../lib/rjade/generator/html_generator'
-require_relative '../lib/rjade/generator/ruby_generator'
+require_relative '../lib/bade/parser'
+require_relative '../lib/bade/generator/html_generator'
+require_relative '../lib/bade/generator/ruby_generator'
 
 
 
