@@ -408,12 +408,12 @@ module Bade
 
 					parse_tag($&)
 
-				when /\A=/
+				when /\A(&?)=/
 					# Handle output code
-					@line = $'
-					block = [:multi]
-					tag << [:slim, :output, $1 != '=', parse_broken_line, block]
-					@stacks << block
+          @line = $'
+          output_node = append_node :output
+          output_node.escaped = $1.length == 0
+          output_node.data = parse_ruby_code("\n")
 
 				when /\A\s*\/\s*/
 					# Closed tag. Do nothing

@@ -45,8 +45,23 @@ abc
         assert_html expected, source
       end
 
-      it 'normal code after tag'
-      it 'unescaped text after tag'
+      it 'escaped after tag' do
+        source = %q{
+div= "text"
+div= "<>"
+}
+        expected = %q{<div>text</div><div>&lt;&gt;</div>}
+        assert_html expected, source
+      end
+
+      it 'unescaped after tag' do
+        source = %q{
+div&= "text"
+div&= "<>"
+}
+        expected = %q{<div>text</div><div><></div>}
+        assert_html expected, source
+      end
     end
   end
 end
