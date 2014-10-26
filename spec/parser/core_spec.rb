@@ -2,7 +2,6 @@ require 'rspec'
 
 require_relative '../../lib/bade/parser'
 
-module RJade
 
 	describe Parser do
 		context '#parse_ruby_code' do
@@ -81,4 +80,3 @@ test code multi lined
 			end
 		end
 	end
-end

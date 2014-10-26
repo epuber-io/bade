@@ -35,7 +35,7 @@ Calling is simple, we just pass in all parameters plus given blocks.
 
 ```ruby
 __blocks = {}
-__blocks['default_block'] = RJade::Runtime::Block.new('default_block') {
+__blocks['default_block'] = Bade::Runtime::Block.new('default_block') {
 
 }
 ...
