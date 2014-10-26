@@ -45,7 +45,7 @@ mixin mixin_name
 			source = '
 mixin mixin_name(param)
 	div
-		!= param
+		&= param
 
 +mixin_name("abc")
 '
@@ -57,11 +57,11 @@ mixin mixin_name(param)
 			source = '
 mixin mixin_name(param1, param2, param3)
 	div
-		!= param1
+		&= param1
 	p
-		!= param2
+		&= param2
 	a
-		!= param3
+		&= param3
 
 +mixin_name("abc","abc".upcase,"ASD")'
 
@@ -74,13 +74,13 @@ mixin mixin_name(param1, param2, param3)
 			source = '
 mixin mixin_name(a, b, c: "abc", d: {})
 	a
-		!= a
+		&= a
 	b
-		!= b
+		&= b
 	c
-		!= c
+		&= c
 	d
-		!= d.to_s
+		&= d.to_s
 
 +mixin_name("aa", "bb", c: "cc")
 '
@@ -169,31 +169,31 @@ mixin m()
 
 
 
-		it 'experiments' do
-			__mixins = {}
-
-			__mixins['aaa'] = lambda { |arg, something: 10, default_block: nil, other_block: nil|
-				this = __mixins['aaa']
-
-				default_block.call unless default_block.nil?
-				other_block.call unless other_block.nil?
-
-				puts this.parameters.inspect
-
-				str = this.parameters.first(2).last.last.to_s
-
-				puts eval(str)
-
-				puts arg
-				puts something
-			}
-
-			__mixins['aaa'].call('fdfs', something: 100, default_block: lambda {
-				puts 'default block'
-			}, other_block: lambda {
-				puts 'other block'
-			})
-		end
+		# it 'experiments' do
+		# 	__mixins = {}
+    #
+		# 	__mixins['aaa'] = lambda { |arg, something: 10, default_block: nil, other_block: nil|
+		# 		this = __mixins['aaa']
+    #
+		# 		default_block.call unless default_block.nil?
+		# 		other_block.call unless other_block.nil?
+    #
+		# 		p this.parameters
+    #
+		# 		str = this.parameters.first(2).last.last.to_s
+    #
+		# 		p eval(str)
+    #
+		# 		p arg
+		# 		p something
+		# 	}
+    #
+		# 	__mixins['aaa'].call('fdfs', something: 100, default_block: lambda {
+		# 		p 'default block'
+		# 	}, other_block: lambda {
+		# 		p 'other block'
+		# 	})
+		# end
 
 	end
 end

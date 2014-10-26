@@ -2,6 +2,7 @@
 require_relative 'node/base_node'
 require_relative 'node/tag_node'
 require_relative 'node/mixin_node'
+require_relative 'node/output_node'
 require_relative 'parser'
 
 module Bade
@@ -12,8 +13,6 @@ module Bade
 
 	Node.register_type :comment
 	Node.register_type :html_comment
-
-	Node.register_type :output
 
 	Node.register_type :mixin_param
 	Node.register_type :mixin_block_param

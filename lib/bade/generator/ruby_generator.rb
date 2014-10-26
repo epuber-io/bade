@@ -1,5 +1,5 @@
 require_relative 'generator'
-require_relative '../runtime/block'
+require_relative '../runtime'
 
 module Bade
 	class RubyGenerator < Generator
@@ -149,8 +149,14 @@ lambda {
 					params = formatted_mixin_params(current_node)
 					buff_code "#{MIXINS_NAME}['#{current_node.data}'].call(#{params})"
 
-				when :output
-					buff_print_text "\#{#{current_node.data}}"
+        when :output
+          data = current_node.data
+          output_code = if current_node.escaped
+                          "\#{::Bade::html_escaped(#{data})}"
+                        else
+                          "\#{#{data}}"
+                        end
+					buff_print_text output_code
 			end
 		end
 

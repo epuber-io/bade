@@ -35,6 +35,7 @@ module Bade
 		#   :file [String]    default nil
 		#
 		def initialize(options = {})
+      @line = ''
 
 			tabsize = options.delete(:tabsize) { 4 }
 			@tabsize = tabsize
@@ -47,13 +48,17 @@ module Bade
 			reset
 		end
 
-		# @param [String] str
+		# @param [String, Array<String>] str
 		# @return [Node] root node
 		#
 		def parse(str)
 			@root = Node.new(:root)
 
-			reset(str.split(/\r?\n/), [[@root]])
+      if str.kind_of? Array
+        reset(str, [[@root]])
+      else
+        reset(str.split(/\r?\n/), [[@root]])
+      end
 
 			parse_line while next_line
 
@@ -242,11 +247,12 @@ module Bade
 					code_node = append_node :ruby_code
 					code_node.data = $1
 
-				when /\A!=/
+				when /\A(&?)=/
 					# Found an output block.
 					# We expect the line to be broken or the next line to be indented.
 					@line = $'
 					output_node = append_node :output
+          output_node.escaped = $1.length == 0
 					output_node.data = parse_ruby_code("\n")
 
 				when /\A(\w+):\s*\Z/
@@ -402,7 +408,7 @@ module Bade
 
 					parse_tag($&)
 
-				when /\A\s*=/
+				when /\A=/
 					# Handle output code
 					@line = $'
 					block = [:multi]
@@ -411,6 +417,7 @@ module Bade
 
 				when /\A\s*\/\s*/
 					# Closed tag. Do nothing
+          # TODO implement this
 					@line = $'
 					syntax_error('Unexpected text after closed tag') unless @line.empty?
 
@@ -467,24 +474,21 @@ module Bade
 						@line = $'
 						next
 
-					else
-						case @line
-							when end_re
-								# Find ending delimiter
-								@line = $'
-								break
+          when end_re
+            # Find ending delimiter
+            @line = $'
+            break
 
-							else
-								# Found something where an attribute should be
-								@line.lstrip!
-								syntax_error('Expected attribute') unless @line.empty?
+          else
+            # Found something where an attribute should be
+            @line.lstrip!
+            syntax_error('Expected attribute') unless @line.empty?
 
-								# Attributes span multiple lines
-								@stacks.last << [:newline]
-								syntax_error("Expected closing delimiter #{delimiter}") if @lines.empty?
-								next_line
-						end
-				end
+            # Attributes span multiple lines
+            @stacks.last << [:newline]
+            syntax_error("Expected closing delimiter #{delimiter}") if @lines.empty?
+            next_line
+        end
 			end
 		end
 
