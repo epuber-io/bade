@@ -73,7 +73,7 @@ module Bade
 		NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)"
 
 		ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}"
-		CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*:\s*/
+		CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*(&?):\s*/
 
 		TAG_RE = /\A#{NAME_RE_STRING}/
 		CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/
@@ -252,7 +252,7 @@ module Bade
 					# We expect the line to be broken or the next line to be indented.
 					@line = $'
 					output_node = append_node :output
-          output_node.escaped = $1.length == 0
+          output_node.escaped = $1.length == 1
 					output_node.data = parse_ruby_code("\n")
 
 				when /\A(\w+):\s*\Z/
@@ -412,7 +412,7 @@ module Bade
 					# Handle output code
           @line = $'
           output_node = append_node :output
-          output_node.escaped = $1.length == 0
+          output_node.escaped = $1.length == 1
           output_node.data = parse_ruby_code("\n")
 
 				when /\A\s*\/\s*/

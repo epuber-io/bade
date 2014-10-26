@@ -1,15 +1,15 @@
-module Bade
-  def html_escaped(text)
-    result = String(text)
-      .sub(/&/, '&amp;')
-      .sub(/</, '&lt;')
-      .sub(/>/, '&gt;')
-      .sub(/"/, '&quot;')
 
-    if result == text
-      text
-    else
-      result
-    end
+module Bade
+  # Escape input text with html escapes
+  #
+  # @param [String] text
+  #
+  # @return [String]
+  #
+  def html_escaped(text)
+    text.sub('&', '&amp;')
+        .sub('<', '&lt;')
+        .sub('>', '&gt;')
+        .sub('"', '&quot;')
   end
 end

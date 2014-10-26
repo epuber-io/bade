@@ -36,6 +36,10 @@ module Bade
 		#
 		attr_accessor :childrens
 
+    # @return [TrueClass, FalseClass]
+    #
+    attr_accessor :escaped
+
 		# @param [Symbol] type
 		# @param [Node] parent
 		#
@@ -77,7 +81,7 @@ module Bade
 	end
 
 	class KeyValueNode < Node
-		attr_forw_accessor :name, :data
+    attr_forw_accessor :name, :data
 
 		attr_accessor :value
 	end

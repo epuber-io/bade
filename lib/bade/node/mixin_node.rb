@@ -24,16 +24,12 @@ module Bade
 	end
 
 	class MixinDeclarationNode < MixinCommonNode
-		register_type :mixin_declaration
-
 		def allowed_parameter_types
 			[:mixin_param, :mixin_key_param, :mixin_block_param]
 		end
 	end
 
 	class MixinCallNode < MixinCommonNode
-		register_type :mixin_call
-
 		attr_reader :blocks
 
 		attr_reader :default_block

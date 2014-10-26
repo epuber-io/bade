@@ -2,7 +2,6 @@
 require_relative 'node/base_node'
 require_relative 'node/tag_node'
 require_relative 'node/mixin_node'
-require_relative 'node/output_node'
 require_relative 'parser'
 
 module Bade
@@ -14,10 +13,17 @@ module Bade
 	Node.register_type :comment
 	Node.register_type :html_comment
 
+  TagNode.register_type :tag
+  KeyValueNode.register_type :tag_attribute
+
+  Node.register_type :output
+
 	Node.register_type :mixin_param
 	Node.register_type :mixin_block_param
 	Node.register_type :mixin_block
 
+  MixinCallNode.register_type :mixin_call
+  MixinDeclarationNode.register_type :mixin_declaration
 	KeyValueNode.register_type :mixin_key_param
 
 

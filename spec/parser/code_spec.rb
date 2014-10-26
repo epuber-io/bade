@@ -24,9 +24,9 @@ describe Parser do
       it 'not-escaped text' do
         source = '
 div
-  &= "abc".upcase
+  = "abc".upcase
 abc
-  &= "<>"
+  = "<>"
 '
         expected = '<div>ABC</div><abc><></abc>'
 
@@ -36,9 +36,9 @@ abc
       it 'escaped text' do
         source = '
 div
-  = "abc".upcase
+  &= "abc".upcase
 abc
-  = "<>"
+  &= "<>"
 '
         expected = '<div>ABC</div><abc>&lt;&gt;</abc>'
 
@@ -47,8 +47,8 @@ abc
 
       it 'escaped after tag' do
         source = %q{
-div= "text"
-div= "<>"
+div&= "text"
+div&= "<>"
 }
         expected = %q{<div>text</div><div>&lt;&gt;</div>}
         assert_html expected, source
@@ -56,8 +56,8 @@ div= "<>"
 
       it 'unescaped after tag' do
         source = %q{
-div&= "text"
-div&= "<>"
+div= "text"
+div= "<>"
 }
         expected = %q{<div>text</div><div><></div>}
         assert_html expected, source

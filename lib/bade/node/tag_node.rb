@@ -3,8 +3,6 @@ require_relative 'base_node'
 module Bade
 
 	class TagNode < Node
-		register_type :tag
-
 		attr_forw_accessor :name, :data
 
 		# @return [Array<TagAttributeNode>]
@@ -28,6 +26,4 @@ module Bade
 			end
 		end
 	end
-
-	KeyValueNode.register_type :tag_attribute
 end
