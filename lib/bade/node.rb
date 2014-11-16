@@ -2,6 +2,7 @@
 require_relative 'node/base_node'
 require_relative 'node/tag_node'
 require_relative 'node/mixin_node'
+require_relative 'node/doctype_node'
 require_relative 'parser'
 
 module Bade
@@ -25,6 +26,8 @@ module Bade
   MixinCallNode.register_type :mixin_call
   MixinDeclarationNode.register_type :mixin_declaration
 	KeyValueNode.register_type :mixin_key_param
+
+	DoctypeNode.register_type :doctype
 
 
 	# Extend Node class, so we can instantiate typed class

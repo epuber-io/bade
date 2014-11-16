@@ -143,6 +143,9 @@ lambda {
 
 					buff_code '#' + comment_text
 
+				when :doctype
+					buff_print_text current_node.xml_output
+
 				when :mixin_declaration
 					params = formatted_mixin_params(current_node)
 					buff_code "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"

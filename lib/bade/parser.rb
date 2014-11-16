@@ -259,9 +259,9 @@ module Bade
 					# Embedded template detected. It is treated as block.
 					@stacks.last << [:slim, :embedded, $1, parse_text_block]
 
-				when /\Adoctype\s+/i
+				when /\Adoctype\s/i
 					# Found doctype declaration
-					@stacks.last << [:html, :doctype, $'.strip]
+					append_node :doctype, data: $'.strip
 
 				when TAG_RE
 					# Found a HTML tag.
