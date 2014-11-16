@@ -134,6 +134,15 @@ lambda {
 					visit_node_childrens(current_node)
 					buff_print_text ' -->'
 
+				when :comment
+					comment_text = current_node.childrens.select { |node|
+						!node.data.nil?
+					}.map { |node|
+						node.data
+					}.join(@new_line_string + '#')
+
+					buff_code '#' + comment_text
+
 				when :mixin_declaration
 					params = formatted_mixin_params(current_node)
 					buff_code "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"

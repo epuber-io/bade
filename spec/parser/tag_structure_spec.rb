@@ -137,6 +137,9 @@ a: b: c: d text
 			source = '// commented text'
 			expected = ''
 			assert_html expected, source
+
+			lambda_str = lambda_str_from_bade_code(source)
+			expect(lambda_str).to include '# commented text'
 		end
 
 		it 'should parse multi lined comment' do
@@ -148,6 +151,13 @@ a: b: c: d text
 
 			expected = ''
 			assert_html expected, source
+
+			lambda_str = lambda_str_from_bade_code(source)
+			expect(lambda_str).to include %{# comment
+#that continues to next line
+#	so we can comment our code
+#		and other people will understand us
+}.strip
 		end
 
 		it 'should parse multi lined comment with other tags' do

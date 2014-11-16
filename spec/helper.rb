@@ -36,4 +36,10 @@ module Bade::Spec
 			raise
 		end
 	end
+
+	def lambda_str_from_bade_code(source)
+		parser = Bade::Parser.new
+		parsed = parser.parse(source)
+		Bade::RubyGenerator.node_to_lambda_string(parsed, indent: '')
+	end
 end
