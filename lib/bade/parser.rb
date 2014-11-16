@@ -290,7 +290,8 @@ module Bade
 			parse_mixin_call_params
 
 			if @line =~ /\A /
-				append_node :text, data: $'
+				@line = $'
+				parse_text
 			end
 		end
 
@@ -381,6 +382,12 @@ module Bade
 			end
 		end
 
+		def parse_text
+			text = @line
+			text = text.gsub(/&\{/, '#{ html_escaped ')
+			append_node :text, data: text
+		end
+
 		# @param [String] tag  tag name
 		#
 		def parse_tag(tag)
@@ -442,8 +449,8 @@ module Bade
 
 				when /\A /
 					# Text content
-					append_node :text, data: $'
-
+					@line = $'
+					parse_text
 			end
 		end
 
@@ -496,7 +503,8 @@ module Bade
 			if !first_line || first_line.empty?
 				text_indent = nil
 			else
-				append_node :text, :data => first_line
+				@line = first_line
+				parse_text
 			end
 
 			until @lines.empty?
@@ -511,7 +519,7 @@ module Bade
 
 					@line.remove_indent!(text_indent ? text_indent : indent, @tabsize)
 
-					append_node :text, data: @line
+					parse_text
 
 					# The indentation of first line of the text block
 					# determines the text base indentation.
