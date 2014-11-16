@@ -167,6 +167,36 @@ mixin m()
 		end
 
 
+		context 'block expansion' do
+			it 'parse two mixins' do
+				source = %q{
+mixin m()
+	a
+		- default_block.call
+
+mixin f()
+	b
+		- default_block.call
+
++m(): +f() aaa
+}
+				expected = %q{<a><b>aaa</b></a>}
+				assert_html expected, source
+			end
+		end
+
+		it 'support output after mixin calling' do
+			source = %q{
+mixin m()
+	a
+		- default_block.call
+
++m()= 'aaa'
+}
+			expected = %q{<a>aaa</a>}
+			assert_html expected, source
+		end
+
 
 
 		# it 'experiments' do

@@ -289,9 +289,25 @@ module Bade
 
 			parse_mixin_call_params
 
-			if @line =~ /\A /
-				@line = $'
-				parse_text
+			case @line
+				when /\A /
+					@line = $'
+					parse_text
+
+				when /\A:\s+/
+					# Block expansion
+					@line = $'
+					parse_line_indicators
+
+				when /\A(&?)=/
+					# Handle output code
+					parse_line_indicators
+
+				when /^$/
+					# nothing
+
+				else
+					syntax_error "Unknown symbol after mixin calling"
 			end
 		end
 
@@ -444,7 +460,7 @@ module Bade
 					# nothing
 
 				else
-					syntax_error "Unknown text after #{@line}"
+					syntax_error "Unknown symbol after tag definition #{@line}"
 			end
 		end
 
