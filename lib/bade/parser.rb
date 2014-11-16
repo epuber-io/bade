@@ -410,23 +410,11 @@ module Bade
 				when /\A:\s+/
 					# Block expansion
 					@line = $'
-					(@line =~ TAG_RE) || syntax_error('Expected tag')
-					@line = $' if $1
-
-					parse_tag($&)
+					parse_line_indicators
 
 				when /\A(&?)=/
 					# Handle output code
-          @line = $'
-          output_node = append_node :output
-          output_node.escaped = $1.length == 1
-          output_node.data = parse_ruby_code("\n")
-
-				when /\A\s*\/\s*/
-					# Closed tag. Do nothing
-          # TODO implement this
-					@line = $'
-					syntax_error('Unexpected text after closed tag') unless @line.empty?
+          parse_line_indicators
 
 				when CLASS_TAG_RE
 					# Class name
@@ -451,6 +439,12 @@ module Bade
 					# Text content
 					@line = $'
 					parse_text
+
+				when /^$/
+					# nothing
+
+				else
+					syntax_error "Unknown text after #{@line}"
 			end
 		end
 

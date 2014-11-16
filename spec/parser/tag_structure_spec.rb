@@ -129,6 +129,18 @@ a: b: c: d text
 
 			assert_html expected, source
 		end
+
+		it 'supports mixin expansion' do
+			source = %q{
+mixin abc()
+	div
+		- default_block.call
+
+a: +abc() text
+}
+			expected = %q{<a><div>text</div></a>}
+			assert_html expected, source
+		end
 	end
 
 
