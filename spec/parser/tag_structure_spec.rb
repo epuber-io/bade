@@ -260,4 +260,12 @@ b b_text
 			assert_html expected, source
 		end
 	end
+
+	context 'autoclose tag' do
+		it 'should autoclose tag when there is no content' do
+			source = 'a'
+			expected = '<a/>'
+			assert_html expected, source
+		end
+	end
 end

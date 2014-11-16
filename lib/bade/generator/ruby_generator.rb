@@ -112,19 +112,7 @@ lambda {
 					buff_print_text current_node.data
 
 				when :tag
-					attributes = formatted_attributes current_node
-
-					if attributes.length > 0
-						buff_print_text "<#{current_node.name} #{attributes}>", new_line: true, indent: true
-					else
-						buff_print_text "<#{current_node.name}>", new_line: true, indent: true
-					end
-
-					indent {
-						visit_node_childrens(current_node)
-					}
-
-					buff_print_text "</#{current_node.name}>", new_line: true, indent: true
+					visit_tag(current_node)
 
 				when :ruby_code
 					buff_code current_node.data
@@ -169,6 +157,38 @@ lambda {
                           "\#{#{data}}"
                         end
 					buff_print_text output_code
+			end
+		end
+
+		# @param [TagNode] current_node
+		#
+		def visit_tag(current_node)
+			attributes = formatted_attributes current_node
+
+			text = "<#{current_node.name}"
+
+			if attributes.length > 0
+				text += " #{attributes}"
+			end
+
+			other_than_new_lines = current_node.childrens.any? { |node|
+				node.type != :newline
+			}
+
+			if other_than_new_lines
+				text += '>'
+			else
+				text += '/>'
+			end
+
+			buff_print_text text, new_line: true, indent: true
+
+			if other_than_new_lines
+				indent {
+					visit_node_childrens(current_node)
+				}
+
+				buff_print_text "</#{current_node.name}>", new_line: true, indent: true
 			end
 		end
 

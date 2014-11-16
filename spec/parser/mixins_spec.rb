@@ -23,7 +23,7 @@ mixin mixin_name()
 +mixin_name()
 '
 
-			expected = '<div></div>'
+			expected = '<div/>'
 
 			assert_html expected, source
 		end
@@ -36,7 +36,7 @@ mixin mixin_name
 +mixin_name
 '
 
-			expected = '<div></div>'
+			expected = '<div/>'
 
 			assert_html expected, source
 		end

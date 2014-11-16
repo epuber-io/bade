@@ -9,7 +9,7 @@ describe Parser do
 a(href: 'href_text')
 "
 
-		expected = '<a href="href_text"></a>'
+		expected = '<a href="href_text"/>'
 
 		assert_html expected, source
 	end
@@ -30,7 +30,7 @@ a(href: 'href_text') abc
 a(href: 'href_text', id : 'id_text')
 "
 
-		expected = '<a href="href_text" id="id_text"></a>'
+		expected = '<a href="href_text" id="id_text"/>'
 
 		assert_html expected, source
 	end
@@ -52,7 +52,7 @@ a(href: 'href_text', id : 'id_text') abc_text_haha
 a(href:'href_text',id:'id_text')
 "
 
-		expected = '<a href="href_text" id="id_text"></a>'
+		expected = '<a href="href_text" id="id_text"/>'
 
 		assert_html expected, source
 	end
