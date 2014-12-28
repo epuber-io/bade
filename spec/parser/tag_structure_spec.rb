@@ -280,4 +280,22 @@ b b_text
 			assert_html expected, source
 		end
 	end
+
+	context 'inline html code' do
+		it 'should support inline xhtml code' do
+			source = '<a href="dasdsad">asdfsfds</a>'
+			expected = source
+			assert_html expected, source
+		end
+
+		it 'should support inline nested xhtml code' do
+			source = '
+<a href="dasdsad">
+	asdfsfds
+</a>
+'
+			expected = '<a href="dasdsad">asdfsfds</a>'
+			assert_html expected, source
+		end
+	end
 end

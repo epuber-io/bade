@@ -238,9 +238,7 @@ module Bade
 
 				when /\A</
 					# Inline html
-					block = [:multi]
-					@stacks.last << [:multi, [:slim, :interpolate, @line], block]
-					@stacks << block
+					parse_text_block @line, @indents.last + @tabsize
 
 				when /\A-\s(.*)\Z/
 					# Found a code block.
