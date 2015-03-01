@@ -73,36 +73,39 @@ lambda {
 		# @param [String] text
 		#
 		def buff_print_text(text, indent: false, new_line: false)
-			indent_text = ''
-			new_line_text = ''
+      indent_text = if indent
+                      @indent_string * @indent
+                    else
+                      ''
+                    end
 
-			if indent
-				indent_text = @indent_string * @indent
-			end
-
-			if new_line
-				new_line_text = @new_line_string
-			end
-
-			prepended_text = indent_text + text + new_line_text
-
-#			escape_double_quotes!(prepended_text)
+      prepended_text = indent_text + text
 
 			if prepended_text.length > 0
-				buff_code "#{BUFF_NAME} << " + '%Q(' + prepended_text + ')'
+				buff_code %Q{#{BUFF_NAME} << %Q{#{prepended_text}}}
 			end
 		end
 
 		def buff_code(text)
 			@buff << "\t" * @code_indent + text
-		end
+    end
 
+    # @param current_node [Node]
+    #
 		def visit_node_childrens(current_node)
-			current_node.childrens.each { |node|
-				visit_node(node)
-			}
-		end
+      visit_nodes(current_node.childrens)
+    end
 
+    # @param nodes [Array<Node>]
+    #
+    def visit_nodes(nodes)
+      nodes.each { |node|
+        visit_node(node)
+      }
+    end
+
+    # @param current_node [Node]
+    #
 		def visit_node(current_node)
 			case current_node.type
 				when :root
@@ -157,6 +160,12 @@ lambda {
                           "\#{#{data}}"
                         end
 					buff_print_text output_code
+          
+        when :newline
+          buff_print_text @new_line_string if @new_line_string.length > 0
+
+        else
+          raise "Unknown type #{current_node.type}"
 			end
 		end
 
@@ -184,11 +193,22 @@ lambda {
 			buff_print_text text, new_line: true, indent: true
 
 			if other_than_new_lines
-				indent {
-					visit_node_childrens(current_node)
-				}
+        last_node = current_node.childrens.last
+        is_last_newline = !last_node.nil? && last_node.type == :newline
+        nodes = if is_last_newline
+                  current_node.childrens[0...-1]
+                else
+                  current_node.childrens
+                end
+
+        indent do
+          visit_nodes(nodes)
+        end
 
 				buff_print_text "</#{current_node.name}>", new_line: true, indent: true
+
+        # print new line after the tag
+        visit_node(last_node) if is_last_newline
 			end
 		end
 
