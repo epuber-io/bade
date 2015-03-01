@@ -1,4 +1,5 @@
-require_relative 'base_node'
+require_relative '../node'
+
 
 module Bade
 	class MixinCommonNode < Node

@@ -1,7 +1,7 @@
-require_relative 'base_node'
+require_relative '../node'
+
 
 module Bade
-
 	class TagNode < Node
 		attr_forw_accessor :name, :data
 

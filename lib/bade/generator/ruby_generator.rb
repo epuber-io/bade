@@ -1,4 +1,4 @@
-require_relative 'generator'
+require_relative '../generator'
 require_relative '../runtime'
 
 module Bade

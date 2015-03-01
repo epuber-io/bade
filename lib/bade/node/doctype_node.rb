@@ -1,9 +1,8 @@
+require_relative '../node'
 
-require_relative 'base_node'
 
 module Bade
   class DoctypeNode < Node
-
     # @return [String]
     #
     def xml_output
