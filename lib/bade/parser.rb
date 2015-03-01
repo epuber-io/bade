@@ -225,12 +225,12 @@ module Bade
 				when /\A\/\/! /
 					# HTML comment
 					append_node :html_comment, add: true
-					parse_text_block $'
+					parse_text_block $', @indents.last + @tabsize
 
 				when /\A\/\//
 					# Comment
 					append_node :comment, add: true
-					parse_text_block $'
+					parse_text_block $', @indents.last + @tabsize
 
 				when /\A\|( ?)/
 					# Found a text block.
@@ -402,14 +402,23 @@ module Bade
 			append_node :text, data: text
 		end
 
+
+    # @param value [String]
+    #
+    def fixed_trailing_colon(value)
+      if value =~ /(:)\Z/
+        value = value.sub /:\Z/, ''
+        @line.prepend ':'
+      end
+
+      value
+    end
+
+
 		# @param [String] tag  tag name
 		#
 		def parse_tag(tag)
-
-			if tag =~ /(:)\Z/
-				tag.gsub! /:\Z/, ''
-				@line.prepend ':'
-			end
+      tag = fixed_trailing_colon(tag)
 
 			if tag.is_a? Node
 				tag_node = tag
@@ -432,20 +441,21 @@ module Bade
 
 				when CLASS_TAG_RE
 					# Class name
+          @line = $'
+
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'class'
-					attr_node.value = $1.single_quote
-					@line = $'
+					attr_node.value = fixed_trailing_colon($1).single_quote
 
 					parse_tag tag_node
 
 				when ID_TAG_RE
 					# Id name
+          @line = $'
+
 					attr_node = append_node :tag_attribute
 					attr_node.name = 'id'
-					attr_node.value = $1.single_quote
-
-					@line = $'
+					attr_node.value = fixed_trailing_colon($1).single_quote
 
 					parse_tag tag_node
 

@@ -140,7 +140,31 @@ a: +abc() text
 }
 			expected = %q{<a><div>text</div></a>}
 			assert_html expected, source
-		end
+    end
+
+    it 'supports tag class with expansion' do
+      source = %q{
+li.selected: a(href: "/href/text") text
+}
+      expected = %q{<li class="selected"><a href="/href/text">text</a></li>}
+      assert_html expected, source
+    end
+
+    it 'supports tag id with expansion' do
+      source = %q{
+li#selected: a(href: "/href/text") text
+}
+      expected = %q{<li id="selected"><a href="/href/text">text</a></li>}
+      assert_html expected, source
+    end
+
+    it 'supports tag id and class with expansion' do
+      source = %q{
+li.selected#id_li: a(href: "/href/text") text
+}
+      expected = %q{<li class="selected" id="id_li"><a href="/href/text">text</a></li>}
+      assert_html expected, source
+    end
 	end
 
 
