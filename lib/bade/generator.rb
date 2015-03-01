@@ -1,7 +1,9 @@
-require_relative '../node'
+require_relative 'node'
 
 module Bade
 	class Generator
+    require_relative 'generator/html_generator'
+    require_relative 'generator/ruby_generator'
 
 		# @param [Node] root
 		#
