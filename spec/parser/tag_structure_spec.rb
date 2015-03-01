@@ -220,7 +220,27 @@ a text
 			expected = '<a>texttext2</a>'
 
 			assert_html expected, source
-		end
+    end
+
+    it 'should parse comment with immediate text after' do
+      source = %q{
+
+      //<p>baf</p>
+
+}
+      expected = ''
+      assert_html expected, source
+    end
+
+    it 'should parse comment in html tag block' do
+      source = %q{
+<h1>Header</h1>
+  //<p>baf</p>
+
+}
+      expected = '<h1>Header</h1>'
+      assert_html expected, source
+    end
 	end
 
 	context 'html comments' do
@@ -315,7 +335,7 @@ b b_text
 		it 'should support inline nested xhtml code' do
 			source = '
 <a href="dasdsad">
-	asdfsfds
+  | asdfsfds
 </a>
 '
 			expected = '<a href="dasdsad">asdfsfds</a>'
