@@ -286,7 +286,11 @@ b b_text
 			assert_html expected, source
 		end
 
-		it 'should merge all classes to one attribute item'
+		it 'should merge all classes to one attribute item' do
+      source = 'a.class_1.class_2 some text'
+      expected = '<a class="class_1 class_2">some text</a>'
+      assert_html expected, source
+    end
 	end
 
 	context 'id' do

@@ -192,14 +192,26 @@ lambda {
 			end
 		end
 
-		# @param [Node] tag_node
+		# @param [TagNode] tag_node
 		#
 		# @return [String] formatted attributes
 		#
 		def formatted_attributes(tag_node)
-			tag_node.attributes.map { |attr|
-				"#{attr.name}=\"\#{#{attr.value}}\""
-			}.join ' '
+      all_attributes = Hash.new { |hash, key| hash[key] = [] }
+      xml_attributes = []
+
+      tag_node.attributes.each do |attr|
+        unless all_attributes.include?(attr.name)
+          xml_attributes << attr.name
+        end
+
+        all_attributes[attr.name] << attr.value
+      end
+
+      xml_attributes.map do |attr_name|
+        joined = all_attributes[attr_name].join('} #{')
+        %Q{#{attr_name}="\#{#{joined}}"}
+      end.join(' ')
 		end
 
 		def indent(plus = 1)
