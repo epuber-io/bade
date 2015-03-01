@@ -9,7 +9,7 @@ module Bade
 		START_STRING =	"
 lambda {
 	#{BUFF_NAME} = []
-	#{MIXINS_NAME} = {}
+	#{MIXINS_NAME} = Hash.new { |hash, key| raise \"Undefined mixin '\#{key}'\" }
 "
 
 		END_STRING =	"
@@ -223,14 +223,14 @@ lambda {
 
 				mixin_node.blocks.each { |block|
 					block_name = block.data ? block.data : 'default_block'
-					buff_code "__blocks['#{block_name}'] = block('#{block_name}') {"
+					buff_code "__blocks['#{block_name}'] = block('#{block_name}') do"
 					indent {
 						visit_node_childrens(block)
 					}
-					buff_code '}'
+					buff_code 'end'
 				}
 
-				result << '__blocks'
+				result << '__blocks.dup'
 			elsif mixin_node.type == :mixin_declaration
 				result << '__blocks'
 			end
