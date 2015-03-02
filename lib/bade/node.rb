@@ -79,10 +79,10 @@ module Bade
 
 
     def self.create(type, parent)
-      klass = self.registered_types[type]
+      klass = registered_types[type]
 
       if klass.nil?
-        raise Parser::ParserInternalError, "undefined type for #{type.inspect}"
+        raise Parser::ParserInternalError, "undefined node type #{type.inspect}"
       end
 
       klass.new(type, parent)
@@ -111,4 +111,6 @@ module Bade
 	KeyValueNode.register_type :mixin_key_param
 
 	DoctypeNode.register_type :doctype
+
+  Node.register_type :import
 end

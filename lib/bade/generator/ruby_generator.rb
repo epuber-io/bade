@@ -164,6 +164,9 @@ lambda {
         when :newline
           buff_print_text @new_line_string if @new_line_string.length > 0
 
+        when :import
+          # nothing
+
         else
           raise "Unknown type #{current_node.type}"
 			end

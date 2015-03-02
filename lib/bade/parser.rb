@@ -49,7 +49,7 @@ module Bade
 		end
 
 		# @param [String, Array<String>] str
-		# @return [Node] root node
+		# @return [Bade::Node] root node
 		#
 		def parse(str)
 			@root = Node.new(:root)
@@ -201,7 +201,12 @@ module Bade
 		end
 
 		def parse_line_indicators
+      add_new_line = true
+
 			case @line
+        when /\Aimport /
+          @line = $'
+          parse_import
 
 				when /\Amixin #{NAME_RE_STRING}/
 					# Mixin declaration
@@ -244,6 +249,7 @@ module Bade
 					# Found a code block.
 					code_node = append_node :ruby_code
 					code_node.data = $1
+          add_new_line = false
 
 				when /\A(&?)=/
 					# Found an output block.
@@ -278,8 +284,13 @@ module Bade
 					syntax_error 'Unknown line indicator'
 			end
 
-			append_node :newline
-		end
+			append_node :newline if add_new_line
+    end
+
+    def parse_import
+      import_node = append_node :import
+      import_node.data = @line
+    end
 
 		def parse_mixin_call(mixin_name)
 			mixin_node = append_node :mixin_call, add: true
@@ -305,7 +316,7 @@ module Bade
 					# nothing
 
 				else
-					syntax_error "Unknown symbol after mixin calling"
+					syntax_error "Unknown symbol after mixin calling, line = `#{@line}'"
 			end
 		end
 
