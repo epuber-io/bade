@@ -71,7 +71,7 @@ module Bade
     #
     def render(binding: nil, new_line: '\n', indent: '  ')
       lambda_str = lambda_string(new_line: new_line, indent: indent)
-      scope = binding || Runtime::HashBinding.new(locals || {}).get_binding
+      scope = binding || Runtime::RenderBinding.new(locals || {}).get_binding
 
       lambda_instance = eval(lambda_str, scope, file_path || '(__template__)')
       lambda_instance.call

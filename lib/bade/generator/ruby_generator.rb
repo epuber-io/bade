@@ -160,7 +160,7 @@ lambda {
                           "\#{#{data}}"
                         end
 					buff_print_text output_code
-          
+
         when :newline
           buff_print_text @new_line_string if @new_line_string.length > 0
 
@@ -251,18 +251,22 @@ lambda {
 
 
 			if mixin_node.type == :mixin_call
-				buff_code '__blocks = {}'
+        if mixin_node.blocks.length > 0
+          buff_code '__blocks = {}'
 
-				mixin_node.blocks.each { |block|
-					block_name = block.data ? block.data : 'default_block'
-					buff_code "__blocks['#{block_name}'] = block('#{block_name}') do"
-					indent {
-						visit_node_childrens(block)
-					}
-					buff_code 'end'
-				}
+          mixin_node.blocks.each { |block|
+            block_name = block.data ? block.data : 'default_block'
+            buff_code "__blocks['#{block_name}'] = __create_block('#{block_name}') do"
+            indent {
+              visit_node_childrens(block)
+            }
+            buff_code 'end'
+          }
 
-				result << '__blocks.dup'
+          result << '__blocks.dup'
+        else
+          result << '{}'
+        end
 			elsif mixin_node.type == :mixin_declaration
 				result << '__blocks'
 			end
@@ -288,7 +292,7 @@ lambda {
 		# @param [String] block_name
 		#
 		def block_name_declaration(block_name)
-			buff_code "#{block_name} = __blocks.delete('#{block_name}') { block('#{block_name}') }"
+			buff_code "#{block_name} = __blocks.delete('#{block_name}') { __create_block('#{block_name}') }"
 		end
 
 		# @param [MixinDeclarationNode] mixin_node
