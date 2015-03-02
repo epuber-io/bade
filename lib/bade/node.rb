@@ -90,27 +90,27 @@ module Bade
 
   end
 
-	Node.register_type :text
-	Node.register_type :newline
-	Node.register_type :ruby_code
+  Node.register_type :text
+  Node.register_type :newline
+  Node.register_type :ruby_code
 
-	Node.register_type :comment
-	Node.register_type :html_comment
+  Node.register_type :comment
+  Node.register_type :html_comment
 
   TagNode.register_type :tag
   KeyValueNode.register_type :tag_attribute
 
   Node.register_type :output
 
-	Node.register_type :mixin_param
-	Node.register_type :mixin_block_param
-	Node.register_type :mixin_block
+  Node.register_type :mixin_param
+  Node.register_type :mixin_block_param
+  Node.register_type :mixin_block
 
   MixinCallNode.register_type :mixin_call
   MixinDeclarationNode.register_type :mixin_declaration
-	KeyValueNode.register_type :mixin_key_param
+  KeyValueNode.register_type :mixin_key_param
 
-	DoctypeNode.register_type :doctype
+  DoctypeNode.register_type :doctype
 
   Node.register_type :import
 end
