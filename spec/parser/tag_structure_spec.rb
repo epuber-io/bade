@@ -68,9 +68,9 @@ a
   it 'should parse advanced piped text' do
     source = '
 | text
-  text2
-   text3
-    text4
+    text2
+     text3
+      text4
 a
   | a_text1
     a_text2'
@@ -181,27 +181,26 @@ li.selected#id_li: a(href: "/href/text") text
     it 'should parse multi lined comment' do
       source = '
 // comment
-  that continues to next line
-    so we can comment our code
-      and other people will understand us'
+    that continues to next line
+     so we can comment our code
+       and other people will understand us'
 
       expected = ''
       assert_html expected, source
 
       lambda_str = lambda_str_from_bade_code(source)
-      expect(lambda_str).to include %{# comment
+      expect(lambda_str).to include %q{# comment
 #that continues to next line
-#	so we can comment our code
-#		and other people will understand us
-}.strip
+# so we can comment our code
+#   and other people will understand us}
     end
 
     it 'should parse multi lined comment with other tags' do
       source = '
 a text
 // comment
-  that continues to next line
-    so we can comment our code
+    that continues to next line
+     so we can comment our code
       and other people will understand us
 a text
 '

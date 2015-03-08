@@ -1,5 +1,6 @@
 require_relative '../generator'
 require_relative '../runtime'
+require_relative '../document'
 
 module Bade
   class RubyGenerator < Generator
@@ -16,22 +17,22 @@ lambda {
   #{BUFF_NAME}.join
 }"
 
-    # @param [Node] root
+    # @param [Document] document
     #
     # @return [Proc]
     #
-    def self.node_to_lambda(root, new_line: "\n", indent: "\t", filename: '')
+    def self.document_to_lambda(document, new_line: "\n", indent: "\t", filename: '')
       generator = self.new(new_line, indent)
-      generator.generate_lambda(root, filename)
+      generator.generate_lambda(document, filename)
     end
 
-    # @param [Node] root
+    # @param [Document] document
     #
     # @return [String]
     #
-    def self.node_to_lambda_string(root, new_line: "\n", indent: "\t", filename: '')
+    def self.document_to_lambda_string(document, new_line: "\n", indent: "\t", filename: '')
       generator = self.new(new_line, indent)
-      generator.generate_lambda_string(root)
+      generator.generate_lambda_string(document)
     end
 
 
@@ -44,26 +45,25 @@ lambda {
       @indent_string = indent_string
     end
 
+    # @param [Document] document
     # @param [String] filename
     #
-    def generate_lambda(root, filename)
-      eval(generate_lambda_string(root), nil, filename)
+    def generate_lambda(document, filename)
+      eval(generate_lambda_string(document), nil, filename)
     end
 
-    # @param [Node] root
+    # @param [Document] document
     #
     # @return [String] string to parse with Ruby
     #
-    def generate_lambda_string(root)
+    def generate_lambda_string(document)
       @buff = []
       @indent = 0
       @code_indent = 1
 
       @buff << START_STRING
 
-
-      visit_node(root)
-
+      visit_document(document)
 
       @buff << END_STRING
 
@@ -88,6 +88,17 @@ lambda {
 
     def buff_code(text)
       @buff << "\t" * @code_indent + text
+    end
+
+
+    # @param document [Bade::Document]
+    #
+    def visit_document(document)
+      document.sub_documents.each do |sub_document|
+        visit_document(sub_document)
+      end
+
+      visit_node(document.root)
     end
 
     # @param current_node [Node]

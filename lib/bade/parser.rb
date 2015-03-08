@@ -1,5 +1,6 @@
 
 require_relative 'node'
+require_relative 'document'
 require_relative 'ruby_extensions/string'
 
 module Bade
@@ -28,6 +29,10 @@ module Bade
 
     class ParserInternalError < StandardError; end
 
+    # @return [Array<String>]
+    #
+    attr_reader :dependency_paths
+
     # Initialize
     #
     # Available options:
@@ -49,10 +54,13 @@ module Bade
     end
 
     # @param [String, Array<String>] str
-    # @return [Bade::Node] root node
+    # @return [Bade::Document] root node
     #
     def parse(str)
-      @root = Node.new(:root)
+      @document = Document.new(file_path: @options[:file_path])
+      @root = @document.root
+
+      @dependency_paths = []
 
       if str.kind_of? Array
         reset(str, [[@root]])
@@ -64,7 +72,7 @@ module Bade
 
       reset
 
-      @root
+      @document
     end
 
 
@@ -288,8 +296,11 @@ module Bade
     end
 
     def parse_import
+      path = eval(@line)
       import_node = append_node :import
-      import_node.data = @line
+      import_node.data = path
+
+      @dependency_paths << path unless @dependency_paths.include?(path)
     end
 
     def parse_mixin_call(mixin_name)
