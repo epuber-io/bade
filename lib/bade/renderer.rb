@@ -23,9 +23,10 @@ module Bade
     #
     # @return [self]
     #
-    def self.from_source(source)
+    def self.from_source(source, file_path = nil)
       inst = new
       inst.source_text = source
+      inst.file_path = file_path
       inst
     end
 
@@ -40,10 +41,7 @@ module Bade
                    file
                  end
 
-      inst = new
-      inst.source_text = file_obj.read
-      inst.file_path = file_obj.path
-      inst
+      from_source(file_obj.read, file_obj.path)
     end
 
 
