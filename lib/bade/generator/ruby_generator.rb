@@ -98,7 +98,9 @@ lambda {
         visit_document(sub_document)
       end
 
+      buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
       visit_node(document.root)
+      buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
     end
 
     # @param current_node [Node]
