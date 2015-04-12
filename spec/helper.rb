@@ -12,8 +12,8 @@ module Bade::Spec
   # @param [String] expectation
   # @param [String] source
   #
-  def assert_html(expectation, source, print_error_if_error: true)
-    renderer = Bade::Renderer.from_source(source)
+  def assert_html(expectation, source, print_error_if_error: true, vars: {})
+    renderer = Bade::Renderer.from_source(source).with_locals(vars)
 
     begin
       str = renderer.render(new_line: '', indent: '')

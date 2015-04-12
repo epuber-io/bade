@@ -62,6 +62,22 @@ div= "<>"
         expected = %q{<div>text</div><div><></div>}
         assert_html expected, source
       end
+
+      it 'normal variable eval' do
+        vars = {
+            __const: {
+                some_text: 'some text'
+            }
+        }
+
+        source = %q{
+div= __const[:some_text]
+div
+  div= __const[:some_text]
+}
+        expected = '<div>some text</div><div><div>some text</div></div>'
+        assert_html expected, source, vars: vars
+      end
     end
   end
 end
