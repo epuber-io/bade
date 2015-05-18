@@ -65,18 +65,18 @@ div= "<>"
 
       it 'normal variable eval' do
         vars = {
-            __const: {
-                some_text: 'some text'
-            }
+            __const: Hash.new { |hash, key| raise "Not found key #{key}" }
         }
 
         source = %q{
-div= __const[:some_text]
 div
-  div= __const[:some_text]
+    h1.section NADEŠEL ČAS PRO PRÁCI NA DÁLKU
+    p= __const[:some_undefined_key]
 }
         expected = '<div>some text</div><div><div>some text</div></div>'
-        assert_html expected, source, vars: vars
+        expect do
+          assert_html expected, source, vars: vars
+        end.to raise_exception
       end
     end
   end
