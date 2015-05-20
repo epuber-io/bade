@@ -8,7 +8,8 @@ Templating language written in Ruby. Developed mainly for creating ebooks and in
 
 ## Installation
 
-Run following command to install this library to system.
+To install latest version just type following commands into terminal:
 
+    bundle install
     bundle exec rake install
 
