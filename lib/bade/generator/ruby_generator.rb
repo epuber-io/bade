@@ -168,7 +168,7 @@ lambda {
         when :output
           data = current_node.data
           output_code = if current_node.escaped
-                          "\#{::Bade::html_escaped(#{data})}"
+                          "\#{html_escaped(#{data})}"
                         else
                           "\#{#{data}}"
                         end

@@ -1,6 +1,5 @@
 
 require_relative 'block'
-require_relative 'functions'
 
 module Bade
   module Runtime
@@ -28,6 +27,19 @@ module Bade
       #
       def __create_block(*args, &block)
         Bade::Runtime::Block.new(*args, &block)
+      end
+
+      # Escape input text with html escapes
+      #
+      # @param [String] text
+      #
+      # @return [String]
+      #
+      def html_escaped(text)
+        text.sub('&', '&amp;')
+            .sub('<', '&lt;')
+            .sub('>', '&gt;')
+            .sub('"', '&quot;')
       end
     end
   end
