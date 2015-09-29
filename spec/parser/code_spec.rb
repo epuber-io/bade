@@ -78,6 +78,19 @@ div
           assert_html expected, source, vars: vars
         end.to raise_exception KeyError
       end
+
+
+      context 'corner cases' do
+        it 'parse input source' do
+          source = %q{
+h1.section NADEŠEL ČAS PRO PRÁCI NA DÁLKU
+
+= 'dsafdsgfd'}
+
+          expected = '<h1 class="section">NADEŠEL ČAS PRO PRÁCI NA DÁLKU</h1>dsafdsgfd'
+          assert_html expected, source
+        end
+      end
     end
   end
 end
