@@ -195,7 +195,19 @@ mixin m()
 }
 			expected = %q{<a>aaa</a>}
 			assert_html expected, source
-		end
+    end
+
+    it 'support multiline mixin call' do
+      source = %q{
+mixin m(a, b)
+	a= a
+	b= b
++m('a_text',
+   'b_text')
+}
+      expected = '<a>a_text</a><b>b_text</b>'
+      assert_html expected, source
+    end
 
 
 

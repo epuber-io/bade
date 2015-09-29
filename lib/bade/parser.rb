@@ -355,6 +355,11 @@ module Bade
             @line = $'
             next
 
+          when /^\s*$/
+            # spaces and/or end of line
+            next_line
+            next
+
           when end_re
             # Find ending delimiter
             @line = $'
