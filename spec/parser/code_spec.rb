@@ -90,6 +90,15 @@ h1.section NADEŠEL ČAS PRO PRÁCI NA DÁLKU
           expected = '<h1 class="section">NADEŠEL ČAS PRO PRÁCI NA DÁLKU</h1>dsafdsgfd'
           assert_html expected, source
         end
+
+        it 'parse empty code line' do
+          source = %q{
+a text
+-
+b text}
+          expected = '<a>text</a><b>text</b>'
+          assert_html expected, source
+        end
       end
     end
   end

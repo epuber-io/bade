@@ -253,7 +253,7 @@ module Bade
           # Inline html
           append_node :text, data: @line
 
-        when /\A-\s(.*)\Z/
+        when /\A-\s*(.*)\Z/
           # Found a code block.
           code_node = append_node :ruby_code
           code_node.data = $1
