@@ -65,7 +65,7 @@ div= "<>"
 
       it 'normal variable eval' do
         vars = {
-            __const: Hash.new { |hash, key| raise "Not found key #{key}" }
+            __const: Hash.new { |hash, key| raise KeyError, "Not found key #{key}" }
         }
 
         source = %q{
@@ -76,7 +76,7 @@ div
         expected = '<div>some text</div><div><div>some text</div></div>'
         expect do
           assert_html expected, source, vars: vars
-        end.to raise_exception
+        end.to raise_exception KeyError
       end
     end
   end
