@@ -41,6 +41,13 @@ module Bade
             .sub('>', '&gt;')
             .sub('"', '&quot;')
       end
+
+      def tag_render_attribute(name, *values)
+        values = values.compact
+        return if values.empty?
+
+        %Q{ #{name}="#{values.join(' ')}"}
+      end
     end
   end
 end

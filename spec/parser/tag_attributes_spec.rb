@@ -78,5 +78,11 @@ a(href : "href_text", id:"id_text") abc_text_haha
 		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
 
 		assert_html expected, source
-	end
+  end
+
+  it 'removes attributes when the value is nil' do
+    source = 'a(href: nil)'
+    expected = '<a/>'
+    assert_html expected, source
+  end
 end

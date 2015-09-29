@@ -193,7 +193,7 @@ lambda {
       text = "<#{current_node.name}"
 
       if attributes.length > 0
-        text += " #{attributes}"
+        text += "#{attributes}"
       end
 
       other_than_new_lines = current_node.childrens.any? { |node|
@@ -245,9 +245,9 @@ lambda {
       end
 
       xml_attributes.map do |attr_name|
-        joined = all_attributes[attr_name].join('} #{')
-        %Q{#{attr_name}="\#{#{joined}}"}
-      end.join(' ')
+        joined = all_attributes[attr_name].join(', ')
+        %Q{\#{tag_render_attribute('#{attr_name}', #{joined})}}
+      end.join
     end
 
     def indent(plus = 1)
