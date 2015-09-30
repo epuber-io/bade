@@ -245,8 +245,8 @@ lambda {
       end
 
       xml_attributes.map do |attr_name|
-        joined = all_attributes[attr_name].join(', ')
-        %Q{\#{tag_render_attribute('#{attr_name}', #{joined})}}
+        joined = all_attributes[attr_name].join('), (')
+        %Q{\#{tag_render_attribute('#{attr_name}', (#{joined}))}}
       end.join
     end
 

@@ -85,4 +85,16 @@ a(href : "href_text", id:"id_text") abc_text_haha
     expected = '<a/>'
     assert_html expected, source
   end
+
+  it 'support if in attributes' do
+    source = %q{a(href: 'selected' if true)}
+    expected = %q{<a href="selected"/>}
+    assert_html expected, source
+  end
+
+	it 'support if in attributes' do
+		source = %q{a(href: 'selected' if false)}
+		expected = %q{<a/>}
+		assert_html expected, source
+	end
 end
