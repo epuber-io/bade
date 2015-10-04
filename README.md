@@ -2,7 +2,7 @@
 # Bade
 
 [![Gem Version](https://badge.fury.io/rb/bade.svg)](http://badge.fury.io/rb/bade)
-[![Build Status](https://semaphoreci.com/api/v1/projects/61441d8f-9c6b-41c2-b677-1ef8516649e5/559728/badge.svg)](https://semaphoreci.com/samnung/bade)      
+[![Build Status](https://travis-ci.org/samnung/bade.svg?branch=master)](https://travis-ci.org/samnung/bade)      
 
 Minimalistic template engine written in Ruby for Ruby. Developed mainly to help with creating e-books. Highly influenced by [Jade](http://jade-lang.com) and [Slim](http://slim-lang.com).
 
