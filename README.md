@@ -2,7 +2,10 @@
 # Bade
 
 [![Gem Version](https://badge.fury.io/rb/bade.svg)](http://badge.fury.io/rb/bade)
+
 [![Build Status](https://travis-ci.org/samnung/bade.svg?branch=master)](https://travis-ci.org/samnung/bade)      
+[![Coverage Status](https://coveralls.io/repos/samnung/bade/badge.svg?branch=master&service=github)](https://coveralls.io/github/samnung/bade?branch=master)
+
 
 Minimalistic template engine written in Ruby for Ruby. Developed mainly to help with creating e-books. Highly influenced by [Jade](http://jade-lang.com) and [Slim](http://slim-lang.com).
 
