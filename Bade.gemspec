@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 	spec.authors     = ['Roman Kříž']
 	spec.email       = ['samnung@gmail.com']
 	spec.summary     = %q{Minimalistic template engine for Ruby.}
-	spec.homepage    = 'https://github.com/samnung/bade'
+	spec.homepage    = 'https://github.com/epuber-io/bade'
 	spec.license     = 'MIT'
 
 	spec.files         = Dir['bin/**/*'] + Dir['lib/**/*'] + %w(Bade.gemspec Gemfile README.md)
