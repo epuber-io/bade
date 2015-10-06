@@ -1,7 +1,7 @@
 
 # Bade
 
-[![Gem Version](https://badge.fury.io/rb/bade.svg)](http://badge.fury.io/rb/bade) [![Build Status](https://travis-ci.org/samnung/bade.svg?branch=master)](https://travis-ci.org/samnung/bade) [![Coverage Status](https://coveralls.io/repos/samnung/bade/badge.svg?branch=master&service=github)](https://coveralls.io/github/samnung/bade?branch=master)
+[![Gem Version](https://badge.fury.io/rb/bade.svg)](http://badge.fury.io/rb/bade) [![Build Status](https://travis-ci.org/epuber-io/bade.svg?branch=master)](https://travis-ci.org/epuber-io/bade) [![Coverage Status](https://coveralls.io/repos/samnung/bade/badge.svg?branch=master&service=github)](https://coveralls.io/github/samnung/bade?branch=master)
 
 
 Minimalistic template engine written in Ruby for Ruby. Developed mainly to help with creating e-books. Highly influenced by [Jade](http://jade-lang.com) and [Slim](http://slim-lang.com).
@@ -35,7 +35,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/samnung/bade. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/epuber-io/bade. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## TODO
