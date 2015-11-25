@@ -35,13 +35,13 @@ module Bade
     # @return [self]
     #
     def self.from_file(file)
-      file_obj = if file.is_a?(String)
-                   File.new(file, 'r')
-                 else
-                   file
-                 end
+      path = if file.is_a?(File)
+               file.path
+             else
+               file
+             end
 
-      from_source(file_obj.read, file_obj.path)
+      from_source(nil, path)
     end
 
 
@@ -71,13 +71,7 @@ module Bade
     # @return [Bade::Node]
     #
     def root_document
-      @parsed ||= (
-        if file_path.nil?
-          _parse_document_from_text(source_text)
-        else
-          _parse_document_from_file(file_path)
-        end
-      )
+      @parsed ||= _parsed_document(source_text, file_path)
     end
 
     # @return [String]
@@ -108,39 +102,32 @@ module Bade
     #
     # @return [Bade::Document]
     #
-    def _parse_document_from_file(file_path)
-      parser = Parser.new(file_path: file_path)
+    def _parsed_document(content, file_path)
+      content = if file_path.nil? && content.nil?
+                  raise LoadError, "Don't know what to do with nil values for both content and path"
+                elsif !file_path.nil? && content.nil?
+                  File.read(file_path)
+                else
+                  content
+                end
 
-      new_path = if File.exists?(file_path)
-               file_path
-             elsif File.exists?("#{file_path}.bade")
-               "#{file_path}.bade"
-             end
-
-      raise "Not existing file with path #{file_path}" if new_path.nil?
-
-      parsed_document = @parsed_documents[new_path]
+      parsed_document = @parsed_documents[file_path]
       return parsed_document unless parsed_document.nil?
 
-      document = parser.parse(File.read(new_path))
+      parser = Parser.new(file_path: file_path)
+
+      document = parser.parse(content)
 
       parser.dependency_paths.each do |path|
-        sub_path = File.expand_path(path, File.dirname(new_path))
-        document.sub_documents << _parse_document_from_file(sub_path)
+        sub_path = File.expand_path(path, File.dirname(file_path))
+        new_path = if File.exists?(sub_path)
+                     sub_path
+                   elsif File.exists?("#{sub_path}.bade")
+                     "#{sub_path}.bade"
+                   end
+
+        document.sub_documents << _parsed_document(nil, new_path)
       end
-
-      document
-    end
-
-    # @param text [String]
-    #
-    # @return [Bade::Document]
-    #
-    def _parse_document_from_text(text)
-      parser = Parser.new
-      document = parser.parse(text)
-
-      raise 'You cannot use import when it is loaded from source text' if parser.dependency_paths.length > 0
 
       document
     end

@@ -31,4 +31,19 @@ describe Bade::Renderer do
 
     expect(output).to eq('<a class="some">text</a>woohoo')
   end
+
+  it 'supports rendering from source with file path' do
+    output = Bade::Renderer.from_source('a abc', File.join(File.dirname(__FILE__), 'from_file.bade'))
+                           .render(new_line: '')
+    expect(output).to eq('<a>abc</a>')
+  end
+
+  it 'supports rendering from source with imports' do
+    source = 'import "files/imported.bade"
++baf("abc")'
+    output = Bade::Renderer.from_source(source, File.join(File.dirname(__FILE__), 'from_file.bade'))
+                           .render(new_line: '')
+    expected = '<div>abc</div>'
+    expect(output).to eq expected
+  end
 end
