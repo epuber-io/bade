@@ -1,9 +1,7 @@
 require 'rspec'
 
-require_relative '../../lib/bade/parser'
 
-
-  describe Parser do
+  describe Bade::Parser do
     context '#parse_ruby_code' do
       def assert_ruby_code(source, expected_ruby, end_delimiter = ',)', options = {})
         sut = Parser.new(options)
