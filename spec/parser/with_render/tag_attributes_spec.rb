@@ -1,8 +1,6 @@
 require_relative '../../helper'
 
-include Bade::Spec
-
-describe Parser do
+describe Bade::Parser do
 
 	it 'should parse one attribute' do
 		source = "

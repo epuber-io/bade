@@ -1,8 +1,6 @@
 require_relative '../../helper'
 
-include Bade::Spec
-
-describe Parser do
+describe Bade::Parser do
   describe 'doctype' do
 
     it 'supports `doctype xml`' do

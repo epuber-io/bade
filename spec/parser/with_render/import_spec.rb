@@ -1,8 +1,6 @@
 
 require_relative '../../helper'
 
-include Bade::Spec
-
 describe Bade::Parser, 'import' do
   it 'parse import statement' do
     parser = Bade::Parser.new

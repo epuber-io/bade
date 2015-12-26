@@ -1,9 +1,7 @@
 require_relative '../../helper'
 
-include Bade::Spec
 
-describe Parser do
-
+describe Bade::Parser do
   context 'inline code' do
     it 'should parse code' do
       source = '

@@ -1,8 +1,6 @@
 require_relative '../../helper'
 
-include Bade::Spec
-
-describe Parser do
+describe Bade::Parser do
 	context 'interpolation' do
 		it 'parse simple unescaping interpolation' do
 			source = %q{

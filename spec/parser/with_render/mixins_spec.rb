@@ -1,8 +1,7 @@
 require_relative '../../helper'
 
-include Bade::Spec
 
-describe Parser do
+describe Bade::Parser do
 	context 'mixins' do
 
 		it 'parse mixin declaration' do
