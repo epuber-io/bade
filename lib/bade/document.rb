@@ -29,5 +29,15 @@ module Bade
       @file_path = file_path
       @sub_documents = []
     end
+
+    # @param other [Bade::Document]
+    #
+    # @return [Bool]
+    #
+    def ==(other)
+      return false unless Document === other
+
+      root == other.root && sub_documents == other.sub_documents
+    end
   end
 end

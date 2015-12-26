@@ -30,9 +30,42 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
   end
 end
 
+def assert_nodes(root_node, source)
+  parser = Bade::Parser.new
+  document = parser.parse(source)
+
+  exp_doc = Bade::Document.new(root: root_node)
+
+  expect(exp_doc).to eq document
+end
+
 def lambda_str_from_bade_code(source)
   parser = Bade::Parser.new
   parsed = parser.parse(source)
   Bade::RubyGenerator.document_to_lambda_string(parsed, indent: '')
 end
 
+module ASTHelper
+  def n(type, properties={}, *children)
+    node = if type == :root
+             Bade::Node.new(:root, lineno: nil)
+           else
+             Bade::NodeRegistrator.create(type, nil)
+           end
+
+    if properties.kind_of?(Bade::Node)
+      children.unshift(properties)
+      properties = nil
+    end
+
+    unless properties.nil?
+      properties.each do |key, value|
+        node.send(key.to_s + '=', value)
+      end
+    end
+
+    node.children.replace(children)
+
+    node
+  end
+end

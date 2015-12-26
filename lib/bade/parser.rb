@@ -212,7 +212,7 @@ module Bade
     end
 
     def parse_line_indicators
-      add_new_line = true
+      add_new_line = false
 
       case @line
         when /\Aimport /
@@ -291,7 +291,7 @@ module Bade
           syntax_error 'Unknown line indicator'
       end
 
-      append_node(:newline) if add_new_line
+      append_node(:newline) if add_new_line || @line == "\n"
     end
 
     def parse_import

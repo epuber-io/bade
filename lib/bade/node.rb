@@ -30,11 +30,21 @@ module Bade
     end
 
     def to_s
-      "#<#{self.class} #{type.inspect}>"
+      "#<#{type.inspect} #{children}>"
     end
 
     def inspect
       to_s
+    end
+
+    # @param other [Node]
+    #
+    # @return [Bool]
+    #
+    def ==(other)
+      return false unless Node === other
+
+      type == other.type && children == other.children
     end
   end
 
