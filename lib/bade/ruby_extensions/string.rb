@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class String
 
   # Creates new string surrounded by single quotes

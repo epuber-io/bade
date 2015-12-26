@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative 'node'
 require_relative 'document'
@@ -577,7 +578,7 @@ module Bade
     # @return [Void] parsed ruby code
     #
     def parse_ruby_code(outer_delimiters)
-      code = ''
+      code = String.new
       end_re = /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
       delimiters = []
 

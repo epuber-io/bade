@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 class Object
   def self.attr_forw_accessor(name, forw_name)
