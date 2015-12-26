@@ -4,7 +4,7 @@ require 'rspec'
   describe Bade::Parser do
     context '#parse_ruby_code' do
       def assert_ruby_code(source, expected_ruby, end_delimiter = ',)', options = {})
-        sut = Parser.new(options)
+        sut = Bade::Parser.new(options)
 
         sut.instance_eval { @lines = [source] }
         sut.next_line
@@ -31,7 +31,7 @@ require 'rspec'
 
         expect {
           assert_ruby_code source, nil
-        }.to raise_error
+        }.to raise_error(String)
       end
 
       it 'parse simple variable' do

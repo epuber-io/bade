@@ -1,10 +1,12 @@
-require_relative '../node'
-
 
 module Bade
   class KeyValueNode < Node
-    attr_forw_accessor :name, :data
+    # @return [String]
+    #
+    attr_accessor :name
 
+    # @return [Any]
+    #
     attr_accessor :value
   end
 end

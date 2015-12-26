@@ -5,8 +5,12 @@ module Bade
   class DoctypeNode < Node
     # @return [String]
     #
+    attr_accessor :text
+
+    # @return [String]
+    #
     def xml_output
-      case self.data
+      case text
         when 'xml'
           '<?xml version="1.0" encoding="utf-8" ?>'
 

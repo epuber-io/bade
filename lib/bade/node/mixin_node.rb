@@ -1,26 +1,14 @@
-require_relative '../node'
-
 
 module Bade
   class MixinCommonNode < Node
+    # @return [String]
+    #
+    attr_accessor :name
 
     # @return [Array<Node>]
     #
-    attr_reader :params
-
-    def initialize(*args)
-      super
-
-      @params = []
-    end
-
-    def << (node)
-      if allowed_parameter_types.include?(node.type)
-        node.parent = self
-        @params << node
-      else
-        super
-      end
+    def params
+      children.select { |n| allowed_parameter_types.include?(n.type) }
     end
   end
 
@@ -30,40 +18,19 @@ module Bade
     end
   end
 
-  class MixinCallNode < MixinCommonNode
-    attr_reader :blocks
-
-    attr_reader :default_block
-
-    def initialize(*args)
-      super
-
-      @blocks = []
+  class MixinBlockNode < MixinCommonNode
+    def allowed_parameter_types
+      [:mixin_param, :mixin_key_param]
     end
+  end
 
+  class MixinCallNode < MixinCommonNode
     def allowed_parameter_types
       [:mixin_param, :mixin_key_param]
     end
 
-    def << (node)
-      if allowed_parameter_types.include?(node.type)
-        node.parent = self
-        @params << node
-      elsif node.type == :mixin_block
-        node.parent = self
-        @blocks << node
-      else
-        if @default_block.nil?
-          if node.type == :newline
-            # skip newlines at start
-            return self
-          end
-
-          @default_block = Node.create(:mixin_block, self)
-        end
-
-        @default_block << node
-      end
+    def blocks
+      children.select { |a| a.type == :mixin_block }
     end
   end
 end

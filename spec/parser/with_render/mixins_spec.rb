@@ -109,7 +109,7 @@ mixin m()
 +m()
 '
 			expect {
-				assert_html nil, source, print_error_if_error: false
+				assert_html '', source, print_error_if_error: false
 			}.to raise_error Bade::Runtime::RuntimeError
 		end
 

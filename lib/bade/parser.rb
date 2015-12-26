@@ -29,6 +29,8 @@ module Bade
 
     class ParserInternalError < StandardError; end
 
+    # @type @stacks [Array<Bade::Node>]
+
     # @return [Array<String>]
     #
     attr_reader :dependency_paths
@@ -140,16 +142,16 @@ module Bade
     #
     # @param [Symbol] type
     #
-    def append_node(type, indent: @indents.length, add: false, data: nil)
+    def append_node(type, indent: @indents.length, add: false, text: nil)
       while indent >= @stacks.length
         @stacks << @stacks.last.dup
       end
 
       parent = @stacks[indent].last
-      node = Node.create(type, parent)
-      node.lineno = @lineno
+      node = NodeRegistrator.create(type, @lineno)
+      parent.children << node
 
-      node.data = data
+      node.text = text unless text.nil?
 
       if add
         @stacks[indent] << node
@@ -162,7 +164,7 @@ module Bade
       line = @line
 
       if line =~ /\A\s*\Z/
-        append_node :newline
+        append_node(:newline)
         return
       end
 
@@ -229,7 +231,8 @@ module Bade
         when /\Ablock #{NAME_RE_STRING}/
           @line = $'
           if @stacks.last.last.type == :mixin_call
-            append_node :mixin_block, data: $1, add: true
+            node = append_node(:mixin_block, add: true)
+            node.name = $1
           else
             # keyword block used outside of mixin call
             parse_tag($&)
@@ -237,12 +240,12 @@ module Bade
 
         when /\A\/\/! /
           # HTML comment
-          append_node :html_comment, add: true
+          append_node(:html_comment, add: true)
           parse_text_block $', @indents.last + @tabsize
 
         when /\A\/\//
           # Comment
-          append_node :comment, add: true
+          append_node(:comment, add: true)
           parse_text_block $', @indents.last + @tabsize
 
         when /\A\|( ?)/
@@ -251,29 +254,24 @@ module Bade
 
         when /\A</
           # Inline html
-          append_node :text, data: @line
+          append_node(:text, text: @line)
 
         when /\A-\s*(.*)\Z/
           # Found a code block.
-          code_node = append_node :ruby_code
-          code_node.data = $1
+          append_node(:ruby_code, text: $1)
           add_new_line = false
 
         when /\A(&?)=/
           # Found an output block.
           # We expect the line to be broken or the next line to be indented.
           @line = $'
-          output_node = append_node :output
+          output_node = append_node(:output)
           output_node.escaped = $1.length == 1
-          output_node.data = parse_ruby_code("\n")
-
-        when /\A(\w+):\s*\Z/
-          # Embedded template detected. It is treated as block.
-          @stacks.last << [:slim, :embedded, $1, parse_text_block]
-
+          output_node.text = parse_ruby_code("\n")
+          
         when /\Adoctype\s/i
           # Found doctype declaration
-          append_node :doctype, data: $'.strip
+          append_node(:doctype, text: $'.strip)
 
         when TAG_RE
           # Found a HTML tag.
@@ -292,20 +290,19 @@ module Bade
           syntax_error 'Unknown line indicator'
       end
 
-      append_node :newline if add_new_line
+      append_node(:newline) if add_new_line
     end
 
     def parse_import
       path = eval(@line)
-      import_node = append_node :import
-      import_node.data = path
+      append_node(:import, text: path)
 
       @dependency_paths << path unless @dependency_paths.include?(path)
     end
 
     def parse_mixin_call(mixin_name)
-      mixin_node = append_node :mixin_call, add: true
-      mixin_node.data = mixin_name
+      mixin_node = append_node(:mixin_call, add: true)
+      mixin_node.name = mixin_name
 
       parse_mixin_call_params
 
@@ -346,7 +343,7 @@ module Bade
         case @line
           when CODE_ATTR_RE
             @line = $'
-            attr_node = append_node :mixin_key_param
+            attr_node = append_node(:mixin_key_param)
             attr_node.name = $1
             attr_node.value = parse_ruby_code(',)')
 
@@ -366,15 +363,15 @@ module Bade
             break
 
           else
-            attr_node = append_node :mixin_param
-            attr_node.data = parse_ruby_code(',)')
+            attr_node = append_node(:mixin_param)
+            attr_node.text = parse_ruby_code(',)')
         end
       end
     end
 
     def parse_mixin_declaration(mixin_name)
-      mixin_node = append_node :mixin_declaration, add: true
-      mixin_node.data = mixin_name
+      mixin_node = append_node(:mixin_declaration, add: true)
+      mixin_node.name = mixin_name
 
       parse_mixin_declaration_params
     end
@@ -395,17 +392,17 @@ module Bade
           when CODE_ATTR_RE
             # Value ruby code
             @line = $'
-            attr_node = append_node :mixin_key_param
+            attr_node = append_node(:mixin_key_param)
             attr_node.name = $1
             attr_node.value = parse_ruby_code(',)')
 
           when /\A\s*#{NAME_RE_STRING}/
             @line = $'
-            append_node :mixin_param, data: $1
+            append_node(:mixin_param, text: $1)
 
           when /\A\s*&#{NAME_RE_STRING}/
             @line = $'
-            append_node :mixin_block_param, data: $1
+            append_node(:mixin_block_param, text: $1)
 
           when /\A\s*,/
             # args delimiter
@@ -426,7 +423,7 @@ module Bade
     def parse_text
       text = @line
       text = text.gsub(/&\{/, '#{ html_escaped ')
-      append_node :text, data: text
+      append_node(:text, text: text)
     end
 
 
@@ -450,7 +447,7 @@ module Bade
       if tag.is_a? Node
         tag_node = tag
       else
-        tag_node = append_node :tag, add: true
+        tag_node = append_node(:tag, add: true)
         tag_node.name = tag
       end
 
@@ -470,7 +467,7 @@ module Bade
           # Class name
           @line = $'
 
-          attr_node = append_node :tag_attribute
+          attr_node = append_node(:tag_attribute)
           attr_node.name = 'class'
           attr_node.value = fixed_trailing_colon($1).single_quote
 
@@ -480,7 +477,7 @@ module Bade
           # Id name
           @line = $'
 
-          attr_node = append_node :tag_attribute
+          attr_node = append_node(:tag_attribute)
           attr_node.name = 'id'
           attr_node.value = fixed_trailing_colon($1).single_quote
 
@@ -517,7 +514,7 @@ module Bade
           when CODE_ATTR_RE
             # Value ruby code
             @line = $'
-            attr_node = append_node :tag_attribute
+            attr_node = append_node(:tag_attribute)
             attr_node.name = $1
             attr_node.value = parse_ruby_code(',)')
 
@@ -555,7 +552,7 @@ module Bade
       until @lines.empty?
         if @lines.first =~ /\A\s*\Z/
           next_line
-          append_node :newline
+          append_node(:newline)
         else
           indent = get_indent(@lines.first)
           break if indent <= @indents.last

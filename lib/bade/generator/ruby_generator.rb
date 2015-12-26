@@ -105,8 +105,8 @@ lambda {
 
     # @param current_node [Node]
     #
-    def visit_node_childrens(current_node)
-      visit_nodes(current_node.childrens)
+    def visit_node_children(current_node)
+      visit_nodes(current_node.children)
     end
 
     # @param nodes [Array<Node>]
@@ -122,27 +122,25 @@ lambda {
     def visit_node(current_node)
       case current_node.type
         when :root
-          visit_node_childrens(current_node)
+          visit_node_children(current_node)
 
         when :text
-          buff_print_text current_node.data
+          buff_print_text current_node.text
 
         when :tag
           visit_tag(current_node)
 
         when :ruby_code
-          buff_code current_node.data
+          buff_code current_node.text
 
         when :html_comment
           buff_print_text '<!-- '
-          visit_node_childrens(current_node)
+          visit_node_children(current_node)
           buff_print_text ' -->'
 
         when :comment
-          comment_text = current_node.childrens.select { |node|
-            !node.data.nil?
-          }.map { |node|
-            node.data
+          comment_text = current_node.children.flat_map { |node|
+            node.text
           }.join(@new_line_string + '#')
 
           buff_code '#' + comment_text
@@ -152,21 +150,21 @@ lambda {
 
         when :mixin_declaration
           params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.data}'] = lambda { |#{params}|"
+          buff_code "#{MIXINS_NAME}['#{current_node.name}'] = lambda { |#{params}|"
 
           indent {
             blocks_name_declaration(current_node)
-            visit_node_childrens(current_node)
+            visit_nodes(current_node.children - current_node.params)
           }
 
           buff_code '}'
 
         when :mixin_call
           params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.data}'].call(#{params})"
+          buff_code "#{MIXINS_NAME}['#{current_node.name}'].call(#{params})"
 
         when :output
-          data = current_node.data
+          data = current_node.text
           output_code = if current_node.escaped
                           "\#{html_escaped(#{data})}"
                         else
@@ -189,6 +187,7 @@ lambda {
     #
     def visit_tag(current_node)
       attributes = formatted_attributes current_node
+      children_wo_attributes = (current_node.children - current_node.attributes)
 
       text = "<#{current_node.name}"
 
@@ -196,7 +195,7 @@ lambda {
         text += "#{attributes}"
       end
 
-      other_than_new_lines = current_node.childrens.any? { |node|
+      other_than_new_lines = children_wo_attributes.any? { |node|
         node.type != :newline
       }
 
@@ -209,12 +208,12 @@ lambda {
       buff_print_text text, new_line: true, indent: true
 
       if other_than_new_lines
-        last_node = current_node.childrens.last
+        last_node = children_wo_attributes.last
         is_last_newline = !last_node.nil? && last_node.type == :newline
         nodes = if is_last_newline
-                  current_node.childrens[0...-1]
+                  children_wo_attributes[0...-1]
                 else
-                  current_node.childrens
+                  children_wo_attributes
                 end
 
         indent do
@@ -264,17 +263,25 @@ lambda {
       params = mixin_node.params
       result = []
 
-
-
       if mixin_node.type == :mixin_call
-        if mixin_node.blocks.length > 0
+        blocks = mixin_node.blocks
+
+        other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
+        if other_children.reject { |n| n.type == :newline }.count > 0
+          def_block_node = NodeRegistrator.create(:mixin_block, mixin_node.lineno)
+          def_block_node.children.replace(other_children)
+
+          blocks << def_block_node
+        end
+
+        if blocks.length > 0
           buff_code '__blocks = {}'
 
-          mixin_node.blocks.each { |block|
-            block_name = block.data ? block.data : 'default_block'
+          blocks.each { |block|
+            block_name = block.name || 'default_block'
             buff_code "__blocks['#{block_name}'] = __create_block('#{block_name}') do"
             indent {
-              visit_node_childrens(block)
+              visit_node_children(block)
             }
             buff_code 'end'
           }
@@ -292,7 +299,7 @@ lambda {
       result += params.select { |param|
         param.type == :mixin_param
       }.map { |param|
-        param.data
+        param.text
       }
 
       result += params.select { |param|
@@ -317,7 +324,7 @@ lambda {
       mixin_node.params.select { |param|
         param.type == :mixin_block_param
       }.each { |param|
-        block_name_declaration(param.data)
+        block_name_declaration(param.text)
       }
 
       block_name_declaration('default_block')

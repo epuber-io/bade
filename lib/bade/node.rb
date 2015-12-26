@@ -5,112 +5,95 @@ require_relative 'ruby_extensions/object'
 
 module Bade
   class Node
-    require_relative 'node/key_value_node'
-    require_relative 'node/tag_node'
-    require_relative 'node/mixin_node'
-    require_relative 'node/doctype_node'
+    # --- MAIN INFO ---
 
-    # @return [Symbol]
+    # @return [Symbol] type of this node
     #
     attr_reader :type
 
+    # @return [Array<Bade::Node>]
+    #
+    attr_reader :children
+
+    # --- METADATA ---
 
     # @return [Int] line number
     #
-    attr_accessor :lineno
+    attr_reader :lineno
 
-    # @return [String]
-    #
-    attr_accessor :data
-
-
-    # @return [Node]
-    #
-    attr_accessor :parent
-
-    # @return [Array<Node>]
-    #
-    attr_accessor :childrens
-
-    # @return [TrueClass, FalseClass]
-    #
-    attr_accessor :escaped
-
-    # @param [Symbol] type
-    # @param [Node] parent
-    #
-    def initialize(type, parent = nil)
+    def initialize(type, lineno: nil)
       @type = type
-      @childrens = []
+      @children = []
 
-      if parent
-        parent << self
-      end
+      @lineno = lineno
     end
 
-    # @param [Node] node
-    #
-    def << (node)
-      node.parent = self
-      @childrens << node
-
-      self
+    def to_s
+      "#<#{self.class} #{type.inspect}>"
     end
 
-
-
-
-
-    # @return [Hash<Symbol, Class>]
-    def self.registered_types
-      @@registered_types ||= {}
+    def inspect
+      to_s
     end
-
-    # @param [Symbol] type
-    # @param [Class] klass  registering class
-    #
-    def self.register_type(type, klass = self)
-      raise StandardError, "Class #{klass} should be subclass of #{self}" unless klass <= Node
-
-      registered_types[type] = klass
-    end
-
-
-
-
-    def self.create(type, parent)
-      klass = registered_types[type]
-
-      if klass.nil?
-        raise Parser::ParserInternalError, "undefined node type #{type.inspect}"
-      end
-
-      klass.new(type, parent)
-    end
-
   end
 
-  Node.register_type :text
-  Node.register_type :newline
-  Node.register_type :ruby_code
+  class NodeRegistrator
+    require_relative 'node/key_value_node'
+    require_relative 'node/tag_node'
+    require_relative 'node/text_node'
+    require_relative 'node/mixin_node'
+    require_relative 'node/doctype_node'
 
-  Node.register_type :comment
-  Node.register_type :html_comment
+    class << self
+      # @return [Hash<Symbol, Class>]
+      def registered_types
+        @registered_types ||= {}
+      end
 
-  TagNode.register_type :tag
-  KeyValueNode.register_type :tag_attribute
+      # @param [Symbol] type
+      # @param [Class] klass  registering class
+      #
+      def register_type(klass, type)
+        raise StandardError, "Class #{klass} should be subclass of #{self}" unless klass <= Node
 
-  Node.register_type :output
+        registered_types[type] = klass
+      end
 
-  Node.register_type :mixin_param
-  Node.register_type :mixin_block_param
-  Node.register_type :mixin_block
+      # @return [Node]
+      #
+      def create(type, lineno)
+        klass = registered_types[type]
 
-  MixinCallNode.register_type :mixin_call
-  MixinDeclarationNode.register_type :mixin_declaration
-  KeyValueNode.register_type :mixin_key_param
+        if klass.nil?
+          raise Parser::ParserInternalError, "undefined node type #{type.inspect}"
+        end
 
-  DoctypeNode.register_type :doctype
+        klass.new(type, lineno: lineno)
+      end
+    end
 
-  Node.register_type :import
+    register_type TextNode, :text
+    register_type TextNode, :newline
+    register_type TextNode, :ruby_code
+
+    register_type Node, :comment
+    register_type Node, :html_comment
+
+    register_type TagNode, :tag
+    register_type KeyValueNode, :tag_attribute
+
+    register_type TextNode, :output
+
+    register_type TextNode, :mixin_param
+    register_type TextNode, :mixin_block_param
+    register_type MixinBlockNode, :mixin_block
+
+    register_type MixinCallNode, :mixin_call
+    register_type MixinDeclarationNode, :mixin_declaration
+    register_type KeyValueNode, :mixin_key_param
+
+    register_type DoctypeNode, :doctype
+
+    register_type TextNode, :import
+  end
 end

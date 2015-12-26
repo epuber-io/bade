@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bade (0.1.4)
+    bade (0.2.0.beta)
 
 GEM
   remote: https://rubygems.org/
