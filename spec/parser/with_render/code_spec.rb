@@ -73,7 +73,7 @@ div
 }
         expected = '<div>some text</div><div><div>some text</div></div>'
         expect do
-          assert_html expected, source, vars: vars
+          assert_html expected, source, vars: vars, print_error_if_error: false
         end.to raise_exception KeyError
       end
 
