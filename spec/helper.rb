@@ -1,5 +1,5 @@
 require 'coveralls'
-Coveralls.wear!
+Coveralls.wear! if Coveralls.will_run?
 
 
 require 'rspec'
