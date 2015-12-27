@@ -2,6 +2,8 @@
 
 require_relative 'ast/node'
 require_relative 'ast/document'
+require_relative 'ast/node_registrator'
+
 require_relative 'ruby_extensions/string'
 
 module Bade
