@@ -57,10 +57,10 @@ module Bade
     end
 
     # @param [String, Array<String>] str
-    # @return [Bade::Document] root node
+    # @return [Bade::AST::Document] root node
     #
     def parse(str)
-      @document = Document.new(file_path: @options[:file_path])
+      @document = AST::Document.new(file_path: @options[:file_path])
       @root = @document.root
 
       @dependency_paths = []
@@ -149,7 +149,7 @@ module Bade
       end
 
       parent = @stacks[indent].last
-      node = NodeRegistrator.create(type, @lineno)
+      node = AST::NodeRegistrator.create(type, @lineno)
       parent.children << node
 
       node.value = value unless value.nil?
@@ -445,7 +445,7 @@ module Bade
     def parse_tag(tag)
       tag = fixed_trailing_colon(tag)
 
-      if tag.is_a? Node
+      if tag.is_a?(AST::Node)
         tag_node = tag
       else
         tag_node = append_node(:tag, add: true)

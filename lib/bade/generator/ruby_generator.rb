@@ -273,7 +273,7 @@ lambda {
 
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
         if other_children.reject { |n| n.type == :newline }.count > 0
-          def_block_node = NodeRegistrator.create(:mixin_block, mixin_node.lineno)
+          def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
           def_block_node.children.replace(other_children)
 
           blocks << def_block_node

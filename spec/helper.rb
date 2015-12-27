@@ -46,12 +46,12 @@ end
 module ASTHelper
   def n(type, properties={}, *children)
     node = if type == :root
-             Bade::Node.new(:root, lineno: nil)
+             Bade::AST::Node.new(:root, lineno: nil)
            else
-             Bade::NodeRegistrator.create(type, nil)
+             Bade::AST::NodeRegistrator.create(type, nil)
            end
 
-    if properties.kind_of?(Bade::Node)
+    if properties.kind_of?(Bade::AST::Node)
       children.unshift(properties)
       properties = nil
     end

@@ -1,37 +1,39 @@
 # frozen_string_literal: true
 
 module Bade
-  class MixinCommonNode < Node
-    # @return [String]
-    #
-    attr_accessor :name
+  module AST
+    class MixinCommonNode < Node
+      # @return [String]
+      #
+      attr_accessor :name
 
-    # @return [Array<Node>]
-    #
-    def params
-      children.select { |n| allowed_parameter_types.include?(n.type) }
-    end
-  end
-
-  class MixinDeclarationNode < MixinCommonNode
-    def allowed_parameter_types
-      [:mixin_param, :mixin_key_param, :mixin_block_param]
-    end
-  end
-
-  class MixinBlockNode < MixinCommonNode
-    def allowed_parameter_types
-      [:mixin_param, :mixin_key_param]
-    end
-  end
-
-  class MixinCallNode < MixinCommonNode
-    def allowed_parameter_types
-      [:mixin_param, :mixin_key_param]
+      # @return [Array<Node>]
+      #
+      def params
+        children.select { |n| allowed_parameter_types.include?(n.type) }
+      end
     end
 
-    def blocks
-      children.select { |a| a.type == :mixin_block }
+    class MixinDeclarationNode < MixinCommonNode
+      def allowed_parameter_types
+        [:mixin_param, :mixin_key_param, :mixin_block_param]
+      end
+    end
+
+    class MixinBlockNode < MixinCommonNode
+      def allowed_parameter_types
+        [:mixin_param, :mixin_key_param]
+      end
+    end
+
+    class MixinCallNode < MixinCommonNode
+      def allowed_parameter_types
+        [:mixin_param, :mixin_key_param]
+      end
+
+      def blocks
+        children.select { |a| a.type == :mixin_block }
+      end
     end
   end
 end
