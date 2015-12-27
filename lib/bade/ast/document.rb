@@ -10,7 +10,7 @@ module Bade
       #
       # @return [Bade::Node]
       #
-      attr_accessor :root
+      attr_reader :root
 
       # Path to this document, but only if it is defined from file
       #
@@ -27,8 +27,16 @@ module Bade
       def initialize(root: Node.new(:root), file_path: nil)
         @root = root
 
-        @file_path = file_path
+        @file_path = file_path.dup.freeze unless file_path.nil?
         @sub_documents = []
+      end
+
+      def freeze
+        super
+
+        root.freeze
+        sub_documents.freeze
+        sub_documents.each(&:freeze)
       end
 
       # @param other [Bade::Document]
