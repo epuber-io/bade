@@ -2,7 +2,8 @@
 
 require_relative '../generator'
 require_relative '../runtime'
-require_relative '../document'
+
+require_relative '../ast/document'
 
 module Bade
   class RubyGenerator < Generator

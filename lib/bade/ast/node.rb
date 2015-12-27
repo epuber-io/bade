@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'parser'
-require_relative 'ruby_extensions/object'
-
 
 module Bade
   class Node
