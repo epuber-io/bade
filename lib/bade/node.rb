@@ -30,7 +30,7 @@ module Bade
     end
 
     def to_s
-      "#<#{type.inspect} #{children}>"
+      "(#{type.inspect} #{children})"
     end
 
     def inspect

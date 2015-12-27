@@ -30,13 +30,11 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
   end
 end
 
-def assert_nodes(root_node, source)
+def assert_ast(root_node, source)
   parser = Bade::Parser.new
   document = parser.parse(source)
 
-  exp_doc = Bade::Document.new(root: root_node)
-
-  expect(exp_doc).to eq document
+  expect(document.root).to eq root_node
 end
 
 def lambda_str_from_bade_code(source)

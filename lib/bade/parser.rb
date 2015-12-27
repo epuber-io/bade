@@ -68,7 +68,7 @@ module Bade
       if str.kind_of? Array
         reset(str, [[@root]])
       else
-        reset(str.split(/\r?\n/), [[@root]])
+        reset(str.split(/\r?\n/, -1), [[@root]]) # -1 is for not suppressing empty lines
       end
 
       parse_line while next_line
@@ -164,8 +164,8 @@ module Bade
     def parse_line
       line = @line
 
-      if line =~ /\A\s*\Z/
-        append_node(:newline)
+      if line.strip.length == 0
+        append_node(:newline) unless @lines.empty?
         return
       end
 
@@ -212,7 +212,7 @@ module Bade
     end
 
     def parse_line_indicators
-      add_new_line = false
+      add_new_line = true
 
       case @line
         when /\Aimport /
@@ -291,7 +291,7 @@ module Bade
           syntax_error 'Unknown line indicator'
       end
 
-      append_node(:newline) if add_new_line || @line == "\n"
+      append_node(:newline) if add_new_line && !@lines.empty?
     end
 
     def parse_import
@@ -489,7 +489,7 @@ module Bade
           @line = $'
           parse_text
 
-        when /^$/
+        when ''
           # nothing
 
         else
@@ -508,8 +508,6 @@ module Bade
         return
       end
 
-      end_re = /\A\s*\)/
-
       while true
         case @line
           when CODE_ATTR_RE
@@ -524,7 +522,7 @@ module Bade
             @line = $'
             next
 
-          when end_re
+          when /\A\s*\)/
             # Find ending delimiter
             @line = $'
             break
@@ -535,7 +533,7 @@ module Bade
             syntax_error('Expected attribute') unless @line.empty?
 
             # Attributes span multiple lines
-            @stacks.last << [:newline]
+            append_node(:newline)
             syntax_error("Expected closing delimiter #{delimiter}") if @lines.empty?
             next_line
         end

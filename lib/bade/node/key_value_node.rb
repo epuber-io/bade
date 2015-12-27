@@ -9,5 +9,15 @@ module Bade
     # @return [Any]
     #
     attr_accessor :value
+
+    def to_s
+      "#{name}:#{value}"
+    end
+
+    # @param other [KeyValueNode]
+    #
+    def ==(other)
+      super && name == other.name && value == other.value
+    end
   end
 end
