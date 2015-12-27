@@ -1,15 +1,16 @@
 
 require_relative '../../helper'
 
-include ASTHelper
 
 describe Bade::Parser do
+  include ASTHelper
+
   context 'tag parsing' do
     it 'parses minimalistic tag' do
       source = 'tag_name'
 
       ast = n(:root,
-              n(:tag, {name: 'tag_name'}))
+              tag('tag_name'))
 
       assert_ast(ast, source)
     end
@@ -18,7 +19,7 @@ describe Bade::Parser do
       source = 'tag_bla(attr_bla: "abc")'
 
       ast = n(:root,
-              n(:tag, {name: 'tag_bla'},
+              tag('tag_bla',
                 n(:tag_attr, {name: 'attr_bla', value: '"abc"'})))
 
       assert_ast(ast, source)
@@ -28,7 +29,7 @@ describe Bade::Parser do
       source = 'tag_bla(a1: "a1", a2: "a2", a3: "a3", a4: "a4", a5: "a5", a6: "a6", a7: "a7", a8: "a8", a9: "a9", a10: "a10")'
 
       ast = n(:root,
-              n(:tag, {name: 'tag_bla'},
+              tag('tag_bla',
                 n(:tag_attr, {name: 'a1', value: '"a1"'}),
                 n(:tag_attr, {name: 'a2', value: '"a2"'}),
                 n(:tag_attr, {name: 'a3', value: '"a3"'}),
@@ -49,7 +50,7 @@ describe Bade::Parser do
       source = 'tagX With some text we can use'
 
       ast = n(:root,
-              n(:tag, {name: 'tagX'},
+              tag('tagX',
                 n(:text, {value: 'With some text we can use'})))
 
       assert_ast(ast, source)
@@ -60,7 +61,7 @@ describe Bade::Parser do
 '
 
       ast = n(:root,
-              n(:tag, {name: 'tagX'},
+              tag('tagX',
                 n(:text, {value: 'With some text we can use'}),
                 n(:newline)))
 
@@ -73,9 +74,9 @@ describe Bade::Parser do
   tag2'
 
       ast = n(:root,
-              n(:tag, {name: 'tag1'},
+              tag('tag1',
                 n(:newline),
-                n(:tag, {name: 'tag2'})))
+                tag('tag2')))
 
       assert_ast(ast, source)
     end

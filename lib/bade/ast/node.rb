@@ -28,7 +28,8 @@ module Bade
       end
 
       def to_s
-        "(#{type.inspect} #{children})"
+        require_relative 'string_serializer'
+        StringSerializer.new(self).to_s
       end
 
       def inspect
