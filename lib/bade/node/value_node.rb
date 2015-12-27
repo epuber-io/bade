@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Bade
-  class TextNode < Node
+  class ValueNode < Node
     # @return [String]
     #
-    attr_accessor :text
+    attr_accessor :value
 
     # @return [Bool]
     #

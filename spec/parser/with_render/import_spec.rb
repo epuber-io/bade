@@ -10,6 +10,6 @@ describe Bade::Parser, 'import' do
     expect(parser.dependency_paths).to eq %w(ahoj)
 
     expect(import_nodes.length).to eq 1
-    expect(import_nodes.first.text).to eq %q{ahoj}
+    expect(import_nodes.first.value).to eq %q{ahoj}
   end
 end

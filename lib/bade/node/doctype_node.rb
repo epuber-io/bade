@@ -4,15 +4,11 @@ require_relative '../node'
 
 
 module Bade
-  class DoctypeNode < Node
-    # @return [String]
-    #
-    attr_accessor :text
-
+  class DoctypeNode < ValueNode
     # @return [String]
     #
     def xml_output
-      case text
+      case value
         when 'xml'
           '<?xml version="1.0" encoding="utf-8" ?>'
 

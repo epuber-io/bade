@@ -51,7 +51,7 @@ module Bade
   class NodeRegistrator
     require_relative 'node/key_value_node'
     require_relative 'node/tag_node'
-    require_relative 'node/text_node'
+    require_relative 'node/value_node'
     require_relative 'node/mixin_node'
     require_relative 'node/doctype_node'
 
@@ -83,9 +83,9 @@ module Bade
       end
     end
 
-    register_type TextNode, :text
-    register_type TextNode, :newline
-    register_type TextNode, :ruby_code
+    register_type ValueNode, :text
+    register_type ValueNode, :newline
+    register_type ValueNode, :ruby_code
 
     register_type Node, :comment
     register_type Node, :html_comment
@@ -93,10 +93,10 @@ module Bade
     register_type TagNode, :tag
     register_type KeyValueNode, :tag_attribute
 
-    register_type TextNode, :output
+    register_type ValueNode, :output
 
-    register_type TextNode, :mixin_param
-    register_type TextNode, :mixin_block_param
+    register_type ValueNode, :mixin_param
+    register_type ValueNode, :mixin_block_param
     register_type MixinBlockNode, :mixin_block
 
     register_type MixinCallNode, :mixin_call
@@ -105,6 +105,6 @@ module Bade
 
     register_type DoctypeNode, :doctype
 
-    register_type TextNode, :import
+    register_type ValueNode, :import
   end
 end

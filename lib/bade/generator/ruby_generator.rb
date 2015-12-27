@@ -127,13 +127,13 @@ lambda {
           visit_node_children(current_node)
 
         when :text
-          buff_print_text current_node.text
+          buff_print_text current_node.value
 
         when :tag
           visit_tag(current_node)
 
         when :ruby_code
-          buff_code current_node.text
+          buff_code current_node.value
 
         when :html_comment
           buff_print_text '<!-- '
@@ -142,7 +142,7 @@ lambda {
 
         when :comment
           comment_text = current_node.children.flat_map { |node|
-            node.text
+            node.value
           }.join(@new_line_string + '#')
 
           buff_code '#' + comment_text
@@ -166,7 +166,7 @@ lambda {
           buff_code "#{MIXINS_NAME}['#{current_node.name}'].call(#{params})"
 
         when :output
-          data = current_node.text
+          data = current_node.value
           output_code = if current_node.escaped
                           "\#{html_escaped(#{data})}"
                         else
@@ -301,7 +301,7 @@ lambda {
       result += params.select { |param|
         param.type == :mixin_param
       }.map { |param|
-        param.text
+        param.value
       }
 
       result += params.select { |param|
@@ -326,7 +326,7 @@ lambda {
       mixin_node.params.select { |param|
         param.type == :mixin_block_param
       }.each { |param|
-        block_name_declaration(param.text)
+        block_name_declaration(param.value)
       }
 
       block_name_declaration('default_block')

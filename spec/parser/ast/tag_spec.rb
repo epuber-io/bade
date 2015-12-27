@@ -50,7 +50,7 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:tag, {name: 'tagX'},
-                n(:text, {text: 'With some text we can use'})))
+                n(:text, {value: 'With some text we can use'})))
 
       assert_ast(ast, source)
     end
@@ -61,7 +61,7 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:tag, {name: 'tagX'},
-                n(:text, {text: 'With some text we can use'}),
+                n(:text, {value: 'With some text we can use'}),
                 n(:newline)))
 
       assert_ast(ast, source)

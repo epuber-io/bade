@@ -143,7 +143,7 @@ module Bade
     #
     # @param [Symbol] type
     #
-    def append_node(type, indent: @indents.length, add: false, text: nil)
+    def append_node(type, indent: @indents.length, add: false, value: nil)
       while indent >= @stacks.length
         @stacks << @stacks.last.dup
       end
@@ -152,7 +152,7 @@ module Bade
       node = NodeRegistrator.create(type, @lineno)
       parent.children << node
 
-      node.text = text unless text.nil?
+      node.value = value unless value.nil?
 
       if add
         @stacks[indent] << node
@@ -255,11 +255,11 @@ module Bade
 
         when /\A</
           # Inline html
-          append_node(:text, text: @line)
+          append_node(:text, value: @line)
 
         when /\A-\s*(.*)\Z/
           # Found a code block.
-          append_node(:ruby_code, text: $1)
+          append_node(:ruby_code, value: $1)
           add_new_line = false
 
         when /\A(&?)=/
@@ -268,11 +268,11 @@ module Bade
           @line = $'
           output_node = append_node(:output)
           output_node.escaped = $1.length == 1
-          output_node.text = parse_ruby_code("\n")
+          output_node.value = parse_ruby_code("\n")
           
         when /\Adoctype\s/i
           # Found doctype declaration
-          append_node(:doctype, text: $'.strip)
+          append_node(:doctype, value: $'.strip)
 
         when TAG_RE
           # Found a HTML tag.
@@ -296,7 +296,7 @@ module Bade
 
     def parse_import
       path = eval(@line)
-      append_node(:import, text: path)
+      append_node(:import, value: path)
 
       @dependency_paths << path unless @dependency_paths.include?(path)
     end
@@ -365,7 +365,7 @@ module Bade
 
           else
             attr_node = append_node(:mixin_param)
-            attr_node.text = parse_ruby_code(',)')
+            attr_node.value = parse_ruby_code(',)')
         end
       end
     end
@@ -399,11 +399,11 @@ module Bade
 
           when /\A\s*#{NAME_RE_STRING}/
             @line = $'
-            append_node(:mixin_param, text: $1)
+            append_node(:mixin_param, value: $1)
 
           when /\A\s*&#{NAME_RE_STRING}/
             @line = $'
-            append_node(:mixin_block_param, text: $1)
+            append_node(:mixin_block_param, value: $1)
 
           when /\A\s*,/
             # args delimiter
@@ -424,7 +424,7 @@ module Bade
     def parse_text
       text = @line
       text = text.gsub(/&\{/, '#{ html_escaped ')
-      append_node(:text, text: text)
+      append_node(:text, value: text)
     end
 
 
