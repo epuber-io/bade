@@ -19,7 +19,7 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:tag, {name: 'tag_bla'},
-                n(:tag_attribute, {name: 'attr_bla', value: '"abc"'})))
+                n(:tag_attr, {name: 'attr_bla', value: '"abc"'})))
 
       assert_ast(ast, source)
     end
@@ -29,16 +29,16 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:tag, {name: 'tag_bla'},
-                n(:tag_attribute, {name: 'a1', value: '"a1"'}),
-                n(:tag_attribute, {name: 'a2', value: '"a2"'}),
-                n(:tag_attribute, {name: 'a3', value: '"a3"'}),
-                n(:tag_attribute, {name: 'a4', value: '"a4"'}),
-                n(:tag_attribute, {name: 'a5', value: '"a5"'}),
-                n(:tag_attribute, {name: 'a6', value: '"a6"'}),
-                n(:tag_attribute, {name: 'a7', value: '"a7"'}),
-                n(:tag_attribute, {name: 'a8', value: '"a8"'}),
-                n(:tag_attribute, {name: 'a9', value: '"a9"'}),
-                n(:tag_attribute, {name: 'a10', value: '"a10"'}),
+                n(:tag_attr, {name: 'a1', value: '"a1"'}),
+                n(:tag_attr, {name: 'a2', value: '"a2"'}),
+                n(:tag_attr, {name: 'a3', value: '"a3"'}),
+                n(:tag_attr, {name: 'a4', value: '"a4"'}),
+                n(:tag_attr, {name: 'a5', value: '"a5"'}),
+                n(:tag_attr, {name: 'a6', value: '"a6"'}),
+                n(:tag_attr, {name: 'a7', value: '"a7"'}),
+                n(:tag_attr, {name: 'a8', value: '"a8"'}),
+                n(:tag_attr, {name: 'a9', value: '"a9"'}),
+                n(:tag_attr, {name: 'a10', value: '"a10"'}),
               ))
 
       assert_ast(ast, source)

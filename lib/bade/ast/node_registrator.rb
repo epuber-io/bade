@@ -46,7 +46,7 @@ module Bade
       register_type Node, :html_comment
 
       register_type TagNode, :tag
-      register_type KeyValueNode, :tag_attribute
+      register_type KeyValueNode, :tag_attr
 
       register_type ValueNode, :output
 

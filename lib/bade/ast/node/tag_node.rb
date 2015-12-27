@@ -7,10 +7,10 @@ module Bade
       #
       attr_accessor :name
 
-      # @return [Array<TagAttributeNode>]
+      # @return [Array<KeyValueNode>]
       #
       def attributes
-        children.select { |n| n.type == :tag_attribute }
+        children.select { |n| n.type == :tag_attr }
       end
     end
   end

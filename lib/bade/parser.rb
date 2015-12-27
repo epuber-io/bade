@@ -470,7 +470,7 @@ module Bade
           # Class name
           @line = $'
 
-          attr_node = append_node(:tag_attribute)
+          attr_node = append_node(:tag_attr)
           attr_node.name = 'class'
           attr_node.value = fixed_trailing_colon($1).single_quote
 
@@ -480,7 +480,7 @@ module Bade
           # Id name
           @line = $'
 
-          attr_node = append_node(:tag_attribute)
+          attr_node = append_node(:tag_attr)
           attr_node.name = 'id'
           attr_node.value = fixed_trailing_colon($1).single_quote
 
@@ -515,7 +515,7 @@ module Bade
           when CODE_ATTR_RE
             # Value ruby code
             @line = $'
-            attr_node = append_node(:tag_attribute)
+            attr_node = append_node(:tag_attr)
             attr_node.name = $1
             attr_node.value = parse_ruby_code(',)')
 
