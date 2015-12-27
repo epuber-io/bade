@@ -20,12 +20,15 @@ module Bade
         # @param [Class] klass  registering class
         #
         def register_type(klass, type)
-          raise StandardError, "Class #{klass} should be subclass of #{self}" unless klass <= Node
+          raise StandardError, "Class #{klass} should be subclass of #{Node}" unless klass <= Node
 
           registered_types[type] = klass
         end
 
-        # @return [Node]
+        # @param [Symbol] type
+        # @param [Fixnum] lineno
+        #
+        # @return [AST::Node]
         #
         def create(type, lineno)
           klass = registered_types[type]
@@ -41,26 +44,32 @@ module Bade
       register_type ValueNode, :text
       register_type ValueNode, :newline
       register_type ValueNode, :ruby_code
-
-      register_type Node, :comment
-      register_type Node, :html_comment
-
-      register_type TagNode, :tag
-      register_type KeyValueNode, :tag_attr
-
       register_type ValueNode, :output
-
-      register_type ValueNode, :mixin_param
-      register_type ValueNode, :mixin_block_param
-      register_type MixinBlockNode, :mixin_block
-
-      register_type MixinCallNode, :mixin_call
-      register_type MixinDeclarationNode, :mixin_declaration
-      register_type KeyValueNode, :mixin_key_param
 
       register_type DoctypeNode, :doctype
 
       register_type ValueNode, :import
+
+      # --- Comments
+
+      register_type Node, :comment
+      register_type Node, :html_comment
+
+      # --- Tags
+
+      register_type TagNode, :tag
+      register_type KeyValueNode, :tag_attr
+
+      # --- Mixins
+
+      register_type ValueNode, :mixin_param
+      register_type KeyValueNode, :mixin_key_param
+      register_type ValueNode, :mixin_block_param
+
+      register_type MixinBlockNode, :mixin_block
+
+      register_type MixinCallNode, :mixin_call
+      register_type MixinDeclarationNode, :mixin_declaration
     end
   end
 end
