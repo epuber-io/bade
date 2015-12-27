@@ -10,6 +10,8 @@ module Bade
     BUFF_NAME = '__buff'
     MIXINS_NAME = '__mixins'
     START_STRING =	"
+# frozen_string_literal: true
+
 lambda {
   #{BUFF_NAME} = []
   #{MIXINS_NAME} = Hash.new { |hash, key| raise \"Undefined mixin '\#{key}'\" }
