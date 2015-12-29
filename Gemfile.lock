@@ -6,6 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    benchmark-ips (2.3.0)
     coveralls (0.8.10)
       json (~> 1.8)
       rest-client (>= 1.6.8, < 2)
@@ -58,6 +59,7 @@ PLATFORMS
 
 DEPENDENCIES
   bade!
+  benchmark-ips
   bundler (~> 1)
   coveralls
   rake (~> 10.4)
