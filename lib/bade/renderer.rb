@@ -77,7 +77,7 @@ module Bade
     # @return [String]
     #
     def lambda_string(new_line: '\n', indent: '  ')
-      RubyGenerator.document_to_lambda_string(root_document, new_line: new_line, indent: indent)
+      Generator.document_to_lambda_string(root_document, new_line: new_line, indent: indent)
     end
 
 
