@@ -61,4 +61,56 @@ describe String do
       assert_remove 4, "\t\tabc", 'abc', :tabsize => 2
     end
   end
+
+  context '#remove_first' do
+    it 'removes first char by default' do
+      expect('abc'.remove_first).to eq 'bc'
+    end
+
+    it 'removes specific number of chars' do
+      expect('abcdefg'.remove_first(3)).to eq 'defg'
+    end
+  end
+
+  context '#remove_first!' do
+    it 'removes first char by default' do
+      var = 'abc'
+      var.remove_first!
+
+      expect(var).to eq 'bc'
+    end
+
+    it 'removes specific number of chars' do
+      var = 'abcdefg'
+      var.remove_first!(3)
+
+      expect(var).to eq 'defg'
+    end
+  end
+
+  context '#remove_last' do
+    it 'removes last char by default' do
+      expect('abc'.remove_last).to eq 'ab'
+    end
+
+    it 'removes specific number of chars' do
+      expect('abcdefg'.remove_last(3)).to eq 'abcd'
+    end
+  end
+
+  context '#remove_last!' do
+    it 'removes first char by default' do
+      var = 'abc'
+      var.remove_last!
+
+      expect(var).to eq 'ab'
+    end
+
+    it 'removes specific number of chars' do
+      var = 'abcdefg'
+      var.remove_last!(3)
+
+      expect(var).to eq 'abcd'
+    end
+  end
 end

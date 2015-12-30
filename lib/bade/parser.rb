@@ -213,25 +213,46 @@ module Bade
       parse_line_indicators
     end
 
+    module LineIndicatorRegexps
+      IMPORT = /\Aimport /
+      MIXIN_DECLARATION = /\Amixin #{NAME_RE_STRING}/
+      MIXIN_CALL = /\A\+#{NAME_RE_STRING}/
+      BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/
+      HTML_COMMENT = /\A\/\/! /
+      NORMAL_COMMENT = /\A\/\//
+      TEXT_BLOCK_START = /\A\|( ?)/
+      INLINE_HTML = /\A</
+      CODE_BLOCK = /\A-/
+      OUTPUT_BLOCK = /\A(&?)=/
+      DOCTYPE = /\Adoctype\s/i
+      TAG_CLASS_START_BLOCK = /\A\./
+      TAG_ID_START_BLOCK = /\A#/
+    end
+
+    module ParseRubyCodeRegexps
+      END_NEW_LINE = /\A\s*\n/
+      END_PARAMS_ARG = /\A\s*[,)]/
+    end
+
     def parse_line_indicators
       add_new_line = true
 
       case @line
-        when /\Aimport /
+        when LineIndicatorRegexps::IMPORT
           @line = $'
           parse_import
 
-        when /\Amixin #{NAME_RE_STRING}/
+        when LineIndicatorRegexps::MIXIN_DECLARATION
           # Mixin declaration
           @line = $'
           parse_mixin_declaration($1)
 
-        when /\A\+#{NAME_RE_STRING}/
+        when LineIndicatorRegexps::MIXIN_CALL
           # Mixin call
           @line = $'
           parse_mixin_call($1)
 
-        when /\Ablock #{NAME_RE_STRING}/
+        when LineIndicatorRegexps::BLOCK_DECLARATION
           @line = $'
           if @stacks.last.last.type == :mixin_call
             node = append_node(:mixin_block, add: true)
@@ -241,38 +262,38 @@ module Bade
             parse_tag($&)
           end
 
-        when /\A\/\/! /
+        when LineIndicatorRegexps::HTML_COMMENT
           # HTML comment
           append_node(:html_comment, add: true)
           parse_text_block $', @indents.last + @tabsize
 
-        when /\A\/\//
+        when LineIndicatorRegexps::NORMAL_COMMENT
           # Comment
           append_node(:comment, add: true)
           parse_text_block $', @indents.last + @tabsize
 
-        when /\A\|( ?)/
+        when LineIndicatorRegexps::TEXT_BLOCK_START
           # Found a text block.
           parse_text_block $', @indents.last + @tabsize
 
-        when /\A</
+        when LineIndicatorRegexps::INLINE_HTML
           # Inline html
           append_node(:text, value: @line)
 
-        when /\A-\s*(.*)\Z/
+        when LineIndicatorRegexps::CODE_BLOCK
           # Found a code block.
-          append_node(:ruby_code, value: $1)
+          append_node(:ruby_code, value: $'.strip)
           add_new_line = false
 
-        when /\A(&?)=/
+        when LineIndicatorRegexps::OUTPUT_BLOCK
           # Found an output block.
           # We expect the line to be broken or the next line to be indented.
           @line = $'
           output_node = append_node(:output)
           output_node.escaped = $1.length == 1
-          output_node.value = parse_ruby_code("\n")
+          output_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_NEW_LINE)
           
-        when /\Adoctype\s/i
+        when LineIndicatorRegexps::DOCTYPE
           # Found doctype declaration
           append_node(:doctype, value: $'.strip)
 
@@ -281,11 +302,11 @@ module Bade
           @line = $' if $1
           parse_tag($&)
 
-        when /\A\./
+        when LineIndicatorRegexps::TAG_CLASS_START_BLOCK
           # Found class name -> implicit div
           parse_tag 'div'
 
-        when /\A#/
+        when LineIndicatorRegexps::TAG_ID_START_BLOCK
           # Found id name -> implicit div
           parse_tag 'div'
 
@@ -303,6 +324,21 @@ module Bade
       @dependency_paths << path unless @dependency_paths.include?(path)
     end
 
+    module MixinRegexps
+      TEXT_START = /\A /
+      BLOCK_EXPANSION = /\A:\s+/
+      OUTPUT_CODE = /\A(&?)=/
+
+      PARAMS_END = /\A\s*\)/
+
+      PARAMS_END_SPACES = /^\s*$/
+      PARAMS_ARGS_DELIMITER = /\A\s*,/
+
+      PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/
+      PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/
+      PARAMS_KEY_PARAM_NAME = CODE_ATTR_RE
+    end
+
     def parse_mixin_call(mixin_name)
       mixin_node = append_node(:mixin_call, add: true)
       mixin_node.name = mixin_name
@@ -310,20 +346,20 @@ module Bade
       parse_mixin_call_params
 
       case @line
-        when /\A /
+        when MixinRegexps::TEXT_START
           @line = $'
           parse_text
 
-        when /\A:\s+/
+        when MixinRegexps::BLOCK_EXPANSION
           # Block expansion
           @line = $'
           parse_line_indicators
 
-        when /\A(&?)=/
+        when MixinRegexps::OUTPUT_CODE
           # Handle output code
           parse_line_indicators
 
-        when /^$/
+        when ''
           # nothing
 
         else
@@ -334,40 +370,38 @@ module Bade
     def parse_mixin_call_params
       # between tag name and attribute must not be space
       # and skip when is nothing other
-      if @line =~ /\A\(/
-        @line = $'
+      if @line.start_with?('(')
+        @line.remove_first!
       else
         return
       end
 
-      end_re = /\A\s*\)/
-
       while true
         case @line
-          when CODE_ATTR_RE
+          when MixinRegexps::PARAMS_KEY_PARAM_NAME
             @line = $'
             attr_node = append_node(:mixin_key_param)
             attr_node.name = $1
-            attr_node.value = parse_ruby_code(',)')
+            attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
 
-          when /\A\s*,/
+          when MixinRegexps::PARAMS_ARGS_DELIMITER
             # args delimiter
             @line = $'
             next
 
-          when /^\s*$/
+          when MixinRegexps::PARAMS_END_SPACES
             # spaces and/or end of line
             next_line
             next
 
-          when end_re
+          when MixinRegexps::PARAMS_END
             # Find ending delimiter
             @line = $'
             break
 
           else
             attr_node = append_node(:mixin_param)
-            attr_node.value = parse_ruby_code(',)')
+            attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
         end
       end
     end
@@ -382,37 +416,35 @@ module Bade
     def parse_mixin_declaration_params
       # between tag name and attribute must not be space
       # and skip when is nothing other
-      if @line =~ /\A\(/
-        @line = $'
+      if @line.start_with?('(')
+        @line.remove_first!
       else
         return
       end
 
-      end_re = /\A\s*\)/
-
       while true
         case @line
-          when CODE_ATTR_RE
+          when MixinRegexps::PARAMS_KEY_PARAM_NAME
             # Value ruby code
             @line = $'
             attr_node = append_node(:mixin_key_param)
             attr_node.name = $1
-            attr_node.value = parse_ruby_code(',)')
+            attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
 
-          when /\A\s*#{NAME_RE_STRING}/
+          when MixinRegexps::PARAMS_PARAM_NAME
             @line = $'
             append_node(:mixin_param, value: $1)
 
-          when /\A\s*&#{NAME_RE_STRING}/
+          when MixinRegexps::PARAMS_BLOCK_NAME
             @line = $'
             append_node(:mixin_block_param, value: $1)
 
-          when /\A\s*,/
+          when MixinRegexps::PARAMS_ARGS_DELIMITER
             # args delimiter
             @line = $'
             next
 
-          when end_re
+          when MixinRegexps::PARAMS_END
             # Find ending delimiter
             @line = $'
             break
@@ -430,12 +462,21 @@ module Bade
     end
 
 
+    module TagRegexps
+      BLOCK_EXPANSION = /\A:\s+/
+      OUTPUT_CODE = /\A(&?)=/
+      TEXT_START = /\A /
+
+      PARAMS_ARGS_DELIMITER = /\A\s*,/
+      PARAMS_END = /\A\s*\)/
+    end
+
     # @param value [String]
     #
     def fixed_trailing_colon(value)
-      if value =~ /(:)\Z/
-        value = value.sub /:\Z/, ''
-        @line.prepend ':'
+      if String === value && value.end_with?(':')
+        value = value.remove_last
+        @line.prepend(':')
       end
 
       value
@@ -457,12 +498,12 @@ module Bade
       parse_tag_attributes
 
       case @line
-        when /\A:\s+/
+        when TagRegexps::BLOCK_EXPANSION
           # Block expansion
           @line = $'
           parse_line_indicators
 
-        when /\A(&?)=/
+        when TagRegexps::OUTPUT_CODE
           # Handle output code
           parse_line_indicators
 
@@ -486,7 +527,7 @@ module Bade
 
           parse_tag tag_node
 
-        when /\A /
+        when TagRegexps::TEXT_START
           # Text content
           @line = $'
           parse_text
@@ -504,8 +545,8 @@ module Bade
 
       # between tag name and attribute must not be space
       # and skip when is nothing other
-      if @line =~ /\A\(/
-        @line = $'
+      if @line.start_with?('(')
+        @line.remove_first!
       else
         return
       end
@@ -517,14 +558,14 @@ module Bade
             @line = $'
             attr_node = append_node(:tag_attr)
             attr_node.name = $1
-            attr_node.value = parse_ruby_code(',)')
+            attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
 
-          when /\A\s*,/
+          when TagRegexps::PARAMS_ARGS_DELIMITER
             # args delimiter
             @line = $'
             next
 
-          when /\A\s*\)/
+          when TagRegexps::PARAMS_END
             # Find ending delimiter
             @line = $'
             break
@@ -536,7 +577,7 @@ module Bade
 
             # Attributes span multiple lines
             append_node(:newline)
-            syntax_error("Expected closing delimiter #{delimiter}") if @lines.empty?
+            syntax_error('Expected closing tag attributes delimiter `)`') if @lines.empty?
             next_line
         end
       end
@@ -551,7 +592,7 @@ module Bade
       end
 
       until @lines.empty?
-        if @lines.first =~ /\A\s*\Z/
+        if @lines.first.blank?
           next_line
           append_node(:newline)
         else
@@ -573,13 +614,17 @@ module Bade
 
     # Parse ruby code, ended with outer delimiters
     #
-    # @param [String] outer_delimiters
+    # @param [String, Regexp] outer_delimiters
     #
     # @return [Void] parsed ruby code
     #
     def parse_ruby_code(outer_delimiters)
       code = String.new
-      end_re = /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
+      end_re = if Regexp === outer_delimiters
+                 outer_delimiters
+               else
+                 /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
+               end
       delimiters = []
 
       until @line.empty? or (delimiters.count == 0 and @line =~ end_re)

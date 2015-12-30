@@ -11,6 +11,29 @@ class String
   end
 
 
+  def blank?
+    strip.length == 0
+  end
+
+
+  def remove_last(count = 1)
+    slice(0, length - count)
+  end
+
+  def remove_last!(count = 1)
+    slice!(length - count, count)
+  end
+
+
+  def remove_first(count = 1)
+    slice(count, length - count)
+  end
+
+  def remove_first!(count = 1)
+    slice!(0, count)
+  end
+
+
   # Remove indent
   #
   # @param [Int] indent

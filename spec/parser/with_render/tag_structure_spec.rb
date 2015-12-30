@@ -86,6 +86,12 @@ a
     assert_html expected, source
   end
 
+  it 'should handle trailing colon in tag name' do
+    source = 'tag: baf'
+    expected = '<tag><baf/></tag>'
+    assert_html expected, source
+  end
+
   context 'block expansion' do
     it 'should parse block expansion' do
       source   = 'a: b text'

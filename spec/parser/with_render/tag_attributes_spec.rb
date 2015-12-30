@@ -94,5 +94,11 @@ a(href : "href_text", id:"id_text") abc_text_haha
 		source = %q{a(href: 'selected' if false)}
 		expected = %q{<a/>}
 		assert_html expected, source
-	end
+  end
+
+  it 'marks spaces between tag and attributes as start of text' do
+    source = 'tag (start of the text)'
+    expected = '<tag>(start of the text)</tag>'
+    assert_html expected, source
+  end
 end
