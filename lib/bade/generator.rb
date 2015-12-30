@@ -79,7 +79,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
 
     def buff_print_value(value)
       # buff_code %Q{#{BUFF_NAME} << #{CURRENT_INDENT_NAME}} if indent
-      buff_code %Q{#{BUFF_NAME} << #{value}}
+      buff_code(%Q{#{BUFF_NAME} << #{value}})
     end
 
     def buff_code(text)
