@@ -10,12 +10,11 @@ module Bade
       # @param vars [Hash]
       #
       def initialize(vars = {})
-        @vars = vars
-      end
-
-      def method_missing(name, *args)
-        raise KeyError, "Not found value for key `#{name}'" unless @vars.key?(name)
-        @vars[name]
+        vars.each do |key, value|
+          define_singleton_method(key) do
+            value
+          end
+        end
       end
 
       # @return [Binding]
