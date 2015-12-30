@@ -38,22 +38,21 @@ module Bade
     #
     attr_reader :dependency_paths
 
-    # Initialize
+    # @return [String]
     #
-    # Available options:
-    #   :tabsize [Int]    default 4
-    #   :file [String]    default nil
+    attr_reader :file_path
+
+    # @param [Fixnum] tabsize
+    # @param [String] file_path
     #
-    def initialize(options = {})
+    def initialize(tabsize: 4, file_path: nil)
       @line = ''
 
-      tabsize = options.delete(:tabsize) { 4 }
       @tabsize = tabsize
+      @file_path = file_path
 
       @tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize-1}}\t/
       @tab = '\1' + ' ' * tabsize
-
-      @options = options
 
       reset
     end
@@ -62,7 +61,7 @@ module Bade
     # @return [Bade::AST::Document] root node
     #
     def parse(str)
-      @document = AST::Document.new(file_path: @options[:file_path])
+      @document = AST::Document.new(file_path: file_path)
       @root = @document.root
 
       @dependency_paths = []
@@ -688,7 +687,7 @@ module Bade
     # @param [String] message
     #
     def syntax_error(message)
-      raise SyntaxError.new(message, @options[:file], @orig_line, @lineno,
+      raise SyntaxError.new(message, file_path, @orig_line, @lineno,
                   @orig_line && @line ? @orig_line.size - @line.size : 0)
     end
   end

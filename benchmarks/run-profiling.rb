@@ -15,14 +15,15 @@ RubyProf.start
 }
 
 result = RubyProf.stop
-
+result.eliminate_methods!([/Bade::Parser#append_node/])
+result.eliminate_methods!([/Integer#times/])
 
 
 call_stack_path = File.join(File.dirname(__FILE__), 'call_stack.html')
 call_stack_file = File.open(call_stack_path, 'w')
 
 printer = RubyProf::CallStackPrinter.new(result)
-printer.print(call_stack_file, min_percent: 0)
+printer.print(call_stack_file, min_percent: 0.1)
 
 
 
