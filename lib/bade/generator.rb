@@ -159,7 +159,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
         when :output
           data = current_node.value
           output_code = if current_node.escaped
-                          "\#{html_escaped(#{data})}"
+                          "\#{__html_escaped(#{data})}"
                         else
                           "\#{#{data}}"
                         end
@@ -238,7 +238,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
 
       xml_attributes.map do |attr_name|
         joined = all_attributes[attr_name].join('), (')
-        %Q{\#{tag_render_attribute('#{attr_name}', (#{joined}))}}
+        %Q{\#{__tag_render_attribute('#{attr_name}', (#{joined}))}}
       end.join
     end
 

@@ -19,7 +19,7 @@ module Bade
 
       # @return [Binding]
       #
-      def get_binding
+      def __get_binding
         binding
       end
 
@@ -35,14 +35,14 @@ module Bade
       #
       # @return [String]
       #
-      def html_escaped(text)
+      def __html_escaped(text)
         text.sub('&', '&amp;')
             .sub('<', '&lt;')
             .sub('>', '&gt;')
             .sub('"', '&quot;')
       end
 
-      def tag_render_attribute(name, *values)
+      def __tag_render_attribute(name, *values)
         values = values.compact
         return if values.empty?
 

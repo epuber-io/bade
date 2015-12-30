@@ -55,13 +55,13 @@ describe Bade::Renderer do
         def baf
           'abc'
         end
-        def get_binding
+        def __get_binding
           binding
         end
       end
 
       output = Bade::Renderer.from_source('= baf')
-                             .with_binding(binding_class.new.get_binding)
+                             .with_binding(binding_class.new.__get_binding)
                              .render
       expect(output).to eq 'abc'
     end

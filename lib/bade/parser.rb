@@ -456,7 +456,7 @@ module Bade
 
     def parse_text
       text = @line
-      text = text.gsub(/&\{/, '#{ html_escaped ')
+      text = text.gsub(/&\{/, '#{ __html_escaped ')
       append_node(:text, value: text)
     end
 

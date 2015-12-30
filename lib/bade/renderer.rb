@@ -125,7 +125,7 @@ module Bade
     # @return [Binding]
     #
     def lambda_binding
-      @lambda_binding || render_binding.get_binding
+      @lambda_binding || render_binding.__get_binding
     end
 
     # @return [Proc]
