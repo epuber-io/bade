@@ -30,7 +30,7 @@ module Bade
       inst
     end
 
-    # @param file [String, File]
+    # @param [String, File] file
     #
     # @return [self]
     #
@@ -42,6 +42,18 @@ module Bade
              end
 
       from_source(nil, path)
+    end
+
+    # @param [String] precompiled
+    # @param [File] file_path
+    #
+    # @return [self]
+    #
+    def self.from_precompiled(precompiled, file_path = nil)
+      inst = new
+      inst.lambda_string = precompiled
+      inst.file_path = file_path
+      inst
     end
 
 
@@ -71,13 +83,23 @@ module Bade
     # @return [Bade::Node]
     #
     def root_document
-      @parsed ||= _parsed_document(source_text, file_path)
+      @root_document ||= _parsed_document(source_text, file_path)
     end
 
     # @return [String]
     #
-    def lambda_string(new_line: '\n', indent: '  ')
-      Generator.document_to_lambda_string(root_document, new_line: new_line, indent: indent)
+    def precompiled
+      lambda_string
+    end
+
+    # @return [String]
+    #
+    attr_accessor :lambda_string
+
+    # @return [String]
+    #
+    def lambda_string
+      @lambda_string ||= Generator.document_to_lambda_string(root_document)
     end
 
 
@@ -86,12 +108,16 @@ module Bade
 
     # @return [String]
     #
-    def render(binding: nil, new_line: '\n', indent: '  ')
-      lambda_str = lambda_string(new_line: new_line, indent: indent)
+    def render(binding: nil, new_line: nil, indent: nil)
+      lambda_str = lambda_string
       scope = binding || Runtime::RenderBinding.new(locals || {}).get_binding
 
       lambda_instance = eval(lambda_str, scope, file_path || '(__template__)')
-      lambda_instance.call
+
+      run_vars = {}
+      run_vars[Generator::NEW_LINE_NAME.to_sym] = new_line unless new_line.nil?
+      run_vars[Generator::BASE_INDENT_NAME.to_sym] = indent unless indent.nil?
+      lambda_instance.call(**run_vars)
     end
 
 

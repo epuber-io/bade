@@ -9,10 +9,16 @@ module Bade
 
     BUFF_NAME = '__buff'
     MIXINS_NAME = '__mixins'
+    NEW_LINE_NAME = '__new_line'
+    CURRENT_INDENT_NAME = '__indent'
+    BASE_INDENT_NAME = '__base_indent'
+
     START_STRING =	"
 # frozen_string_literal: true
 
-lambda {
+lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
+#  #{CURRENT_INDENT_NAME} = #{BASE_INDENT_NAME}
+
   #{BUFF_NAME} = []
   #{MIXINS_NAME} = Hash.new { |hash, key| raise \"Undefined mixin '\#{key}'\" }
 "
@@ -25,8 +31,8 @@ lambda {
     #
     # @return [Proc]
     #
-    def self.document_to_lambda(document, new_line: "\n", indent: "\t", filename: '')
-      generator = self.new(new_line, indent)
+    def self.document_to_lambda(document, filename: nil)
+      generator = self.new
       generator.generate_lambda(document, filename)
     end
 
@@ -34,26 +40,17 @@ lambda {
     #
     # @return [String]
     #
-    def self.document_to_lambda_string(document, new_line: "\n", indent: "\t", filename: '')
-      generator = self.new(new_line, indent)
+    def self.document_to_lambda_string(document)
+      generator = self.new
       generator.generate_lambda_string(document)
     end
 
-
-
-    # @param [String] new_line_string
-    # @param [String] indent_string
-    #
-    def initialize(new_line_string, indent_string)
-      @new_line_string = new_line_string
-      @indent_string = indent_string
-    end
 
     # @param [Document] document
     # @param [String] filename
     #
     def generate_lambda(document, filename)
-      eval(generate_lambda_string(document), nil, filename)
+      eval(generate_lambda_string(document), nil, filename || '(__template__)')
     end
 
     # @param [Document] document
@@ -77,21 +74,16 @@ lambda {
     # @param [String] text
     #
     def buff_print_text(text, indent: false, new_line: false)
-      indent_text = if indent
-                      @indent_string * @indent
-                    else
-                      ''
-                    end
+      buff_print_value(%Q{%Q{#{text}}}) if text.length > 0
+    end
 
-      prepended_text = indent_text + text
-
-      if prepended_text.length > 0
-        buff_code %Q{#{BUFF_NAME} << %Q{#{prepended_text}}}
-      end
+    def buff_print_value(value)
+      # buff_code %Q{#{BUFF_NAME} << #{CURRENT_INDENT_NAME}} if indent
+      buff_code %Q{#{BUFF_NAME} << #{value}}
     end
 
     def buff_code(text)
-      @buff << "\t" * @code_indent + text
+      @buff << '  ' * @code_indent + text
     end
 
 
@@ -143,11 +135,8 @@ lambda {
           buff_print_text ' -->'
 
         when :comment
-          comment_text = current_node.children.flat_map { |node|
-            node.value
-          }.join(@new_line_string + '#')
-
-          buff_code '#' + comment_text
+          comment_text = '#' + current_node.children.map(&:value).join("\n#")
+          buff_code(comment_text)
 
         when :doctype
           buff_print_text current_node.xml_output
@@ -177,7 +166,7 @@ lambda {
           buff_print_text output_code
 
         when :newline
-          buff_print_text @new_line_string if @new_line_string.length > 0
+          buff_print_value(NEW_LINE_NAME)
 
         when :import
           # nothing

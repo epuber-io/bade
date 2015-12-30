@@ -40,7 +40,7 @@ end
 def lambda_str_from_bade_code(source)
   parser = Bade::Parser.new
   parsed = parser.parse(source)
-  Bade::Generator.document_to_lambda_string(parsed, indent: '')
+  Bade::Generator.document_to_lambda_string(parsed)
 end
 
 module ASTHelper
