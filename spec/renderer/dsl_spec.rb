@@ -49,6 +49,24 @@ describe Bade::Renderer do
     expect(output).to eq expected
   end
 
+  context 'it supports using custom binding' do
+    it 'can work with anonymous class instance' do
+      binding_class = Class.new do
+        def baf
+          'abc'
+        end
+        def get_binding
+          binding
+        end
+      end
+
+      output = Bade::Renderer.from_source('= baf')
+                             .with_binding(binding_class.new.get_binding)
+                             .render
+      expect(output).to eq 'abc'
+    end
+  end
+
   context 'it supports rendering precompiled string' do
     it 'can precompile file to some object usable later' do
       precompiled = Bade::Renderer.from_file(template_path)
@@ -107,6 +125,39 @@ describe Bade::Renderer do
                              .render(new_line: '')
 
       expect(output).to eq('<a class="some">text</a>woohoo')
+    end
+  end
+
+  context 'it clears after running' do
+    it 'defined method in template is not visible after running' do
+      source = '
+- def abc(a)
+-   self
+- end
+'
+
+      # prepare first run
+      renderer = Bade::Renderer.from_source(source)
+      render_binding = renderer.render_binding
+
+      # make sure the method doesn't exist
+      expect do
+        render_binding.method(:abc)
+      end.to raise_error NameError
+
+
+      # run the template to define method
+      renderer.lambda_instance.call
+
+
+      # reset render binding
+      renderer.render_binding = nil
+      new_render_binding = renderer.render_binding
+
+      # now the method should not exist
+      expect do
+        new_render_binding.method(:abc)
+      end.to raise_error NameError
     end
   end
 end

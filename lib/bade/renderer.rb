@@ -20,6 +20,14 @@ module Bade
     #
     attr_accessor :locals
 
+    # @return [Binding]
+    #
+    attr_accessor :lambda_binding
+
+    # @return [RenderBinding]
+    #
+    attr_accessor :render_binding
+
     # @param source [String]
     #
     # @return [self]
@@ -72,7 +80,14 @@ module Bade
     # @return [self]
     #
     def with_locals(locals = {})
+      self.render_binding = nil
+
       self.locals = locals
+      self
+    end
+
+    def with_binding(binding)
+      self.lambda_binding = binding
       self
     end
 
@@ -101,6 +116,27 @@ module Bade
       precompiled.code_string
     end
 
+    # @return [RenderBinding]
+    #
+    def render_binding
+      @render_binding ||= Runtime::RenderBinding.new(locals || {})
+    end
+
+    # @return [Binding]
+    #
+    def lambda_binding
+      @lambda_binding || render_binding.get_binding
+    end
+
+    # @return [Proc]
+    #
+    def lambda_instance
+      if @lambda_binding
+        @lambda_binding.eval(lambda_string, file_path || '(__template__)')
+      else
+        render_binding.instance_eval(lambda_string, file_path || '(__template__)')
+      end
+    end
 
     # ----------------------------------------------------------------------------- #
     # Render
@@ -108,9 +144,7 @@ module Bade
     # @return [String]
     #
     def render(binding: nil, new_line: nil, indent: nil)
-      scope = binding || Runtime::RenderBinding.new(locals || {}).get_binding
-
-      lambda_instance = eval(lambda_string, scope, file_path || '(__template__)')
+      self.lambda_binding = binding unless binding.nil? # backward compatibility
 
       run_vars = {}
       run_vars[Generator::NEW_LINE_NAME.to_sym] = new_line unless new_line.nil?
