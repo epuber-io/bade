@@ -54,7 +54,7 @@ describe Bade::Renderer do
       precompiled = Bade::Renderer.from_file(template_path)
                                   .precompiled
 
-      output = Bade::Renderer.from_precompiled(precompiled, template_path)
+      output = Bade::Renderer.from_precompiled(precompiled)
                              .with_locals(magic: 'woohoo')
                              .render(new_line: '')
 
@@ -67,11 +67,46 @@ describe Bade::Renderer do
       precompiled = Bade::Renderer.from_source(source, template_path)
                                   .precompiled
 
-      output = Bade::Renderer.from_precompiled(precompiled, template_path)
+      output = Bade::Renderer.from_precompiled(precompiled)
                              .render(new_line: '')
 
       expected = '<div>abc</div>'
       expect(output).to eq expected
+    end
+
+    it 'can write precompiled version to disk and read back' do
+      source = 'div abc'
+      precompiled = Bade::Renderer.from_source(source)
+                                  .precompiled
+
+      precompiled.write_yaml_to_file('/tmp/bade_experiment')
+      expect(precompiled.source_file_path).to be_nil
+
+      new_precompiled = Bade::Precompiled.from_yaml_file('/tmp/bade_experiment')
+      expect(new_precompiled.source_file_path).to be_nil
+
+      output = Bade::Renderer.from_precompiled(new_precompiled)
+                             .render(new_line: '')
+
+      expected = '<div>abc</div>'
+      expect(output).to eq expected
+    end
+
+    it 'can write precompiled version to disk and read back from file from disk' do
+      precompiled = Bade::Renderer.from_file(template_path)
+                                  .precompiled
+
+      precompiled.write_yaml_to_file('/tmp/bade_experiment')
+      expect(precompiled.source_file_path).to eq template_path
+
+      new_precompiled = Bade::Precompiled.from_yaml_file('/tmp/bade_experiment')
+      expect(new_precompiled.source_file_path).to eq template_path
+
+      output = Bade::Renderer.from_precompiled(new_precompiled)
+                             .with_locals(magic: 'woohoo')
+                             .render(new_line: '')
+
+      expect(output).to eq('<a class="some">text</a>woohoo')
     end
   end
 end

@@ -3,6 +3,7 @@
 require_relative 'parser'
 require_relative 'generator'
 require_relative 'runtime'
+require_relative 'precompiled'
 
 
 module Bade
@@ -44,15 +45,14 @@ module Bade
       from_source(nil, path)
     end
 
-    # @param [String] precompiled
+    # @param [Precompiled] precompiled
     # @param [File] file_path
     #
     # @return [self]
     #
-    def self.from_precompiled(precompiled, file_path = nil)
+    def self.from_precompiled(precompiled)
       inst = new
-      inst.lambda_string = precompiled
-      inst.file_path = file_path
+      inst.precompiled = precompiled
       inst
     end
 
@@ -86,20 +86,19 @@ module Bade
       @root_document ||= _parsed_document(source_text, file_path)
     end
 
-    # @return [String]
+
+    attr_writer :precompiled
+
+    # @return [Precompiled]
     #
     def precompiled
-      lambda_string
+      @precompiled ||= Precompiled.new(Generator.document_to_lambda_string(root_document), file_path)
     end
 
     # @return [String]
     #
-    attr_accessor :lambda_string
-
-    # @return [String]
-    #
     def lambda_string
-      @lambda_string ||= Generator.document_to_lambda_string(root_document)
+      precompiled.code_string
     end
 
 
@@ -109,10 +108,9 @@ module Bade
     # @return [String]
     #
     def render(binding: nil, new_line: nil, indent: nil)
-      lambda_str = lambda_string
       scope = binding || Runtime::RenderBinding.new(locals || {}).get_binding
 
-      lambda_instance = eval(lambda_str, scope, file_path || '(__template__)')
+      lambda_instance = eval(lambda_string, scope, file_path || '(__template__)')
 
       run_vars = {}
       run_vars[Generator::NEW_LINE_NAME.to_sym] = new_line unless new_line.nil?
