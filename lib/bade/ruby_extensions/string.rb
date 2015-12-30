@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class String
+  SPACE_CHAR = ' '
+  TAB_CHAR = "\t"
 
   # Creates new string surrounded by single quotes
   #
@@ -33,31 +35,15 @@ class String
     slice!(0, count)
   end
 
-
-  # Remove indent
-  #
-  # @param [Int] indent
-  # @param [Int] tabsize
-  #
-  def remove_indent(indent, tabsize)
-    self.dup.remove_indent!(indent, tabsize)
-  end
-
-
-  # Remove indent
-  #
-  # @param [Int] indent
-  # @param [Int] tabsize
-  #
-  def remove_indent!(indent, tabsize)
+  def __chars_count_for_indent(indent, tabsize)
     count = 0
     self.each_char do |char|
+      break if indent <= 0
 
-      if indent <= 0
-        break
-      elsif char == ' '
+      case char
+      when SPACE_CHAR
         indent -= 1
-      elsif char == "\t"
+      when TAB_CHAR
         if indent - tabsize < 0
           raise StandardError, 'malformed tabs'
         end
@@ -70,7 +56,26 @@ class String
       count += 1
     end
 
-    self[0 ... self.length] = self[count ... self.length]
+    count
+  end
+
+  # Remove indent
+  #
+  # @param [Int] indent
+  # @param [Int] tabsize
+  #
+  def remove_indent(indent, tabsize)
+    remove_first(__chars_count_for_indent(indent, tabsize))
+  end
+
+
+  # Remove indent
+  #
+  # @param [Int] indent
+  # @param [Int] tabsize
+  #
+  def remove_indent!(indent, tabsize)
+    remove_first!(__chars_count_for_indent(indent, tabsize))
   end
 
 
@@ -84,9 +89,9 @@ class String
     count = 0
 
     self.each_char do |char|
-      if char == ' '
+      if char == SPACE_CHAR
         count += 1
-      elsif char == "\t"
+      elsif char == TAB_CHAR
         count += tabsize
       else
         break

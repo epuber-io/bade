@@ -39,6 +39,27 @@ describe String do
 
   end
 
+  context '#remove_indent' do
+    def assert_remove(indent, string, expected_string, tabsize: 4)
+      new_str = string.remove_indent(indent, tabsize)
+
+      expect(new_str).to eq expected_string
+    end
+
+    it 'removes spaces' do
+      assert_remove 4, '    abc', 'abc'
+      assert_remove 3, '    abc', ' abc'
+      assert_remove 2, '    abc', '  abc'
+      assert_remove 1, '    abc', '   abc'
+      assert_remove 0, '    abc', '    abc'
+    end
+
+    it 'removes tabs' do
+      assert_remove 4, "\tabc", 'abc', :tabsize => 4
+      assert_remove 4, "\t\tabc", 'abc', :tabsize => 2
+    end
+  end
+
   context '#remove_indent!' do
     def assert_remove(indent, string, expected_string, tabsize: 4)
       string_dup = string.dup
