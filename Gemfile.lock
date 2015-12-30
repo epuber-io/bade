@@ -18,12 +18,19 @@ GEM
     docile (1.1.5)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
+    fast_stack (0.1.0)
+      rake
+      rake-compiler
+    flamegraph (0.1.0)
+      fast_stack
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     json (1.8.3)
     mime-types (2.99)
     netrc (0.11.0)
     rake (10.4.2)
+    rake-compiler (0.9.5)
+      rake
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -41,6 +48,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
+    ruby-prof (0.15.9)
     simplecov (0.11.1)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -62,8 +70,10 @@ DEPENDENCIES
   benchmark-ips
   bundler (~> 1)
   coveralls
+  flamegraph
   rake (~> 10.4)
   rspec (~> 3.2)
+  ruby-prof
 
 BUNDLED WITH
    1.11.2
