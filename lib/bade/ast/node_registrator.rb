@@ -43,7 +43,7 @@ module Bade
 
       register_type ValueNode, :text
       register_type ValueNode, :newline
-      register_type ValueNode, :ruby_code
+      register_type ValueNode, :code
       register_type ValueNode, :output
 
       register_type DoctypeNode, :doctype

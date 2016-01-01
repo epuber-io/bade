@@ -126,7 +126,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
         when :tag
           visit_tag(current_node)
 
-        when :ruby_code
+        when :code
           buff_code current_node.value
 
         when :html_comment

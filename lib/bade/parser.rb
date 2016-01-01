@@ -279,7 +279,7 @@ module Bade
 
         when LineIndicatorRegexps::CODE_BLOCK
           # Found a code block.
-          append_node(:ruby_code, value: $'.strip)
+          append_node(:code, value: $'.strip)
           add_new_line = false
 
         when LineIndicatorRegexps::OUTPUT_BLOCK
