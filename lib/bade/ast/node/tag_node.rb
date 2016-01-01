@@ -7,6 +7,12 @@ module Bade
       #
       attr_accessor :name
 
+      # @param [TagNode] other
+      #
+      def ==(other)
+        super && name == other.name
+      end
+
       # @return [Array<KeyValueNode>]
       #
       def attributes

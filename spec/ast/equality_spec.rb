@@ -157,3 +157,32 @@ describe Bade::AST::MixinCommonNode do
   end
 end
 
+describe Bade::AST::TagNode do
+  context '#==' do
+    it 'equals correctly for same instances' do
+      node1 = Bade::AST::TagNode.new(:random_tag_123)
+      node1.name = 'abc some text'
+      expect(node1).to eq node1
+    end
+    it 'equals correctly for same objects' do
+      node1 = Bade::AST::TagNode.new(:random_tag_123)
+      node1.name = 'abc'
+      node2 = Bade::AST::TagNode.new(:random_tag_123)
+      node2.name = 'abc'
+      expect(node1).to eq node2
+    end
+    it 'not equals correctly for different types' do
+      node1 = Bade::AST::TagNode.new(:random_tag_123)
+      node2 = Bade::AST::TagNode.new(:root)
+      expect(node1).to_not eq node2
+    end
+    it 'not equals correctly for same type with different names' do
+      node1 = Bade::AST::TagNode.new(:random_tag_123)
+      node1.name = 'abc'
+      node2 = Bade::AST::TagNode.new(:random_tag_123)
+      node2.name = 'xyz'
+      expect(node1).to_not eq node2
+    end
+  end
+end
+
