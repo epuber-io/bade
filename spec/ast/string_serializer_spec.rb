@@ -24,7 +24,8 @@ describe Bade::AST::StringSerializer do
     sut = _Sut.new(tag)
 
     expected = '(:tag tag_name
-  (:tag_attr attr-name:"attr-value"))'
+  (:tag_attr attr-name:"attr-value")
+)'
 
     expect(sut.to_s).to eq expected
   end
@@ -41,7 +42,9 @@ describe Bade::AST::StringSerializer do
   (:tag_attr attr:value)
   (:tag tag_2
     (:tag_attr attr2:value2)
-    (:text baf)))'
+    (:text baf)
+  )
+)'
 
     expect(sut.to_s).to eq expected
   end
@@ -53,7 +56,8 @@ describe Bade::AST::StringSerializer do
     sut = _Sut.new(root)
 
     expected = '(:mixin_decl blaf
-  (:mixin_param abc))'
+  (:mixin_param abc)
+)'
 
     expect(sut.to_s).to eq expected
   end

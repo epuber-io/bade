@@ -36,7 +36,7 @@ module Bade
 
         children_s = ''
         if node.children.count > 0
-          children_s = "\n" + node.children.map { |n| node_to_s(n, level + 1) }.join("\n")
+          children_s = "\n" + node.children.map { |n| node_to_s(n, level + 1) }.join("\n") + "\n#{indent}"
         end
 
         other = ''
