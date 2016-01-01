@@ -12,6 +12,12 @@ module Bade
       def params
         children.select { |n| allowed_parameter_types.include?(n.type) }
       end
+
+      # @param [MixinCommonNode] other
+      #
+      def ==(other)
+        super && name == other.name
+      end
     end
 
     class MixinDeclarationNode < MixinCommonNode

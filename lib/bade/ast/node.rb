@@ -41,7 +41,7 @@ module Bade
       # @return [Bool]
       #
       def ==(other)
-        return false unless Node === other
+        return false unless self.class == other.class
 
         type == other.type && children == other.children
       end

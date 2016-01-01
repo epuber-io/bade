@@ -12,15 +12,21 @@ module Bade
       attr_accessor :escaped
 
       def to_s
-        text || type
+        value || type
       end
 
       def inspect
-        if text
-          text.inspect
+        if value
+          value.inspect
         else
           type.inspect
         end
+      end
+
+      # @param [ValueNode] other
+      #
+      def ==(other)
+        super && value == other.value && escaped == other.escaped
       end
     end
   end
