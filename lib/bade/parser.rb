@@ -261,7 +261,7 @@ module Bade
       END_PARAMS_ARG = /\A\s*[,)]/
     end
 
-    def parse_line_indicators(add_new_line: true)
+    def parse_line_indicators(add_newline: true)
       case @line
         when LineIndicatorRegexps::IMPORT
           @line = $'
@@ -338,7 +338,7 @@ module Bade
           syntax_error 'Unknown line indicator'
       end
 
-      append_node(:newline) if add_new_line && !@lines.empty?
+      append_node(:newline) if add_newline && !@lines.empty?
     end
 
     def parse_import
@@ -364,6 +364,8 @@ module Bade
     end
 
     def parse_mixin_call(mixin_name)
+      mixin_name = fixed_trailing_colon(mixin_name)
+
       mixin_node = append_node(:mixin_call, add: true)
       mixin_node.name = mixin_name
 
@@ -377,11 +379,11 @@ module Bade
         when MixinRegexps::BLOCK_EXPANSION
           # Block expansion
           @line = $'
-          parse_line_indicators
+          parse_line_indicators(add_newline: false)
 
         when MixinRegexps::OUTPUT_CODE
           # Handle output code
-          parse_line_indicators
+          parse_line_indicators(add_newline: false)
 
         when ''
           # nothing
@@ -525,11 +527,11 @@ module Bade
         when TagRegexps::BLOCK_EXPANSION
           # Block expansion
           @line = $'
-          parse_line_indicators(add_new_line: false)
+          parse_line_indicators(add_newline: false)
 
         when TagRegexps::OUTPUT_CODE
           # Handle output code
-          parse_line_indicators(add_new_line: false)
+          parse_line_indicators(add_newline: false)
 
         when CLASS_TAG_RE
           # Class name

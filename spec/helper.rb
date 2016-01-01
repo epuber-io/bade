@@ -71,3 +71,16 @@ module ASTHelper
     n(:tag, {name: name}, *children)
   end
 end
+
+
+
+class String
+  # source: http://apidock.com/rails/String/strip_heredoc
+  # @return [String]
+  #
+  def strip_heredoc
+    min_val = scan(/^[ \t]*(?=\S)/).min
+    indent = (min_val && min_val.size) || 0
+    gsub(/^[ \t]{#{indent}}/, '')
+  end
+end
