@@ -5,6 +5,7 @@ require_relative 'ast/document'
 require_relative 'ast/node_registrator'
 
 require_relative 'ruby_extensions/string'
+require_relative 'ruby_extensions/array'
 
 module Bade
   class Parser
@@ -123,6 +124,11 @@ module Bade
     def next_line
       if @lines.empty?
         @orig_line = @line = nil
+
+        last_newlines = remove_last_newlines
+        @root.children += last_newlines
+
+        nil
       else
         @orig_line = @lines.shift
         @lineno += 1
@@ -162,19 +168,24 @@ module Bade
       node
     end
 
-    def parse_line
-      line = @line
+    # @return [Array<AST::Node>]
+    #
+    def remove_last_newlines
+      last_node = @stacks.last.last
+      last_newlines_count = last_node.children.rcount_matching { |n| n.type == :newline }
+      last_node.children.pop(last_newlines_count)
+    end
 
-      if line.strip.length == 0
+    def parse_line
+      if @line.strip.length == 0
         append_node(:newline) unless @lines.empty?
         return
       end
 
-      indent = get_indent(line)
+      indent = get_indent(@line)
 
       # left strip
-      line.remove_indent!(indent, @tabsize)
-      @line = line
+      @line.remove_indent!(indent, @tabsize)
 
       # If there's more stacks than indents, it means that the previous
       # line is expecting this line to be indented.
@@ -185,19 +196,36 @@ module Bade
       else
         # This line was *not* indented more than the line before,
         # so we'll just forget about the stack that the previous line pushed.
-        @stacks.pop if expecting_indentation
+        if expecting_indentation
+          last_newlines = remove_last_newlines
+
+          @stacks.pop
+
+          new_node = @stacks.last.last
+          new_node.children += last_newlines
+        end
 
         # This line was deindented.
         # Now we're have to go through the all the indents and figure out
         # how many levels we've deindented.
         while indent < @indents.last
+          last_newlines = remove_last_newlines
+
           @indents.pop
           @stacks.pop
+
+          new_node = @stacks.last.last
+          new_node.children += last_newlines
         end
 
         # Remove old stacks we don't need
         while not @stacks[indent].nil? and indent < @stacks[indent].length - 1
+          last_newlines = remove_last_newlines
+
           @stacks[indent].pop
+
+          new_node = @stacks.last.last
+          new_node.children += last_newlines
         end
 
         # This line's indentation happens lie "between" two other line's
@@ -280,7 +308,6 @@ module Bade
         when LineIndicatorRegexps::CODE_BLOCK
           # Found a code block.
           append_node(:code, value: $'.strip)
-          add_new_line = false
 
         when LineIndicatorRegexps::OUTPUT_BLOCK
           # Found an output block.

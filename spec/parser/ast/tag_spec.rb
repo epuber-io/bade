@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative '../../helper'
 
@@ -62,8 +63,8 @@ describe Bade::Parser do
 
       ast = n(:root,
               tag('tagX',
-                n(:text, {value: 'With some text we can use'}),
-                n(:newline)))
+                  n(:text, {value: 'With some text we can use'})),
+              n(:newline))
 
       assert_ast(ast, source)
     end

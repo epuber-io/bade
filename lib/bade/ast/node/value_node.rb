@@ -11,18 +11,6 @@ module Bade
       #
       attr_accessor :escaped
 
-      def to_s
-        value || type
-      end
-
-      def inspect
-        if value
-          value.inspect
-        else
-          type.inspect
-        end
-      end
-
       # @param [ValueNode] other
       #
       def ==(other)

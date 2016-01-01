@@ -12,7 +12,7 @@ module Bade
 
       # @return [Array<Bade::Node>]
       #
-      attr_reader :children
+      attr_accessor :children
 
       # --- METADATA ---
 
