@@ -80,5 +80,68 @@ describe Bade::Parser do
 
       assert_ast(ast, source)
     end
+
+    it 'parses output right after tag' do
+      source = 'tag1= magic_variable.name.baf'
+      ast = n(:root,
+              tag('tag1',
+                n(:output, {value: 'magic_variable.name.baf', escaped: false})))
+
+      assert_ast(ast, source)
+    end
+
+    it 'parses output on next line after tag' do
+      source = 'tag1
+  = magic_variable.name.baf'
+      ast = n(:root,
+              tag('tag1',
+                  n(:newline),
+                  n(:output, {value: 'magic_variable.name.baf', escaped: false})))
+
+      assert_ast(ast, source)
+    end
+
+
+    it 'parses inline tags right after tag' do
+      source = 'tag1: tag2 some text'
+
+      ast = n(:root,
+             tag('tag1',
+                 tag('tag2',
+                    n(:text, {value: 'some text'}))))
+
+      assert_ast(ast, source)
+    end
+
+    it 'parses nested inline tags' do
+      source = 'tag1: tag2 some text
+  tag3: tag4 some other text'
+
+      ast = n(:root,
+              tag('tag1',
+                  tag('tag2',
+                      n(:text, {value: 'some text'}),
+                      n(:newline),
+                      tag('tag3',
+                          tag('tag4',
+                              n(:text, {value: 'some other text'}))))))
+
+      assert_ast(ast, source)
+    end
+
+    it 'parses inline tags right after tag with attributes' do
+      source = 'tag1(a1: "baf"): tag2(a2: "abc") some text'
+
+      ast = n(:root,
+              tag('tag1',
+                  n(:tag_attr, {name: 'a1', value: '"baf"'}),
+                  tag('tag2',
+                      n(:tag_attr, {name: 'a2', value: '"abc"'}),
+                      n(:text, {value: 'some text'}))))
+
+      assert_ast(ast, source)
+    end
+
+
   end
 end

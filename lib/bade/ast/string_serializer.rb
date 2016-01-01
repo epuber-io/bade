@@ -47,7 +47,7 @@ module Bade
         when KeyValueNode
           other = "#{node.name}:#{node.value}"
         when ValueNode
-          other = node.value
+          other = node.value || ''
         when MixinCommonNode
           other = node.name
         else

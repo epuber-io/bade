@@ -233,9 +233,7 @@ module Bade
       END_PARAMS_ARG = /\A\s*[,)]/
     end
 
-    def parse_line_indicators
-      add_new_line = true
-
+    def parse_line_indicators(add_new_line: true)
       case @line
         when LineIndicatorRegexps::IMPORT
           @line = $'
@@ -500,11 +498,11 @@ module Bade
         when TagRegexps::BLOCK_EXPANSION
           # Block expansion
           @line = $'
-          parse_line_indicators
+          parse_line_indicators(add_new_line: false)
 
         when TagRegexps::OUTPUT_CODE
           # Handle output code
-          parse_line_indicators
+          parse_line_indicators(add_new_line: false)
 
         when CLASS_TAG_RE
           # Class name
