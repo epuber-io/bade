@@ -141,7 +141,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
         when :doctype
           buff_print_text current_node.xml_output
 
-        when :mixin_declaration
+        when :mixin_decl
           params = formatted_mixin_params(current_node)
           buff_code "#{MIXINS_NAME}['#{current_node.name}'] = lambda { |#{params}|"
 
@@ -283,7 +283,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
         else
           result << '{}'
         end
-      elsif mixin_node.type == :mixin_declaration
+      elsif mixin_node.type == :mixin_decl
         result << '__blocks'
       end
 

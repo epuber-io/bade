@@ -214,7 +214,7 @@ module Bade
 
     module LineIndicatorRegexps
       IMPORT = /\Aimport /
-      MIXIN_DECLARATION = /\Amixin #{NAME_RE_STRING}/
+      MIXIN_DECL = /\Amixin #{NAME_RE_STRING}/
       MIXIN_CALL = /\A\+#{NAME_RE_STRING}/
       BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/
       HTML_COMMENT = /\A\/\/! /
@@ -239,7 +239,7 @@ module Bade
           @line = $'
           parse_import
 
-        when LineIndicatorRegexps::MIXIN_DECLARATION
+        when LineIndicatorRegexps::MIXIN_DECL
           # Mixin declaration
           @line = $'
           parse_mixin_declaration($1)
@@ -404,7 +404,7 @@ module Bade
     end
 
     def parse_mixin_declaration(mixin_name)
-      mixin_node = append_node(:mixin_declaration, add: true)
+      mixin_node = append_node(:mixin_decl, add: true)
       mixin_node.name = mixin_name
 
       parse_mixin_declaration_params

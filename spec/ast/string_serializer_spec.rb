@@ -47,12 +47,12 @@ describe Bade::AST::StringSerializer do
   end
 
   it 'can serialize simple mixin' do
-    root = n(:mixin_declaration, {name: 'blaf'},
-            n(:mixin_param, {value: 'abc'}))
+    root = n(:mixin_decl, {name: 'blaf'},
+             n(:mixin_param, {value: 'abc'}))
 
     sut = _Sut.new(root)
 
-    expected = '(:mixin_declaration blaf
+    expected = '(:mixin_decl blaf
   (:mixin_param abc))'
 
     expect(sut.to_s).to eq expected

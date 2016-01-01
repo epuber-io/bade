@@ -69,7 +69,7 @@ module Bade
       register_type MixinBlockNode, :mixin_block
 
       register_type MixinCallNode, :mixin_call
-      register_type MixinDeclarationNode, :mixin_declaration
+      register_type MixinDeclarationNode, :mixin_decl
     end
   end
 end
