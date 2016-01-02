@@ -1,104 +1,112 @@
 require_relative '../../helper'
 
 describe Bade::Parser do
+  context 'tag attributes' do
+    it 'should parse one attribute' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'href_text')
+      BADE
 
-	it 'should parse one attribute' do
-		source = "
-a(href: 'href_text')
-"
+      expected = '<a href="href_text"/>'
+      assert_html expected, source
+    end
 
-		expected = '<a href="href_text"/>'
+    it 'should parse one attribute and text after' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'href_text') abc
+      BADE
 
-		assert_html expected, source
-	end
-
-	it 'should parse one attribute and text after' do
-		source = "
-a(href: 'href_text') abc
-"
-
-		expected = '<a href="href_text">abc</a>'
-
-		assert_html expected, source
-	end
+      expected = '<a href="href_text">abc</a>'
+      assert_html expected, source
+    end
 
 
-	it 'should parse two attributes' do
-		source = "
-a(href: 'href_text', id : 'id_text')
-"
+    it 'should parse two attributes' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'href_text', id : 'id_text')
+      BADE
 
-		expected = '<a href="href_text" id="id_text"/>'
-
-		assert_html expected, source
-	end
-
-
-	it 'should parse two attributes and text' do
-		source = "
-a(href: 'href_text', id : 'id_text') abc_text_haha
-"
-
-		expected = '<a href="href_text" id="id_text">abc_text_haha</a>'
-
-		assert_html expected, source
-	end
+      expected = '<a href="href_text" id="id_text"/>'
+      assert_html expected, source
+    end
 
 
-	it 'should parse two attributes without spaces' do
-		source = "
-a(href:'href_text',id:'id_text')
-"
+    it 'should parse two attributes and text' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'href_text', id : 'id_text') abc_text_haha
+      BADE
 
-		expected = '<a href="href_text" id="id_text"/>'
+      expected = '<a href="href_text" id="id_text">abc_text_haha</a>'
+      assert_html expected, source
+    end
 
-		assert_html expected, source
-	end
+
+    it 'should parse two attributes without spaces' do
+      source = <<-BADE.strip_heredoc
+        a(href:'href_text',id:'id_text')
+      BADE
+
+      expected = '<a href="href_text" id="id_text"/>'
+
+      assert_html expected, source
+    end
 
 
-	it 'should parse two attributes and text nested' do
-		source = "
-a(href : 'href_text', id : 'id_text') abc_text_haha
-	b(class : 'aaa') bbb
-"
+    it 'should parse two attributes and text nested' do
+      source = <<-BADE.strip_heredoc
+        a(href : 'href_text', id : 'id_text') abc_text_haha
+          b(class : 'aaa') bbb
+      BADE
 
-		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
+      expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
 
-		assert_html expected, source
-	end
+      assert_html expected, source
+    end
 
-	it 'should parse attributes with double quoted attributes' do
-		source = '
-a(href : "href_text", id:"id_text") abc_text_haha
-	b(class : "aaa") bbb
-'
+    it 'should parse attributes with double quoted attributes' do
+      source = <<-BADE.strip_heredoc
+        a(href : "href_text", id:"id_text") abc_text_haha
+          b(class : "aaa") bbb
+      BADE
 
-		expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
+      expected = '<a href="href_text" id="id_text">abc_text_haha<b class="aaa">bbb</b></a>'
+      assert_html expected, source
+    end
 
-		assert_html expected, source
-  end
+    it 'removes attributes when the value is nil' do
+      source = <<-BADE.strip_heredoc
+        a(href: nil)
+      BADE
 
-  it 'removes attributes when the value is nil' do
-    source = 'a(href: nil)'
-    expected = '<a/>'
-    assert_html expected, source
-  end
+      expected = '<a/>'
+      assert_html expected, source
+    end
 
-  it 'support if in attributes' do
-    source = %q{a(href: 'selected' if true)}
-    expected = %q{<a href="selected"/>}
-    assert_html expected, source
-  end
+    it 'support if in attributes' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'selected' if true)
+      BADE
 
-	it 'support if in attributes' do
-		source = %q{a(href: 'selected' if false)}
-		expected = %q{<a/>}
-		assert_html expected, source
-  end
+      expected = %q{<a href="selected"/>}
+      assert_html expected, source
+    end
 
-  it 'marks spaces between tag and attributes as start of text' do
-    source = 'tag (start of the text)'
-    expected = '<tag>(start of the text)</tag>'
-    assert_html expected, source
+    it 'support if in attributes' do
+      source = <<-BADE.strip_heredoc
+        a(href: 'selected' if false)
+      BADE
+
+      expected = %q{<a/>}
+      assert_html expected, source
+    end
+
+    it 'marks spaces between tag and attributes as start of text' do
+      source = <<-BADE.strip_heredoc
+        tag (start of the text)
+      BADE
+
+      expected = '<tag>(start of the text)</tag>'
+      assert_html expected, source
+    end
   end
 end

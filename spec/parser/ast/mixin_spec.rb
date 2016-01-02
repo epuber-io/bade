@@ -8,7 +8,9 @@ describe Bade::Parser do
 
   context 'mixin declaration parsing' do
     it 'can parse empty mixin declaration' do
-      source = 'mixin abc'
+      source = <<-BADE.strip_heredoc.strip
+        mixin abc
+      BADE
 
       ast = n(:root,
               n(:mixin_decl, {name: 'abc'}))
@@ -17,7 +19,10 @@ describe Bade::Parser do
     end
 
     it 'can parse empty mixin declaration with parameters' do
-      source = 'mixin abc(a, b, key1: "a", &block_param)'
+      source = <<-BADE.strip_heredoc.strip
+        mixin abc(a, b, key1: "a", &block_param)
+      BADE
+
       ast = n(:root,
               n(:mixin_decl, {name: 'abc'},
                 n(:mixin_param, {value: 'a'}),
@@ -29,10 +34,10 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with implementation' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         mixin abc
           | text
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_decl, {name: 'abc'},
@@ -44,10 +49,10 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with attributes and implementation' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         mixin abc(a, b, key1: "a", &block_param)
           | text
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_decl, {name: 'abc'},
@@ -63,11 +68,11 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with implementation with multiple blocks' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         mixin abc(&first, &second)
           - first.call
           - second.call!
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_decl, {name: 'abc'},
@@ -85,10 +90,10 @@ describe Bade::Parser do
 
   context 'mixin calling parsing' do
     it 'can parse empty calling' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc
         +abc()
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_call, {name: 'abc'}),
@@ -99,12 +104,12 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
     it 'can parse empty calling with default block' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc some text
         +abc() some text
         +abc()
           | some text
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_call, {name: 'abc'},
@@ -122,14 +127,14 @@ describe Bade::Parser do
     end
 
     it 'can parse calling with parameters' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc('abc') text
         +abc(key1: 'key1') text
         +abc('abc', key1: 'key1') text
         +abc('abc', key1: 'key1')
           block first
             | text
-      SOURCE
+      BADE
 
       ast = n(:root,
               # first line
@@ -165,14 +170,14 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
     it 'can parse calling with parameters and blocks' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc
           block first
             | text
           block second
             | text2
           | text in default block
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_call, {name: 'abc'},
@@ -193,10 +198,10 @@ describe Bade::Parser do
     end
 
     it 'can parse calling with inline' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc: tag2 text
         +abc(param, key2: key2): tag2 text
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_call, {name: 'abc'},

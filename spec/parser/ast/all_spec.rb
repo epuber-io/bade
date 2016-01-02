@@ -8,7 +8,7 @@ describe Bade::Parser do
 
   context 'mixing all things together' do
     it 'parse nested mixin call, code and tag' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<-BADE.strip_heredoc
         +abc
           - if abc.empty?
             | empty
@@ -16,7 +16,7 @@ describe Bade::Parser do
             items
               = abc.join()
           - end
-      SOURCE
+      BADE
 
       ast = n(:root,
               n(:mixin_call, {name: 'abc'},
