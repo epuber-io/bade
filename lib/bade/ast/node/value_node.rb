@@ -11,6 +11,12 @@ module Bade
       #
       attr_accessor :escaped
 
+      def initialize(*args)
+        super
+
+        self.escaped = false
+      end
+
       # @param [ValueNode] other
       #
       def ==(other)

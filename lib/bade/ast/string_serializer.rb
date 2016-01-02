@@ -47,14 +47,23 @@ module Bade
         when KeyValueNode
           other = "#{node.name}:#{node.value}"
         when ValueNode
-          other = node.value || ''
+          escaped_sign = if node.escaped
+                           '& '
+                         elsif node.escaped.nil?
+                           '&(nil) '
+                         else
+                           ''
+                         end
+          other = "#{escaped_sign}#{node.value}"
         when MixinCommonNode
           other = node.name
-        else
+        when Node
           # nothing
+        else
+          raise "Unknown node class #{node.class} of type #{node.type} for serializing"
         end
 
-        other = ' ' + other if other.length > 0
+        other = ' ' + other if other && other.length > 0
 
         "#{indent}(#{type_s}#{other}#{children_s})"
       end
