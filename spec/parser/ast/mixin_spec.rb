@@ -8,18 +8,19 @@ describe Bade::Parser do
 
   context 'mixin declaration parsing' do
     it 'can parse empty mixin declaration' do
-      source = <<-BADE.strip_heredoc.strip
+      source = <<-BADE.strip_heredoc
         mixin abc
       BADE
 
       ast = n(:root,
-              n(:mixin_decl, {name: 'abc'}))
+              n(:mixin_decl, {name: 'abc'}),
+              n(:newline))
 
       assert_ast(ast, source)
     end
 
     it 'can parse empty mixin declaration with parameters' do
-      source = <<-BADE.strip_heredoc.strip
+      source = <<-BADE.strip_heredoc
         mixin abc(a, b, key1: "a", &block_param)
       BADE
 
@@ -28,7 +29,8 @@ describe Bade::Parser do
                 n(:mixin_param, {value: 'a'}),
                 n(:mixin_param, {value: 'b'}),
                 n(:mixin_key_param, {name: 'key1', value: '"a"'}),
-                n(:mixin_block_param, {value: 'block_param'})))
+                n(:mixin_block_param, {value: 'block_param'})),
+              n(:newline))
 
       assert_ast(ast, source)
     end
