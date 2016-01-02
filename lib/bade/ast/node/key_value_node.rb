@@ -11,10 +11,6 @@ module Bade
       #
       attr_accessor :value
 
-      def to_s
-        "#{name}:#{value}"
-      end
-
       # @param other [KeyValueNode]
       #
       def ==(other)
