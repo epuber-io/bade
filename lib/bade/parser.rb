@@ -86,7 +86,7 @@ module Bade
     NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)"
 
     ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}"
-    CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*(&?):\s*/
+    CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*&?:\s*/
 
     TAG_RE = /\A#{NAME_RE_STRING}/
     CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/
@@ -703,8 +703,8 @@ module Bade
     RUBY_END_DELIMITERS = (%w(\) ] }) + RUBY_NOT_NESTABLE_DELIMITERS).freeze
     RUBY_ALL_DELIMITERS = (RUBY_START_DELIMITERS + RUBY_END_DELIMITERS).uniq.freeze
 
-    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join('')}]/
-    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join('')}]/
+    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join}]/
+    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join}]/
 
 
     # ----------- Errors ---------------
