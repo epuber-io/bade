@@ -407,7 +407,7 @@ module Bade
           when MixinRegexps::PARAMS_KEY_PARAM_NAME
             @line = $'
             attr_node = append_node(:mixin_key_param)
-            attr_node.name = $1
+            attr_node.name = fixed_trailing_colon($1)
             attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
 
           when MixinRegexps::PARAMS_ARGS_DELIMITER
@@ -454,7 +454,7 @@ module Bade
             # Value ruby code
             @line = $'
             attr_node = append_node(:mixin_key_param)
-            attr_node.name = $1
+            attr_node.name = fixed_trailing_colon($1)
             attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
 
           when MixinRegexps::PARAMS_PARAM_NAME

@@ -26,7 +26,12 @@ require 'rspec'
         assert_ruby_code source, expected
       end
 
-      it 'should not parse uncomplete text' do
+      it 'parse symbol definition' do
+        assert_ruby_code(' :symbol', ':symbol')
+        assert_ruby_code(' :symbol,', ':symbol')
+      end
+
+      it 'should not parse incomplete text' do
         source = ' some_method(param   , '
 
         expect {

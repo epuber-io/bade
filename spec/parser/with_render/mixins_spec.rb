@@ -84,7 +84,24 @@ describe Bade::Parser do
 
 			expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'
 			assert_html expected, source
-		end
+    end
+
+    it 'parse mixin declaration and call with key-value parameter with symbols' do
+      source = <<-BADE.strip_heredoc
+        mixin mixin_name(a, c: :abc, d: {})
+          a
+            &= a.inspect
+          c
+            &= c.inspect
+          d
+            &= d.to_s
+
+        +mixin_name(:abc, c: :cc)
+      BADE
+
+      expected = '<a>:abc</a><c>:cc</c><d>{}</d>'
+      assert_html expected, source
+    end
 
 		it 'parse mixin with default block' do
 			source = <<-BADE.strip_heredoc
