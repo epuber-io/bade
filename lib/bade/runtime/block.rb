@@ -18,24 +18,34 @@ module Bade
       #
       def initialize(name, &block)
         @name = name
-        @block = lambda &block unless block.nil?
+        @block = block
       end
 
       def call(*args)
-        @block.call(*args) unless @block.nil?
+        __call(*args) unless @block.nil?
       end
 
       def call!(*args)
         if @block.nil?
-          raise RuntimeError, "`#{@name}` must have block definition"
+          raise RuntimeError, "Block `#{@name}` must have block definition"
         else
+          __call(*args)
+        end
+      end
+
+      def __call(*args)
+        begin
           @block.call(*args)
+        rescue ArgumentError => e
+          if e.message =~ /wrong number of arguments \(given ([0-9]+), expected ([0-9]+)\)/
+            given = $1.to_i - 1
+            expected = $2.to_i - 1
+            raise ArgumentError, "wrong number of arguments (given #{given}, expected #{expected}) for #{self.class.name.split('::').last.downcase} `#{name}`"
+          else
+            raise
+          end
         end
       end
     end
-  end
-
-  def block(name, &block)
-    Runtime::Block.new(name, &block)
   end
 end

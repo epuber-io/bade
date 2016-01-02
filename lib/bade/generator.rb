@@ -143,18 +143,18 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
 
         when :mixin_decl
           params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.name}'] = lambda { |#{params}|"
+          buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
 
           indent {
             blocks_name_declaration(current_node)
             visit_nodes(current_node.children - current_node.params)
           }
 
-          buff_code '}'
+          buff_code '})'
 
         when :mixin_call
           params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.name}'].call(#{params})"
+          buff_code "#{MIXINS_NAME}['#{current_node.name}'].call!(#{params})"
 
         when :output
           data = current_node.value
@@ -262,7 +262,7 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
         if other_children.reject { |n| n.type == :newline }.count > 0
           def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
-          def_block_node.children.replace(other_children)
+          def_block_node.children = other_children
 
           blocks << def_block_node
         end

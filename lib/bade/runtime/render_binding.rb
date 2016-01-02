@@ -29,6 +29,10 @@ module Bade
         Bade::Runtime::Block.new(*args, &block)
       end
 
+      def __create_mixin(*args, &block)
+        Bade::Runtime::Mixin.new(*args, &block)
+      end
+
       # Escape input text with html escapes
       #
       # @param [String] text
