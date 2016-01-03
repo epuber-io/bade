@@ -151,7 +151,7 @@ module Bade
           buff_print_text output_code
 
         when :newline
-          buff_print_value(NEW_LINE_NAME)
+          # buff_print_value(NEW_LINE_NAME)
 
         when :import
           base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))

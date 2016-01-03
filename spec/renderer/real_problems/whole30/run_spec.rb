@@ -15,6 +15,14 @@ describe Bade::Renderer do
                   .render(new_line: '')
         end.to_not raise_error
       end
+
+      it 'generates totally shit string' do
+        path = File.join(File.dirname(__FILE__), 'part_1/chapter_3.bade')
+        renderer = Bade::Renderer.from_file(path)
+        output = renderer.render(new_line: '')
+
+        expect(output).to eq "<div class=\"green_box\"><p class=\"title\">ŠKODÍ ZDRAVÍ</p><p>Abychom byli fér: mléko zase vápník. Čtěte dál…</p></div>"
+      end
     end
   end
 end

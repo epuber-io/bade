@@ -1,0 +1,4 @@
+import '../__base.bade'
+
++green_box(title: 'ŠKODÍ ZDRAVÍ')
+	p Abychom byli fér: mléko zase vápník. Čtěte dál…
