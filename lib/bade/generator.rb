@@ -6,33 +6,11 @@ require_relative 'ast/document'
 
 module Bade
   class Generator
-
-    BUFF_NAME = '__buff'
-    MIXINS_NAME = '__mixins'
-    NEW_LINE_NAME = '__new_line'
-    CURRENT_INDENT_NAME = '__indent'
-    BASE_INDENT_NAME = '__base_indent'
-
-    START_STRING =	"
-# frozen_string_literal: true
-
-lambda { |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|
-
-  #{MIXINS_NAME} = Hash.new { |hash, key| raise \"Undefined mixin '\#{key}'\" }
-"
-
-    END_STRING =	"
-  #{BUFF_NAME}.join
-}"
-
-    # @param [Document] document
-    #
-    # @return [Proc]
-    #
-    def self.document_to_lambda(document, filename: nil)
-      generator = self.new
-      generator.generate_lambda(document, filename)
-    end
+    BUFF_NAME = :__buff
+    MIXINS_NAME = :__mixins
+    NEW_LINE_NAME = :__new_line
+    CURRENT_INDENT_NAME = :__indent
+    BASE_INDENT_NAME = :__base_indent
 
     # @param [Document] document
     #
@@ -43,14 +21,6 @@ lambda { |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|
       generator.generate_lambda_string(document)
     end
 
-
-    # @param [Document] document
-    # @param [String] filename
-    #
-    def generate_lambda(document, filename)
-      eval(generate_lambda_string(document), nil, filename || '(__template__)')
-    end
-
     # @param [Document] document
     #
     # @return [String] string to parse with Ruby
@@ -58,13 +28,19 @@ lambda { |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|
     def generate_lambda_string(document)
       @buff = []
       @indent = 0
-      @code_indent = 1
+      @code_indent = 0
 
-      @buff << START_STRING
+      buff_code '# frozen_string_literal: true' # so it can be faster on Ruby 2.3+
+      buff_code ''
+      buff_code "lambda do |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|"
 
-      visit_document(document)
+      indent {
+        visit_document(document)
 
-      @buff << END_STRING
+        buff_code "#{BUFF_NAME}.join"
+      }
+
+      buff_code 'end'
 
       @buff.join("\n")
     end
@@ -273,12 +249,12 @@ lambda { |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|
             buff_code "__blocks['#{block_name}'] = __create_block('#{block_name}') do"
             indent {
               # push the current buffer to stack, so we can pop it on end of this block
-              buff_code "__buffs_push()"
+              buff_code '__buffs_push()'
 
               visit_node_children(block)
 
               # return __buff, and self.__buff back to previous state
-              buff_code "__buffs_pop()"
+              buff_code '__buffs_pop()'
             }
             buff_code 'end'
           }

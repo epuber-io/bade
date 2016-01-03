@@ -19,6 +19,18 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
 
+    it 'can parse mixin with colon in name' do
+      source = <<-BADE.strip_heredoc
+        mixin ab:c
+      BADE
+
+      ast = n(:root,
+              n(:mixin_decl, {name: 'ab:c'}),
+              n(:newline))
+
+      assert_ast(ast, source)
+    end
+
     it 'can parse empty mixin declaration with parameters' do
       source = <<-BADE.strip_heredoc
         mixin abc(a, b, key1: "a", &block_param)

@@ -11,10 +11,15 @@ module Bade
       #
       attr_accessor :__buffs_stack
 
+      # @return [Hash<String, Mixin>]
+      #
+      attr_accessor :__mixins
+
       # @param vars [Hash]
       #
       def initialize(vars = {})
         @__buffs_stack = [[]]
+        @__mixins = Hash.new { |_hash, key| raise "Undefined mixin '#{key}'" }
 
         vars.each do |key, value|
           define_singleton_method(key) do

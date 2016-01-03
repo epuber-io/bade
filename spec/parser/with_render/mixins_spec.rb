@@ -11,7 +11,23 @@ describe Bade::Parser do
 
       expected = ''
 			assert_html expected, source
-		end
+    end
+
+    it 'can parse mixin with colon in name' do
+      source = <<-BADE.strip_heredoc
+        mixin ab:c
+          <a>
+          | ab:c
+          = default_block.render
+          </a>
+
+        +ab:c
+        +ab:c :text starting with color
+      BADE
+
+      expected = '<a>ab:c</a><a>ab:c:text starting with color</a>'
+      assert_html expected, source
+    end
 
 		it 'parse mixin declaration and call' do
 			source = <<-BADE.strip_heredoc
