@@ -40,7 +40,9 @@ module Bade
       code_indent {
         visit_document(document)
 
-        buff_code "#{BUFF_NAME}.join"
+        buff_code "output = #{BUFF_NAME}.join"
+        buff_code 'self.__reset'
+        buff_code 'output'
       }
 
       buff_code 'end'

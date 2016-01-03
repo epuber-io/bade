@@ -1,5 +1,5 @@
 
-require_relative '../../lib/bade/renderer'
+require_relative '../helper'
 
 describe Bade::Renderer do
   let(:template_path) { File.join(File.dirname(__FILE__), 'from_file.bade') }
@@ -47,6 +47,17 @@ describe Bade::Renderer do
                            .render(new_line: '')
     expected = '<div>abc</div>'
     expect(output).to eq expected
+  end
+
+  it 'can render single instance multiple times' do
+    renderer = Bade::Renderer.from_file(File.new(template_path, 'r'))
+                             .with_locals(magic: 'woohoo')
+
+    output = renderer.render(new_line: '')
+    expect(output).to eq('<a class="some">text</a>woohoo')
+
+    output = renderer.render(new_line: '')
+    expect(output).to eq('<a class="some">text</a>woohoo')
   end
 
   context 'it supports using custom binding' do
@@ -127,11 +138,11 @@ describe Bade::Renderer do
 
   context 'it clears after running' do
     it 'defined method in template is not visible after running' do
-      source = '
-- def abc(a)
--   self
-- end
-'
+      source = <<-BADE.strip_heredoc
+        - def abc(a)
+        -   self
+        - end
+      BADE
 
       # prepare first run
       renderer = Bade::Renderer.from_source(source)

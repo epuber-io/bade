@@ -18,14 +18,22 @@ module Bade
       # @param vars [Hash]
       #
       def initialize(vars = {})
-        @__buffs_stack = [[]]
-        @__mixins = Hash.new { |_hash, key| raise "Undefined mixin '#{key}'" }
+        __reset
 
         vars.each do |key, value|
           define_singleton_method(key) do
             value
           end
         end
+      end
+
+      # Resets this binding to default state, this method should be envoked after running the template lambda
+      #
+      # @return [nil]
+      #
+      def __reset
+        @__buffs_stack = [[]]
+        @__mixins = Hash.new { |_hash, key| raise "Undefined mixin '#{key}'" }
       end
 
       # @return [Binding]
