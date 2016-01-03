@@ -40,7 +40,9 @@ module Bade
       #
       attr_reader :render_binding
 
-      # @param [String] name
+      # @param [String] name  name of the block
+      # @param [RenderBinding] render_binding  reference to current binding instance
+      # @param [Proc] block  reference to lambda
       #
       def initialize(name, render_binding, &block)
         @name = name

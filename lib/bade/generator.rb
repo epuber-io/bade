@@ -12,6 +12,8 @@ module Bade
     CURRENT_INDENT_NAME = :__indent
     BASE_INDENT_NAME = :__base_indent
 
+    DEFAULT_BLOCK_NAME = 'default_block'
+
     # @param [Document] document
     #
     # @return [String]
@@ -21,7 +23,7 @@ module Bade
       generator.generate_lambda_string(document)
     end
 
-    # @param [Document] document
+    # @param [Bade::AST::Document] document
     #
     # @return [String] string to parse with Ruby
     #
@@ -35,7 +37,7 @@ module Bade
       buff_code ''
       buff_code "lambda do |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|"
 
-      indent {
+      code_indent {
         visit_document(document)
 
         buff_code "#{BUFF_NAME}.join"
@@ -123,7 +125,7 @@ module Bade
           params = formatted_mixin_params(current_node)
           buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
 
-          indent {
+          code_indent {
             blocks_name_declaration(current_node)
             visit_nodes(current_node.children - current_node.params)
           }
@@ -165,6 +167,8 @@ module Bade
 
     # @param [TagNode] current_node
     #
+    # @return [nil]
+    #
     def visit_tag(current_node)
       attributes = formatted_attributes current_node
       children_wo_attributes = (current_node.children - current_node.attributes)
@@ -185,7 +189,7 @@ module Bade
         text += '/>'
       end
 
-      buff_print_text text, new_line: true, indent: true
+      buff_print_text(text, new_line: true, indent: true)
 
       if other_than_new_lines
         last_node = children_wo_attributes.last
@@ -196,11 +200,11 @@ module Bade
                   children_wo_attributes
                 end
 
-        indent do
+        code_indent do
           visit_nodes(nodes)
         end
 
-        buff_print_text "</#{current_node.name}>", new_line: true, indent: true
+        buff_print_text("</#{current_node.name}>", new_line: true, indent: true)
 
         # print new line after the tag
         visit_node(last_node) if is_last_newline
@@ -229,7 +233,11 @@ module Bade
       end.join
     end
 
-    def indent(plus = 1)
+    # Method for indenting generated code, indent is raised only in passed block
+    #
+    # @return [nil]
+    #
+    def code_indent(plus = 1)
       @code_indent += plus
       yield
       @code_indent -= plus
@@ -249,6 +257,7 @@ module Bade
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
         if other_children.reject { |n| n.type == :newline }.count > 0
           def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
+          def_block_node.name = DEFAULT_BLOCK_NAME
           def_block_node.children = other_children
 
           blocks << def_block_node
@@ -257,20 +266,9 @@ module Bade
         if blocks.length > 0
           buff_code '__blocks = {}'
 
-          blocks.each { |block|
-            block_name = block.name || 'default_block'
-            buff_code "__blocks['#{block_name}'] = __create_block('#{block_name}') do"
-            indent {
-              # push the current buffer to stack, so we can pop it on end of this block
-              buff_code '__buffs_push()'
-
-              visit_node_children(block)
-
-              # return __buff, and self.__buff back to previous state
-              buff_code '__buffs_pop()'
-            }
-            buff_code 'end'
-          }
+          blocks.each do |block|
+            block_definition(block)
+          end
 
           result << '__blocks.dup'
         else
@@ -282,23 +280,37 @@ module Bade
 
 
       # normal params
-      result += params.select { |param|
-        param.type == :mixin_param
-      }.map { |param|
-        param.value
-      }
-
-      result += params.select { |param|
-        param.type == :mixin_key_param
-      }.map { |param|
-        "#{param.name}: #{param.value}"
-      }
+      result += params.select { |n| n.type == :mixin_param }.map(&:value)
+      result += params.select { |n| n.type == :mixin_key_param }.map { |param| "#{param.name}: #{param.value}" }
 
       result.join(', ')
     end
 
+    # Generates code for definition of block
+    #
+    # @param [MixinCallBlockNode] block_node
+    #
+    # @return [nil]
+    #
+    def block_definition(block_node)
+      buff_code "__blocks['#{block_node.name}'] = __create_block('#{block_node.name}') do"
 
+      code_indent do
+        buff_code '__buffs_push()'
+
+        visit_node_children(block_node)
+
+        buff_code '__buffs_pop()'
+      end
+
+      buff_code 'end'
+    end
+
+    # Generates code for block variables declaration in mixin definition
+    #
     # @param [String] block_name
+    #
+    # @return [nil]
     #
     def block_name_declaration(block_name)
       buff_code "#{block_name} = __blocks.delete('#{block_name}') { __create_block('#{block_name}') }"
@@ -306,14 +318,14 @@ module Bade
 
     # @param [MixinDeclarationNode] mixin_node
     #
+    # @return [nil]
+    #
     def blocks_name_declaration(mixin_node)
-      mixin_node.params.select { |param|
-        param.type == :mixin_block_param
-      }.each { |param|
-        block_name_declaration(param.value)
-      }
+      block_name_declaration(DEFAULT_BLOCK_NAME)
 
-      block_name_declaration('default_block')
+      mixin_node.params.select { |n| n.type == :mixin_block_param }.each do |param|
+        block_name_declaration(param.value)
+      end
     end
 
 

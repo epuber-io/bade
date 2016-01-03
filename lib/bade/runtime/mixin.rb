@@ -5,8 +5,8 @@ module Bade
     require_relative 'block'
 
     class Mixin < Block
-      def call!(*args)
-        block.call(*args)
+      def call!(blocks, *args)
+        block.call(blocks, *args)
       rescue ArgumentError => e
         case e.message
         when /\Awrong number of arguments \(given ([0-9]+), expected ([0-9]+)\)\Z/, /\Awrong number of arguments \(([0-9]+) for ([0-9]+)\)\Z/

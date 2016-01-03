@@ -12,12 +12,17 @@ module Bade
 
       class << self
         # @return [Hash<Symbol, Class>]
+        #
         def registered_types
           @registered_types ||= {}
         end
 
-        # @param [Symbol] type
+        # Method to map some node type to backing node class
+        #
+        # @param [Symbol] type  type of the node
         # @param [Class] klass  registering class
+        #
+        # @return [nil]
         #
         def register_type(klass, type)
           raise StandardError, "Class #{klass} should be subclass of #{Node}" unless klass <= Node
@@ -25,16 +30,18 @@ module Bade
           registered_types[type] = klass
         end
 
-        # @param [Symbol] type
-        # @param [Fixnum] lineno
+        # Method to create node backing instance
         #
-        # @return [AST::Node]
+        # @param [Symbol] type  type of the node
+        # @param [Fixnum] lineno  line number of the node appearance
+        #
+        # @return [Bade::AST::Node]
         #
         def create(type, lineno)
           klass = registered_types[type]
 
           if klass.nil?
-            raise Parser::ParserInternalError, "undefined node type #{type.inspect}"
+            raise ::KeyError, "Undefined node type #{type.inspect}"
           end
 
           klass.new(type, lineno: lineno)

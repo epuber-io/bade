@@ -29,6 +29,8 @@ module Bade
       end
     end
 
+    TEMPLATE_FILE_NAME = '(__template__)'
+
     # @return [String]
     #
     attr_accessor :source_text
@@ -49,9 +51,23 @@ module Bade
     #
     attr_accessor :render_binding
 
-    # @param source [String]
+
+    # ----------------------------------------------------------------------------- #
+    # Internal attributes
+
+    # @return [Hash<String, Document>] absolute path => document
     #
-    # @return [self]
+    def parsed_documents
+      @parsed_documents ||= {}
+    end
+
+
+    # ----------------------------------------------------------------------------- #
+    # Factory methods
+
+    # @param [String] source  source string that should be parsed
+    #
+    # @return [Renderer] preconfigured instance of this class
     #
     def self.from_source(source, file_path = nil)
       inst = new
@@ -60,9 +76,9 @@ module Bade
       inst
     end
 
-    # @param [String, File] file
+    # @param [String, File] file  file path or file instance, file that should be loaded and parsed
     #
-    # @return [self]
+    # @return [Renderer] preconfigured instance of this class
     #
     def self.from_file(file)
       path = if file.is_a?(File)
@@ -74,23 +90,17 @@ module Bade
       from_source(nil, path)
     end
 
-    # @param [Precompiled] precompiled
-    # @param [File] file_path
+    # Method to create Renderer from Precompiled object, for example when you want to reuse precompiled object from disk
     #
-    # @return [self]
+    # @param [Precompiled] precompiled
+    #
+    # @return [Renderer] preconfigured instance of this class
     #
     def self.from_precompiled(precompiled)
       inst = new
       inst.precompiled = precompiled
       inst
     end
-
-
-    def initialize
-      # absolute path => document
-      @parsed_documents = {}
-    end
-
 
     # ----------------------------------------------------------------------------- #
     # DSL methods
@@ -116,13 +126,14 @@ module Bade
     # ----------------------------------------------------------------------------- #
     # Getters
 
-    # @return [Bade::Node]
+    # @return [Bade::AST::Node]
     #
     def root_document
       @root_document ||= _parsed_document(source_text, file_path)
     end
 
-
+    # @return [Precompiled]
+    #
     attr_writer :precompiled
 
     # @return [Precompiled]
@@ -143,33 +154,34 @@ module Bade
       @render_binding ||= Runtime::RenderBinding.new(locals || {})
     end
 
-    # @return [Binding]
-    #
-    def lambda_binding
-      @lambda_binding || render_binding.__get_binding
-    end
-
     # @return [Proc]
     #
     def lambda_instance
-      if @lambda_binding
-        @lambda_binding.eval(lambda_string, file_path || '(__template__)')
+      if lambda_binding
+        lambda_binding.eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
       else
-        render_binding.instance_eval(lambda_string, file_path || '(__template__)')
+        render_binding.instance_eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
       end
     end
 
     # ----------------------------------------------------------------------------- #
     # Render
 
-    # @return [String]
+    # @param [Binding] binding  custom binding for evaluating the template, but it is not recommended to use, use :locals and #with_locals instead
+    # @param [String] new_line  newline string, default is \n
+    # @param [String] indent  indent string, default is two spaces
+    #
+    # @return [String] rendered content of template
     #
     def render(binding: nil, new_line: nil, indent: nil)
       self.lambda_binding = binding unless binding.nil? # backward compatibility
 
-      run_vars = {}
-      run_vars[Generator::NEW_LINE_NAME.to_sym] = new_line unless new_line.nil?
-      run_vars[Generator::BASE_INDENT_NAME.to_sym] = indent unless indent.nil?
+      run_vars = {
+          Generator::NEW_LINE_NAME.to_sym => new_line,
+          Generator::BASE_INDENT_NAME.to_sym => indent,
+      }
+      run_vars.reject! { |_key, value| value.nil? } # remove nil values
+
       lambda_instance.call(**run_vars)
     end
 
@@ -177,9 +189,10 @@ module Bade
 
     private
 
-    # @param file_path [String]
+    # @param [String] content  source code of the template
+    # @param [String] file_path  reference path to template file
     #
-    # @return [Bade::Document]
+    # @return [Bade::AST::Document]
     #
     def _parsed_document(content, file_path)
       content = if file_path.nil? && content.nil?
@@ -190,43 +203,53 @@ module Bade
                   content
                 end
 
-      parsed_document = @parsed_documents[file_path]
+      parsed_document = parsed_documents[file_path]
       return parsed_document unless parsed_document.nil?
 
       parser = Parser.new(file_path: file_path)
-
       document = parser.parse(content)
 
       parser.dependency_paths.each do |path|
-        sub_path = File.expand_path(path, File.dirname(file_path))
-
-        if File.exists?(sub_path)
-          new_path = sub_path
-
-          next if new_path.end_with?('.rb')
-        else
-          bade_path = "#{sub_path}.bade"
-          rb_path = "#{sub_path}.rb"
-
-          bade_exist = File.exists?(bade_path)
-          rb_exist = File.exists?(rb_path)
-          relative = Pathname.new(file_path).relative_path_from(Pathname.new(File.dirname(self.file_path))).to_s
-
-          if bade_exist && rb_exist
-            raise LoadError.new(path, file_path, "Found both .bade and .rb files for `#{path}` in file #{relative}, change the import path so it references uniq file.")
-          elsif bade_exist
-            new_path = bade_path
-          elsif rb_exist
-            next # this will handle Generator
-          else
-            raise LoadError.new(path, file_path, "Can't find file matching name `#{path}` referenced from file #{relative}")
-          end
-        end
+        new_path = _find_file!(path, file_path)
+        next if new_path.nil?
 
         document.sub_documents << _parsed_document(nil, new_path)
       end
 
       document
+    end
+
+    # Tries to find file with name, if no file could be found or there are multiple files matching the name error is raised
+    #
+    # @param [String] name  name of the file that should be found
+    # @param [String] reference_path  path to file from which is loading/finding
+    #
+    # @return [String, nil] returns nil when this file should be skipped otherwise absolute path to file
+    #
+    def _find_file!(name, reference_path)
+      sub_path = File.expand_path(name, File.dirname(reference_path))
+
+      if File.exists?(sub_path)
+        return if sub_path.end_with?('.rb') # handled in Generator
+        sub_path
+      else
+        bade_path = "#{sub_path}.bade"
+        rb_path = "#{sub_path}.rb"
+
+        bade_exist = File.exists?(bade_path)
+        rb_exist = File.exists?(rb_path)
+        relative = Pathname.new(reference_path).relative_path_from(Pathname.new(File.dirname(self.file_path))).to_s
+
+        if bade_exist && rb_exist
+          raise LoadError.new(name, reference_path, "Found both .bade and .rb files for `#{name}` in file #{relative}, change the import path so it references uniq file.")
+        elsif bade_exist
+          return bade_path
+        elsif rb_exist
+          return # handled in Generator
+        else
+          raise LoadError.new(name, reference_path, "Can't find file matching name `#{name}` referenced from file #{relative}")
+        end
+      end
     end
   end
 end
