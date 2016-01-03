@@ -26,6 +26,7 @@ module Bade
     # @return [String] string to parse with Ruby
     #
     def generate_lambda_string(document)
+      @document = document
       @buff = []
       @indent = 0
       @code_indent = 0
@@ -41,6 +42,9 @@ module Bade
       }
 
       buff_code 'end'
+
+
+      @document = nil
 
       @buff.join("\n")
     end
@@ -143,7 +147,16 @@ module Bade
           buff_print_value(NEW_LINE_NAME)
 
         when :import
-          # nothing
+          base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
+          load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
+                        base_path
+                      elsif File.exist?("#{base_path}.rb")
+                        "#{base_path}.rb"
+                      else
+                        nil # other cases are handled in Renderer
+                      end
+
+          buff_code "load('#{load_path}')" unless load_path.nil?
 
         else
           raise "Unknown type #{current_node.type}"

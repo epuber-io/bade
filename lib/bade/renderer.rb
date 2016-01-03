@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'pathname'
 require_relative 'parser'
 require_relative 'generator'
 require_relative 'runtime'
@@ -8,6 +9,26 @@ require_relative 'precompiled'
 
 module Bade
   class Renderer
+    class LoadError < ::LoadError
+      # @return [String]
+      #
+      attr_reader :loading_path
+
+      # @return [String]
+      #
+      attr_reader :reference_path
+
+      # @param [String] loading_path  currently loaded path
+      # @param [String] reference_path  reference file from which is load performed
+      # @param [String] msg  standard message
+      #
+      def initialize(loading_path, reference_path, msg=nil)
+        super(msg)
+        @loading_path = loading_path
+        @reference_path = reference_path
+      end
+    end
+
     # @return [String]
     #
     attr_accessor :source_text
@@ -162,7 +183,7 @@ module Bade
     #
     def _parsed_document(content, file_path)
       content = if file_path.nil? && content.nil?
-                  raise LoadError, "Don't know what to do with nil values for both content and path"
+                  raise LoadError.new(nil, file_path, "Don't know what to do with nil values for both content and path")
                 elsif !file_path.nil? && content.nil?
                   File.read(file_path)
                 else
@@ -178,11 +199,29 @@ module Bade
 
       parser.dependency_paths.each do |path|
         sub_path = File.expand_path(path, File.dirname(file_path))
-        new_path = if File.exists?(sub_path)
-                     sub_path
-                   elsif File.exists?("#{sub_path}.bade")
-                     "#{sub_path}.bade"
-                   end
+
+        if File.exists?(sub_path)
+          new_path = sub_path
+
+          next if new_path.end_with?('.rb')
+        else
+          bade_path = "#{sub_path}.bade"
+          rb_path = "#{sub_path}.rb"
+
+          bade_exist = File.exists?(bade_path)
+          rb_exist = File.exists?(rb_path)
+          relative = Pathname.new(file_path).relative_path_from(Pathname.new(File.dirname(self.file_path))).to_s
+
+          if bade_exist && rb_exist
+            raise LoadError.new(path, file_path, "Found both .bade and .rb files for `#{path}` in file #{relative}, change the import path so it references uniq file.")
+          elsif bade_exist
+            new_path = bade_path
+          elsif rb_exist
+            next # this will handle Generator
+          else
+            raise LoadError.new(path, file_path, "Can't find file matching name `#{path}` referenced from file #{relative}")
+          end
+        end
 
         document.sub_documents << _parsed_document(nil, new_path)
       end
