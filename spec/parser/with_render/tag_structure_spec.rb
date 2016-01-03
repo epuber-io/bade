@@ -397,4 +397,78 @@ describe Bade::Parser do
       assert_html expected, source
     end
   end
+
+  context 'conditional output code' do
+    it 'should not render tag when the value is nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag?= nil
+      SOURCE
+
+      expected = ''
+      assert_html expected, source
+    end
+
+    it 'should not render tag when the value is nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag
+          ?= nil
+      SOURCE
+
+      expected = ''
+      assert_html expected, source
+    end
+
+    it 'should not render tag when the value is nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag
+          ?= val
+      SOURCE
+
+      expected = ''
+      assert_html expected, source, vars: {val: nil}
+    end
+
+    it 'should not render tag when values are nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag
+          ?= val
+          ?= val2
+          ?= val3
+      SOURCE
+
+      expected = ''
+      assert_html expected, source, vars: {val: nil, val2: nil, val3: nil}
+    end
+
+    it 'should render tag when the value is not nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag
+          ?= val
+      SOURCE
+
+      expected = '<tag>abc</tag>'
+      assert_html expected, source, vars: {val: 'abc'}
+    end
+
+    it 'should render tag when values are not nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag
+          ?= val
+          ?= val2
+          ?= val3
+      SOURCE
+
+      expected = '<tag>truetruetrue</tag>'
+      assert_html expected, source, vars: {val: true, val2: true, val3: true}
+    end
+
+    it 'should render tag when the value is not nil' do
+      source = <<-SOURCE.strip_heredoc
+        tag?= "abc"
+      SOURCE
+
+      expected = '<tag>abc</tag>'
+      assert_html expected, source
+    end
+  end
 end

@@ -250,7 +250,7 @@ module Bade
       TEXT_BLOCK_START = /\A\|( ?)/
       INLINE_HTML = /\A</
       CODE_BLOCK = /\A-/
-      OUTPUT_BLOCK = /\A(&?)=/
+      OUTPUT_BLOCK = /\A(\??)(&?)=/
       DOCTYPE = /\Adoctype\s/i
       TAG_CLASS_START_BLOCK = /\A\./
       TAG_ID_START_BLOCK = /\A#/
@@ -314,9 +314,10 @@ module Bade
           # We expect the line to be broken or the next line to be indented.
           @line = $'
           output_node = append_node(:output)
-          output_node.escaped = $1.length == 1
+          output_node.conditional = $1.length == 1
+          output_node.escaped = $2.length == 1
           output_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_NEW_LINE)
-          
+
         when LineIndicatorRegexps::DOCTYPE
           # Found doctype declaration
           append_node(:doctype, value: $'.strip)
@@ -490,7 +491,7 @@ module Bade
 
     module TagRegexps
       BLOCK_EXPANSION = /\A:\s+/
-      OUTPUT_CODE = /\A(&?)=/
+      OUTPUT_CODE = LineIndicatorRegexps::OUTPUT_BLOCK
       TEXT_START = /\A /
 
       PARAMS_ARGS_DELIMITER = /\A\s*,/

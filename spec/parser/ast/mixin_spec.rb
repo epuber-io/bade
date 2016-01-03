@@ -22,10 +22,14 @@ describe Bade::Parser do
     it 'can parse mixin with colon in name' do
       source = <<-BADE.strip_heredoc
         mixin ab:c
+        mixin ab:cd(abc)
       BADE
 
       ast = n(:root,
               n(:mixin_decl, {name: 'ab:c'}),
+              n(:newline),
+              n(:mixin_decl, {name: 'ab:cd'},
+                n(:mixin_param, {value: 'abc'})),
               n(:newline))
 
       assert_ast(ast, source)

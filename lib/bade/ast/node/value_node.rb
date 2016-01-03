@@ -11,16 +11,21 @@ module Bade
       #
       attr_accessor :escaped
 
+      # @return [Bool]
+      #
+      attr_accessor :conditional
+
       def initialize(*args)
         super
 
-        self.escaped = false
+        @escaped = false
+        @conditional = false
       end
 
       # @param [ValueNode] other
       #
       def ==(other)
-        super && value == other.value && escaped == other.escaped
+        super && value == other.value && escaped == other.escaped && conditional == other.conditional
       end
     end
   end

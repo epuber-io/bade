@@ -170,7 +170,7 @@ module Bade
     # @return [nil]
     #
     def visit_tag(current_node)
-      attributes = formatted_attributes current_node
+      attributes = formatted_attributes(current_node)
       children_wo_attributes = (current_node.children - current_node.attributes)
 
       text = "<#{current_node.name}"
@@ -187,6 +187,14 @@ module Bade
         text += '>'
       else
         text += '/>'
+      end
+
+      conditional_nodes = current_node.children.select { |n| n.type == :output && n.conditional }
+
+      unless conditional_nodes.empty?
+        buff_code "if (#{conditional_nodes.map(&:value).join(') && (')})"
+
+        @code_indent += 1
       end
 
       buff_print_text(text, new_line: true, indent: true)
@@ -208,6 +216,12 @@ module Bade
 
         # print new line after the tag
         visit_node(last_node) if is_last_newline
+      end
+
+      unless conditional_nodes.empty?
+        @code_indent -= 1
+
+        buff_code 'end'
       end
     end
 

@@ -102,6 +102,46 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
 
+    context 'conditional output' do
+      it 'parses conditional output after tag' do
+        source = <<-BADE.strip_heredoc
+          tag?= nil_value
+          tag?= value
+        BADE
+
+        ast = n(:root,
+                tag('tag',
+                  n(:output, {value: 'nil_value', conditional: true})),
+                n(:newline),
+                tag('tag',
+                    n(:output, {value: 'value', conditional: true})),
+                n(:newline))
+
+        assert_ast(ast, source)
+      end
+
+      it 'parses conditional output on next line' do
+        source = <<-BADE.strip_heredoc
+          tag
+            ?= nil_value
+          tag
+            ?= value
+        BADE
+
+        ast = n(:root,
+                tag('tag',
+                    n(:newline),
+                    n(:output, {value: 'nil_value', conditional: true})),
+                n(:newline),
+                tag('tag',
+                    n(:newline),
+                    n(:output, {value: 'value', conditional: true})),
+                n(:newline))
+
+        assert_ast(ast, source)
+      end
+    end
+
 
     it 'parses inline tags right after tag' do
       source = 'tag1: tag2 some text'
