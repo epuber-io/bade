@@ -127,7 +127,7 @@ describe Bade::Parser do
 
 			expect {
 				assert_html '', source, print_error_if_error: false
-			}.to raise_error Bade::Runtime::RuntimeError
+			}.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError
 		end
 
 		it 'parse mixin with custom blocks' do
@@ -231,6 +231,46 @@ describe Bade::Parser do
 
       expected = '<a>a_text</a><b>b_text</b>'
       assert_html expected, source
+    end
+
+    context 'rendered content of block' do
+      it 'support for mutating of rendered content of block' do
+        source = <<-BADE.strip_heredoc
+          mixin a
+            = default_block.render!.upcase
+
+          +a abc
+        BADE
+
+        expected = 'ABC'
+        assert_html expected, source
+      end
+
+      it '#render! raises error when the block is not specified' do
+        source = <<-BADE.strip_heredoc
+          mixin a
+            - default_block.render!.upcase
+
+          +a
+        BADE
+
+        expect do
+          assert_html '', source, print_error_if_error: false
+        end.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError, 'Mixin `a` requires block to get rendered content of block `default_block`'
+      end
+
+      it 'support for mutating of rendered content of block without specified block' do
+        source = <<-BADE.strip_heredoc
+          mixin a
+            - default_block.render.upcase
+
+          +a
+        BADE
+
+        expect do
+          assert_html '', source
+        end.to_not raise_error
+      end
     end
 	end
 end

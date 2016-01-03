@@ -25,6 +25,18 @@ module Bade
         else
           raise
         end
+
+      rescue Block::MissingBlockDefinitionError => e
+        msg = case e.context
+              when :call
+                "Mixin `#{name}` requires block to get called of block `#{e.name}`"
+              when :render
+                "Mixin `#{name}` requires block to get rendered content of block `#{e.name}`"
+              else
+                raise ::ArgumentError, "Unknown context #{e.context} of error #{e}!"
+              end
+
+        raise Block::MissingBlockDefinitionError.new(e.name, e.context, msg)
       end
     end
   end

@@ -16,10 +16,8 @@ module Bade
     START_STRING =	"
 # frozen_string_literal: true
 
-lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
-#  #{CURRENT_INDENT_NAME} = #{BASE_INDENT_NAME}
+lambda { |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|
 
-  #{BUFF_NAME} = []
   #{MIXINS_NAME} = Hash.new { |hash, key| raise \"Undefined mixin '\#{key}'\" }
 "
 
@@ -274,7 +272,13 @@ lambda { |#{NEW_LINE_NAME}: \"\n\", #{BASE_INDENT_NAME}: '  '|
             block_name = block.name || 'default_block'
             buff_code "__blocks['#{block_name}'] = __create_block('#{block_name}') do"
             indent {
+              # push the current buffer to stack, so we can pop it on end of this block
+              buff_code "__buffs_push()"
+
               visit_node_children(block)
+
+              # return __buff, and self.__buff back to previous state
+              buff_code "__buffs_pop()"
             }
             buff_code 'end'
           }

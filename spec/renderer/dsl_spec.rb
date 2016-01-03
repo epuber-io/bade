@@ -51,12 +51,9 @@ describe Bade::Renderer do
 
   context 'it supports using custom binding' do
     it 'can work with anonymous class instance' do
-      binding_class = Class.new do
+      binding_class = Class.new(Bade::Runtime::RenderBinding) do
         def baf
           'abc'
-        end
-        def __get_binding
-          binding
         end
       end
 
