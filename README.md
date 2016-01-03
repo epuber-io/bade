@@ -8,6 +8,8 @@ Minimalistic template engine written in Ruby for Ruby. Developed mainly to help 
 
 The language is in development state, breaking changes can be made in future. Current version supports minimal list of features to make it working in production for my purposes.
 
+This gem acts only as library, it does not provide CLI tool, yet.
+
 
 ## Installation
 
@@ -19,7 +21,7 @@ gem 'bade'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
@@ -40,7 +42,6 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/epuber
 
 ## TODO
 
-- [ ] move all cards from Trello to GitHub
 - [ ] create documentation about syntax
 - [ ] create several examples
 
