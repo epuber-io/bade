@@ -1,0 +1,53 @@
+
+mixin empty_line
+	p= ' '
+
+mixin first
+	p.first_para
+		- default_block.call
+
+mixin non
+	p.non
+		- default_block.call
+
+
+
+// =========================================
+
+- def __string_transform(method, text)
+-   text.send(method)
+- end
+
+- def downcase(text)
+-   __string_transform(:downcase, text)
+- end
+
+- def upcase(text)
+-   __string_transform(:upcase, text)
+- end
+
+
+- def text_from_xml_string(xml_str)
+-   doc = Nokogiri::XML::Document.parse("<xml>#{xml_str}</xml>")
+-
+-   str_parts = []
+-   doc.traverse do |node|
+-     str_parts << node.content if node.text?
+-   end
+-
+-   str_parts.join
+- end
+
+
+- def rich_target?(target = __target)
+-   name = target.name.to_s
+-   (['ibooks', 'play'].include?(name) || !['palmknihy', 'kosmas'].include?(name))
+- end
+
+- def primitive_target?(target = __target)
+-   !rich_target?(target)
+- end
+
+- def back_symbol
+-   rich_target? ? "↩" : 'zpět'
+- end

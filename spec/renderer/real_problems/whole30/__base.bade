@@ -1,0 +1,133 @@
+
+// - require_relative(File.join(Dir.pwd, 'link_for_page.rb'))
+import 'common_base.bade'
+
+// ==============================================================================================
+
+mixin other_chapter(title)
+	h1.other_chapter= title
+
+mixin iniciala(symbol)
+	+first
+		span.iniciala= symbol
+		- default_block.call
+
+mixin red_iniciala(symbol)
+	+first
+		span.red_iniciala= symbol
+		- default_block.call
+
+
+
+mixin chapter_quote
+	.chapter_quote
+		- default_block.call
+
+
+mixin multi_header(pre, title, color: 'blue', id: nil)
+	h3.target(id: id)
+		span.target_key= pre
+		= ' '
+		<span class="target_#{color}">#{title}</span>
+
+mixin target_header(title, id: nil)
+	+multi_header('CÍL:', title, id: id)
+
+mixin step_header(number, title, id: nil)
+	+multi_header("KROK #{number}:", title, id: id)
+
+mixin day_header(pre, title)
+	+multi_header(pre, title, color: 'red')
+
+
+mixin normal_multi_header(pre, title, color: 'blue')
+	h3.normal_multi
+		span.sans= pre
+		= ' '
+		<span class="#{color}">#{title}</span>
+
+
+// ==============================================================================================
+
+mixin part_intro(number, title: '')
+	.part_intro_content
+		p.number: span.number= upcase(number)
+		h1.part_intro= downcase(title)
+
+		- default_block.call
+
+mixin chapter(title, above: nil)
+	- unless above.nil?
+		p.chapter_above_title: span.chapter_above_title= above
+		h2.chapter_with_above= title
+	- else
+		h2.chapter= title
+	- end
+
+
+mixin h3(title, id: nil)
+	h3.normal(id: id)= title
+
+mixin red_h3(title, id: nil)
+	h3.red(id: id)= title
+
+mixin table_header(title, id: nil)
+	p.table_header(id: id)= title
+
+
+
+mixin h4(title)
+	h4.normal= title
+
+// ==============================================================================================
+
+
+mixin green_box(title: '', id: nil)
+	.green_box(id: id)
+		p.title= upcase(title)
+		- default_block.call
+
+
+mixin dots(items)
+	p.dots= items.split(' • ').join(" <span class='dot'>•</span> ")
+
+mixin blue_line
+	hr.blue
+
+mixin __tip(pre, id: nil)
+	p.tip(id: id)
+		span.RTip_Star 
+		= ' '
+		span.header= pre
+		= ' '
+		span.text
+			- default_block.call
+
+// ==============================================================================================
+
+mixin intro_picture(src)
+	.page_picture.intro_image
+		img.picture(src: src, alt: '')
+
+
+mixin page_picture(src)
+	.page_picture
+		img.picture(src: src, alt: '')
+
+mixin picture(src, title: '', above_title: '')
+	div.picture(id: "img_#{src}")
+		- unless above_title.empty?
+			p.picture_above_title= above_title
+		- end
+
+		img.picture(src: src, alt: '')
+		- unless title.empty?
+			p.picture_title= title
+		- end
+
+- def footnote_ref
+-    $footnotes_files ||= {}
+-    number = $footnotes_files.count + 1
+-    $footnotes_files[number] = __file
+-    %Q{<a class="footnote_ref" href="footnotes#footnote_#{number}" id="footnote_back_#{number}">#{number}</a>}
+- end

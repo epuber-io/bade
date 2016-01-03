@@ -38,6 +38,9 @@ module Bade
       buff_code "lambda do |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|"
 
       code_indent {
+        buff_code "self.#{NEW_LINE_NAME} = #{NEW_LINE_NAME}"
+        buff_code "self.#{BASE_INDENT_NAME} = #{BASE_INDENT_NAME}"
+
         visit_document(document)
 
         buff_code "output = #{BUFF_NAME}.join"
@@ -109,7 +112,7 @@ module Bade
           visit_tag(current_node)
 
         when :code
-          buff_code current_node.value
+          buff_code(current_node.value)
 
         when :html_comment
           buff_print_text '<!-- '

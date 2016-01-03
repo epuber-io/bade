@@ -15,12 +15,19 @@ module Bade
       #
       attr_accessor :__mixins
 
+      # Holds
+      # @return [String]
+      #
+      attr_accessor :__new_line, :__base_indent
+
       # @param vars [Hash]
       #
       def initialize(vars = {})
         __reset
 
         vars.each do |key, value|
+          raise KeyError, "Already defined variable #{key.inspect} in this binding" if respond_to?(key.to_sym)
+
           define_singleton_method(key) do
             value
           end
