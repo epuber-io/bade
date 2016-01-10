@@ -20,18 +20,18 @@ describe String do
     end
 
     it 'tab indents' do
-      assert_indent 'abc', 0, :tabsize => 4
+      assert_indent 'abc', 0, tabsize: 4
 
-      assert_indent "\tabc", 4, :tabsize => 4
-      assert_indent "\tabc", 1, :tabsize => 1
+      assert_indent "\tabc", 4, tabsize: 4
+      assert_indent "\tabc", 1, tabsize: 1
 
-      assert_indent "\t\tabc", 4, :tabsize => 2
-      assert_indent "\t\tabc", 8, :tabsize => 4
+      assert_indent "\t\tabc", 4, tabsize: 2
+      assert_indent "\t\tabc", 8, tabsize: 4
     end
 
     it 'tabs and spaces can be combined' do
-      assert_indent "\t abc", 2, :tabsize => 1
-      assert_indent "\t \tabc", 9, :tabsize => 4
+      assert_indent "\t abc", 2, tabsize: 1
+      assert_indent "\t \tabc", 9, tabsize: 4
     end
 
     it 'default tab size is 4' do
@@ -56,8 +56,8 @@ describe String do
     end
 
     it 'removes tabs' do
-      assert_remove 4, "\tabc", 'abc', :tabsize => 4
-      assert_remove 4, "\t\tabc", 'abc', :tabsize => 2
+      assert_remove 4, "\tabc", 'abc', tabsize: 4
+      assert_remove 4, "\t\tabc", 'abc', tabsize: 2
     end
   end
 
@@ -79,8 +79,8 @@ describe String do
     end
 
     it 'removes tabs' do
-      assert_remove 4, "\tabc", 'abc', :tabsize => 4
-      assert_remove 4, "\t\tabc", 'abc', :tabsize => 2
+      assert_remove 4, "\tabc", 'abc', tabsize: 4
+      assert_remove 4, "\t\tabc", 'abc', tabsize: 2
     end
   end
 
@@ -96,14 +96,14 @@ describe String do
 
   context '#remove_first!' do
     it 'removes first char by default' do
-      var = 'abc'
+      var = String.new('abc')
       var.remove_first!
 
       expect(var).to eq 'bc'
     end
 
     it 'removes specific number of chars' do
-      var = 'abcdefg'
+      var = String.new('abcdefg')
       var.remove_first!(3)
 
       expect(var).to eq 'defg'
@@ -122,14 +122,14 @@ describe String do
 
   context '#remove_last!' do
     it 'removes first char by default' do
-      var = 'abc'
+      var = String.new('abc')
       var.remove_last!
 
       expect(var).to eq 'ab'
     end
 
     it 'removes specific number of chars' do
-      var = 'abcdefg'
+      var = String.new('abcdefg')
       var.remove_last!(3)
 
       expect(var).to eq 'abcd'

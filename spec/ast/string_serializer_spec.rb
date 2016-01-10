@@ -8,12 +8,10 @@ require_relative '../helper'
 describe Bade::AST::StringSerializer do
   include ASTHelper
 
-  _Sut = Bade::AST::StringSerializer
-
   it 'can serialize simple tag' do
     tag = tag('tag_name')
 
-    sut = _Sut.new(tag)
+    sut = Bade::AST::StringSerializer.new(tag)
 
     expect(sut.to_s).to eq ('(:tag tag_name)')
   end
@@ -21,7 +19,7 @@ describe Bade::AST::StringSerializer do
   it 'can serialize tag with attributes' do
     tag = tag('tag_name',
             n(:tag_attr, {name: 'attr-name', value: '"attr-value"'}))
-    sut = _Sut.new(tag)
+    sut = Bade::AST::StringSerializer.new(tag)
 
     expected = '(:tag tag_name
   (:tag_attr attr-name:"attr-value")
@@ -36,7 +34,7 @@ describe Bade::AST::StringSerializer do
             tag('tag_2',
                 n(:tag_attr, {name: 'attr2', value: 'value2'}),
                n(:text, {value: 'baf'})))
-    sut = _Sut.new(root)
+    sut = Bade::AST::StringSerializer.new(root)
 
     expected = '(:tag tag_name
   (:tag_attr attr:value)
@@ -53,7 +51,7 @@ describe Bade::AST::StringSerializer do
     root = n(:mixin_decl, {name: 'blaf'},
              n(:mixin_param, {value: 'abc'}))
 
-    sut = _Sut.new(root)
+    sut = Bade::AST::StringSerializer.new(root)
 
     expected = '(:mixin_decl blaf
   (:mixin_param abc)
