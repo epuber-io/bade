@@ -66,7 +66,7 @@ describe Bade::Parser do
 
       it 'normal variable eval' do
         vars = {
-            __const: Hash.new { |hash, key| raise KeyError, "Not found key #{key}" }
+          __const: Hash.new { |_hash, key| raise KeyError, "Not found key #{key}" }
         }
 
         source = <<-BADE.strip_heredoc

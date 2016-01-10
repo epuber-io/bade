@@ -10,9 +10,9 @@ require_relative 'constants'
 # profile the code
 RubyProf.start
 
-500.times {
+500.times do
   Bade::Renderer.from_file(TEMPLATE_PATH).with_locals(TEMPLATE_VARS).render
-}
+end
 
 result = RubyProf.stop
 result.eliminate_methods!([/Bade::Parser#append_node/])

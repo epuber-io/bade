@@ -4,7 +4,6 @@ require_relative '../../lib/bade/ruby_extensions/string'
 
 describe String do
   context '#get_indent' do
-
     def assert_indent(string, expected_indent, tabsize: 4)
       indent = string.get_indent(tabsize)
       expect(indent).to eq expected_indent
@@ -37,7 +36,6 @@ describe String do
     it 'default tab size is 4' do
       assert_indent "\ta", 4
     end
-
   end
 
   context '#remove_indent' do

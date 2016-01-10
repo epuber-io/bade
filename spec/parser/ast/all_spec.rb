@@ -21,20 +21,20 @@ describe Bade::Parser do
       ast = n(:root,
               n(:mixin_call, { name: 'abc' },
                 n(:newline),
-                n(:code, value: 'if abc.empty?'),
+                code('if abc.empty?'),
                 n(:newline),
                 n(:text, value: 'empty'),
                 n(:newline),
-                n(:code, value: 'else'),
+                code('else'),
                 n(:newline),
                 tag('items',
                     n(:newline),
-                    n(:output, value: 'abc.join()')
-                ),
+                    n(:output, value: 'abc.join()'),
+                   ),
                 n(:newline),
-                n(:code, value: 'end')),
-              n(:newline)
-      )
+                code('end')),
+              n(:newline),
+             )
 
       assert_ast(ast, source)
     end

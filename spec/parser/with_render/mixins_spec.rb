@@ -270,9 +270,10 @@ describe Bade::Parser do
           +a
         BADE
 
+        message = 'Mixin `a` requires block to get rendered content of block `default_block`'
         expect do
           assert_html '', source, print_error_if_error: false
-        end.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError, 'Mixin `a` requires block to get rendered content of block `default_block`'
+        end.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError, message
       end
 
       it 'support for mutating of rendered content of block without specified block' do

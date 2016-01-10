@@ -22,11 +22,8 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
     str = renderer.render(new_line: '', indent: '')
 
     expect(str).to eq expectation
-
-  rescue Exception
-    if print_error_if_error
-      puts renderer.lambda_string
-    end
+  rescue
+    puts renderer.lambda_string if print_error_if_error
 
     raise
   end
@@ -45,15 +42,17 @@ def lambda_str_from_bade_code(source)
   Bade::Generator.document_to_lambda_string(parsed)
 end
 
+# Module for easier creating AST in code
+#
 module ASTHelper
-  def n(type, properties={}, *children)
+  def n(type, properties = {}, *children)
     node = if type == :root
              Bade::AST::Node.new(:root, lineno: nil)
            else
              Bade::AST::NodeRegistrator.create(type, nil)
            end
 
-    if properties.kind_of?(Bade::AST::Node)
+    if properties.is_a?(Bade::AST::Node)
       children.unshift(properties)
       properties = nil
     end
@@ -72,10 +71,27 @@ module ASTHelper
   def tag(name, *children)
     n(:tag, { name: name }, *children)
   end
+
+  def text(text)
+    n(:text, value: text)
+  end
+
+  def code(text)
+    n(:code, value: text)
+  end
+
+  def output(text)
+    n(:output, value: text)
+  end
+
+  def newline
+    n(:newline)
+  end
 end
 
 
-
+# Some extensions to String only for tests
+#
 class String
   # source: http://apidock.com/rails/String/strip_heredoc
   # @return [String]
