@@ -77,7 +77,7 @@ require 'rspec'
             code
         BADE
 
-        expected = <<-RESULT.strip_heredoc
+        expected = <<-RESULT.strip_heredoc.rstrip
           test code multi lined
             code
         RESULT

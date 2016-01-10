@@ -21,7 +21,7 @@ describe Bade::Parser do
 
       ast = n(:root,
               tag('tag_bla',
-                n(:tag_attr, name: 'attr_bla', value: '"abc"')))
+                  n(:tag_attr, name: 'attr_bla', value: '"abc"')))
 
       assert_ast(ast, source)
     end
@@ -31,16 +31,16 @@ describe Bade::Parser do
 
       ast = n(:root,
               tag('tag_bla',
-                n(:tag_attr, name: 'a1', value: '"a1"'),
-                n(:tag_attr, name: 'a2', value: '"a2"'),
-                n(:tag_attr, name: 'a3', value: '"a3"'),
-                n(:tag_attr, name: 'a4', value: '"a4"'),
-                n(:tag_attr, name: 'a5', value: '"a5"'),
-                n(:tag_attr, name: 'a6', value: '"a6"'),
-                n(:tag_attr, name: 'a7', value: '"a7"'),
-                n(:tag_attr, name: 'a8', value: '"a8"'),
-                n(:tag_attr, name: 'a9', value: '"a9"'),
-                n(:tag_attr, name: 'a10', value: '"a10"'),
+                  n(:tag_attr, name: 'a1', value: '"a1"'),
+                  n(:tag_attr, name: 'a2', value: '"a2"'),
+                  n(:tag_attr, name: 'a3', value: '"a3"'),
+                  n(:tag_attr, name: 'a4', value: '"a4"'),
+                  n(:tag_attr, name: 'a5', value: '"a5"'),
+                  n(:tag_attr, name: 'a6', value: '"a6"'),
+                  n(:tag_attr, name: 'a7', value: '"a7"'),
+                  n(:tag_attr, name: 'a8', value: '"a8"'),
+                  n(:tag_attr, name: 'a9', value: '"a9"'),
+                  n(:tag_attr, name: 'a10', value: '"a10"'),
               ))
 
       assert_ast(ast, source)
@@ -52,7 +52,7 @@ describe Bade::Parser do
 
       ast = n(:root,
               tag('tagX',
-                n(:text, { value: 'With some text we can use' })))
+                  n(:text, { value: 'With some text we can use' })))
 
       assert_ast(ast, source)
     end
@@ -76,8 +76,8 @@ describe Bade::Parser do
 
       ast = n(:root,
               tag('tag1',
-                n(:newline),
-                tag('tag2')))
+                  n(:newline),
+                  tag('tag2')))
 
       assert_ast(ast, source)
     end
@@ -86,7 +86,7 @@ describe Bade::Parser do
       source = 'tag1= magic_variable.name.baf'
       ast = n(:root,
               tag('tag1',
-                n(:output, { value: 'magic_variable.name.baf', escaped: false })))
+                  n(:output, { value: 'magic_variable.name.baf', escaped: false })))
 
       assert_ast(ast, source)
     end
@@ -111,7 +111,7 @@ describe Bade::Parser do
 
         ast = n(:root,
                 tag('tag',
-                  n(:output, { value: 'nil_value', conditional: true })),
+                    n(:output, { value: 'nil_value', conditional: true })),
                 n(:newline),
                 tag('tag',
                     n(:output, { value: 'value', conditional: true })),
@@ -147,9 +147,9 @@ describe Bade::Parser do
       source = 'tag1: tag2 some text'
 
       ast = n(:root,
-             tag('tag1',
-                 tag('tag2',
-                    n(:text, { value: 'some text' }))))
+              tag('tag1',
+                  tag('tag2',
+                      n(:text, { value: 'some text' }))))
 
       assert_ast(ast, source)
     end

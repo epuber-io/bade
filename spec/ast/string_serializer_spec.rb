@@ -13,12 +13,12 @@ describe Bade::AST::StringSerializer do
 
     sut = Bade::AST::StringSerializer.new(tag)
 
-    expect(sut.to_s).to eq ('(:tag tag_name)')
+    expect(sut.to_s).to eq '(:tag tag_name)'
   end
 
   it 'can serialize tag with attributes' do
     tag = tag('tag_name',
-            n(:tag_attr, { name: 'attr-name', value: '"attr-value"' }))
+              n(:tag_attr, name: 'attr-name', value: '"attr-value"'))
     sut = Bade::AST::StringSerializer.new(tag)
 
     expected = '(:tag tag_name
@@ -30,26 +30,28 @@ describe Bade::AST::StringSerializer do
 
   it 'can serialize nested tags with attributes and text' do
     root = tag('tag_name',
-            n(:tag_attr, { name: 'attr', value: 'value' }),
-            tag('tag_2',
-                n(:tag_attr, { name: 'attr2', value: 'value2' }),
-               n(:text, { value: 'baf' })))
+               n(:tag_attr, name: 'attr', value: 'value'),
+               tag('tag_2',
+                   n(:tag_attr, name: 'attr2', value: 'value2'),
+                   n(:text, value: 'baf')))
     sut = Bade::AST::StringSerializer.new(root)
 
-    expected = '(:tag tag_name
-  (:tag_attr attr:value)
-  (:tag tag_2
-    (:tag_attr attr2:value2)
-    (:text baf)
-  )
-)'
+    expected = <<-AST.strip_heredoc.rstrip
+      (:tag tag_name
+        (:tag_attr attr:value)
+        (:tag tag_2
+          (:tag_attr attr2:value2)
+          (:text baf)
+        )
+      )
+    AST
 
     expect(sut.to_s).to eq expected
   end
 
   it 'can serialize simple mixin' do
     root = n(:mixin_decl, { name: 'blaf' },
-             n(:mixin_param, { value: 'abc' }))
+             n(:mixin_param, value: 'abc'))
 
     sut = Bade::AST::StringSerializer.new(root)
 

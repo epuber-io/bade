@@ -255,13 +255,13 @@ describe Bade::Parser do
       ast = n(:root,
               n(:mixin_call, { name: 'abc' },
                 tag('tag2',
-                  n(:text, { value: 'text' }))),
+                    n(:text, { value: 'text' }))),
               n(:newline),
               n(:mixin_call, { name: 'abc' },
                 n(:mixin_param, { value: 'param' }),
                 n(:mixin_key_param, { name: 'key2', value: 'key2' }),
                 tag('tag2',
-                  n(:text, { value: 'text' }))),
+                    n(:text, { value: 'text' }))),
               n(:newline),
       )
 

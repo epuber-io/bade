@@ -185,4 +185,3 @@ describe Bade::AST::TagNode do
     end
   end
 end
-
