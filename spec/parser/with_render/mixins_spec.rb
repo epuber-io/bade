@@ -141,9 +141,9 @@ describe Bade::Parser do
         +m()
       BADE
 
-      expect {
+      expect do
         assert_html '', source, print_error_if_error: false
-      }.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError
+      end.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError
     end
 
     it 'parse mixin with custom blocks' do

@@ -14,7 +14,7 @@ Style/Encoding:
 
 Style/MultilineOperationIndentation:
   Exclude:
-    - spec/renderer/dsl_spec.rb
+    - spec/renderer/*_spec.rb
 
 Style/UnneededPercentQ:
   Exclude:

@@ -21,8 +21,8 @@ require 'rspec'
         assert_ruby_code ' "abc ,fd ,, fds f" ,   ', '"abc ,fd ,, fds f"'
       end
       it 'parse string with mixed quotes' do
-        source = %Q{ "text with \\', \\" quotes" 'other, text ' }
-        expected = %Q{"text with \\', \\" quotes" 'other, text '}
+        source = %( "text with \\', \\" quotes" 'other, text ' )
+        expected = %("text with \\', \\" quotes" 'other, text ')
         assert_ruby_code source, expected
       end
 
@@ -34,9 +34,9 @@ require 'rspec'
       it 'should not parse incomplete text' do
         source = ' some_method(param   , '
 
-        expect {
+        expect do
           assert_ruby_code source, nil
-        }.to raise_error(String)
+        end.to raise_error(String)
       end
 
       it 'parse simple variable' do
@@ -72,13 +72,16 @@ require 'rspec'
       end
 
       it 'parse multi lined code' do
-        source = '
-test code multi lined
-  code
-'
+        source = <<-BADE.strip_heredoc
+          test code multi lined
+            code
+        BADE
 
-        expected = 'test code multi lined
-  code'
+        expected = <<-RESULT.strip_heredoc
+          test code multi lined
+            code
+        RESULT
+
         assert_ruby_code source, expected
       end
     end
