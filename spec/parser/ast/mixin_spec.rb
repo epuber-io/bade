@@ -13,7 +13,7 @@ describe Bade::Parser do
       BADE
 
       ast = n(:root,
-              n(:mixin_decl, { name: 'abc' }),
+              n(:mixin_decl, name: 'abc'),
               n(:newline))
 
       assert_ast(ast, source)
@@ -26,10 +26,10 @@ describe Bade::Parser do
       BADE
 
       ast = n(:root,
-              n(:mixin_decl, { name: 'ab:c' }),
+              n(:mixin_decl, name: 'ab:c'),
               n(:newline),
               n(:mixin_decl, { name: 'ab:cd' },
-                n(:mixin_param, { value: 'abc' })),
+                n(:mixin_param, value: 'abc')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -42,10 +42,10 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_decl, { name: 'abc' },
-                n(:mixin_param, { value: 'a' }),
-                n(:mixin_param, { value: 'b' }),
-                n(:mixin_key_param, { name: 'key1', value: '"a"' }),
-                n(:mixin_block_param, { value: 'block_param' })),
+                n(:mixin_param, value: 'a'),
+                n(:mixin_param, value: 'b'),
+                n(:mixin_key_param, name: 'key1', value: '"a"'),
+                n(:mixin_block_param, value: 'block_param')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -60,7 +60,7 @@ describe Bade::Parser do
       ast = n(:root,
               n(:mixin_decl, { name: 'abc' },
                 n(:newline),
-                n(:text, { value: 'text' })),
+                n(:text, value: 'text')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -74,12 +74,12 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_decl, { name: 'abc' },
-                n(:mixin_param, { value: 'a' }),
-                n(:mixin_param, { value: 'b' }),
-                n(:mixin_key_param, { name: 'key1', value: '"a"' }),
-                n(:mixin_block_param, { value: 'block_param' }),
+                n(:mixin_param, value: 'a'),
+                n(:mixin_param, value: 'b'),
+                n(:mixin_key_param, name: 'key1', value: '"a"'),
+                n(:mixin_block_param, value: 'block_param'),
                 n(:newline),
-                n(:text, { value: 'text' })),
+                n(:text, value: 'text')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -92,9 +92,9 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_decl, { name: 'abc' },
-                n(:mixin_param, { value: 'a' }),
-                n(:mixin_key_param, { name: 'key', value: ':value' }),
-                n(:mixin_block_param, { value: 'block' })),
+                n(:mixin_param, value: 'a'),
+                n(:mixin_key_param, name: 'key', value: ':value'),
+                n(:mixin_block_param, value: 'block')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -109,12 +109,12 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_decl, { name: 'abc' },
-                n(:mixin_block_param, { value: 'first' }),
-                n(:mixin_block_param, { value: 'second' }),
+                n(:mixin_block_param, value: 'first'),
+                n(:mixin_block_param, value: 'second'),
                 n(:newline),
-                n(:code, { value: 'first.call' }),
+                n(:code, value: 'first.call'),
                 n(:newline),
-                n(:code, { value: 'second.call!' })),
+                n(:code, value: 'second.call!')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -129,9 +129,9 @@ describe Bade::Parser do
       BADE
 
       ast = n(:root,
-              n(:mixin_call, { name: 'abc' }),
+              n(:mixin_call, name: 'abc'),
               n(:newline),
-              n(:mixin_call, { name: 'abc' }),
+              n(:mixin_call, name: 'abc'),
               n(:newline))
 
       assert_ast(ast, source)
@@ -146,14 +146,14 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_call, { name: 'abc' },
-                n(:text, { value: 'some text' })),
+                n(:text, value: 'some text')),
               n(:newline),
               n(:mixin_call, { name: 'abc' },
-                n(:text, { value: 'some text' })),
+                n(:text, value: 'some text')),
               n(:newline),
               n(:mixin_call, { name: 'abc' },
                 n(:newline),
-                n(:text, { value: 'some text' })),
+                n(:text, value: 'some text')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -172,31 +172,31 @@ describe Bade::Parser do
       ast = n(:root,
               # first line
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_param, { value: "'abc'" }),
-                n(:text, { value: 'text' })),
+                n(:mixin_param, value: "'abc'"),
+                n(:text, value: 'text')),
               n(:newline),
 
               # second line
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_key_param, { name: 'key1', value: "'key1'" }),
-                n(:text, { value: 'text' })),
+                n(:mixin_key_param, name: 'key1', value: "'key1'"),
+                n(:text, value: 'text')),
               n(:newline),
 
               # third line
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_param, { value: "'abc'" }),
-                n(:mixin_key_param, { name: 'key1', value: "'key1'" }),
-                n(:text, { value: 'text' })),
+                n(:mixin_param, value: "'abc'"),
+                n(:mixin_key_param, name: 'key1', value: "'key1'"),
+                n(:text, value: 'text')),
               n(:newline),
 
               # rest (lines 4, 5 and 6)
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_param, { value: "'abc'" }),
-                n(:mixin_key_param, { name: 'key1', value: "'key1'" }),
+                n(:mixin_param, value: "'abc'"),
+                n(:mixin_key_param, name: 'key1', value: "'key1'"),
                 n(:newline),
                 n(:mixin_block, { name: 'first' },
                   n(:newline),
-                  n(:text, { value: 'text' }))),
+                  n(:text, value: 'text'))),
               n(:newline),
       )
 
@@ -210,9 +210,9 @@ describe Bade::Parser do
 
       ast = n(:root,
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_param, { value: ':a' }),
-                n(:mixin_param, { value: ':b' }),
-                n(:mixin_key_param, { name: 'key', value: ':value' })),
+                n(:mixin_param, value: ':a'),
+                n(:mixin_param, value: ':b'),
+                n(:mixin_key_param, name: 'key', value: ':value')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -233,13 +233,13 @@ describe Bade::Parser do
                 n(:newline),
                 n(:mixin_block, { name: 'first' },
                   n(:newline),
-                  n(:text, { value: 'text' })),
+                  n(:text, value: 'text')),
                 n(:newline),
                 n(:mixin_block, { name: 'second' },
                   n(:newline),
-                  n(:text, { value: 'text2' })),
+                  n(:text, value: 'text2')),
                 n(:newline),
-                n(:text, { value: 'text in default block' }),
+                n(:text, value: 'text in default block'),
               ),
               n(:newline),
       )
@@ -255,13 +255,13 @@ describe Bade::Parser do
       ast = n(:root,
               n(:mixin_call, { name: 'abc' },
                 tag('tag2',
-                    n(:text, { value: 'text' }))),
+                    n(:text, value: 'text'))),
               n(:newline),
               n(:mixin_call, { name: 'abc' },
-                n(:mixin_param, { value: 'param' }),
-                n(:mixin_key_param, { name: 'key2', value: 'key2' }),
+                n(:mixin_param, value: 'param'),
+                n(:mixin_key_param, name: 'key2', value: 'key2'),
                 tag('tag2',
-                    n(:text, { value: 'text' }))),
+                    n(:text, value: 'text'))),
               n(:newline),
       )
 
