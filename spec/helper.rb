@@ -70,7 +70,7 @@ module ASTHelper
   end
 
   def tag(name, *children)
-    n(:tag, {name: name}, *children)
+    n(:tag, { name: name }, *children)
   end
 end
 

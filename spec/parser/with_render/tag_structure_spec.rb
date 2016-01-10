@@ -425,7 +425,7 @@ describe Bade::Parser do
       SOURCE
 
       expected = ''
-      assert_html expected, source, vars: {val: nil}
+      assert_html expected, source, vars: { val: nil }
     end
 
     it 'should not render tag when values are nil' do
@@ -437,7 +437,7 @@ describe Bade::Parser do
       SOURCE
 
       expected = ''
-      assert_html expected, source, vars: {val: nil, val2: nil, val3: nil}
+      assert_html expected, source, vars: { val: nil, val2: nil, val3: nil }
     end
 
     it 'should render tag when the value is not nil' do
@@ -447,7 +447,7 @@ describe Bade::Parser do
       SOURCE
 
       expected = '<tag>abc</tag>'
-      assert_html expected, source, vars: {val: 'abc'}
+      assert_html expected, source, vars: { val: 'abc' }
     end
 
     it 'should render tag when values are not nil' do
@@ -459,7 +459,7 @@ describe Bade::Parser do
       SOURCE
 
       expected = '<tag>truetruetrue</tag>'
-      assert_html expected, source, vars: {val: true, val2: true, val3: true}
+      assert_html expected, source, vars: { val: true, val2: true, val3: true }
     end
 
     it 'should render tag when the value is not nil' do

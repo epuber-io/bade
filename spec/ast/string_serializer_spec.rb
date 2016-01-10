@@ -18,7 +18,7 @@ describe Bade::AST::StringSerializer do
 
   it 'can serialize tag with attributes' do
     tag = tag('tag_name',
-            n(:tag_attr, {name: 'attr-name', value: '"attr-value"'}))
+            n(:tag_attr, { name: 'attr-name', value: '"attr-value"' }))
     sut = Bade::AST::StringSerializer.new(tag)
 
     expected = '(:tag tag_name
@@ -30,10 +30,10 @@ describe Bade::AST::StringSerializer do
 
   it 'can serialize nested tags with attributes and text' do
     root = tag('tag_name',
-            n(:tag_attr, {name: 'attr', value: 'value'}),
+            n(:tag_attr, { name: 'attr', value: 'value' }),
             tag('tag_2',
-                n(:tag_attr, {name: 'attr2', value: 'value2'}),
-               n(:text, {value: 'baf'})))
+                n(:tag_attr, { name: 'attr2', value: 'value2' }),
+               n(:text, { value: 'baf' })))
     sut = Bade::AST::StringSerializer.new(root)
 
     expected = '(:tag tag_name
@@ -48,8 +48,8 @@ describe Bade::AST::StringSerializer do
   end
 
   it 'can serialize simple mixin' do
-    root = n(:mixin_decl, {name: 'blaf'},
-             n(:mixin_param, {value: 'abc'}))
+    root = n(:mixin_decl, { name: 'blaf' },
+             n(:mixin_param, { value: 'abc' }))
 
     sut = Bade::AST::StringSerializer.new(root)
 

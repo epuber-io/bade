@@ -19,7 +19,7 @@ describe Bade::Parser do
       BADE
 
       ast = n(:root,
-              n(:mixin_call, {name: 'abc'},
+              n(:mixin_call, { name: 'abc' },
                 n(:newline),
                 n(:code, value: 'if abc.empty?'),
                 n(:newline),
