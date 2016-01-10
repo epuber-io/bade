@@ -20,6 +20,14 @@ Style/UnneededPercentQ:
   Exclude:
     - lib/bade/generator.rb # TODO: remove this
 
+# We are supporting Ruby 2.3 with frozen strings, so not working
+Style/EmptyLiteral:
+  Enabled: false
+
+# Still not working as expected
+Style/Documentation:
+  Enabled: false
+
 # We adopted raise instead of fail.
 SignalException:
   EnforcedStyle: only_raise

@@ -18,14 +18,14 @@ module Bade
     #
     def parse_ruby_code(outer_delimiters)
       code = String.new
-      end_re = if Regexp === outer_delimiters
+      end_re = if outer_delimiters.is_a?(Regexp)
                  outer_delimiters
                else
                  /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
                end
       delimiters = []
 
-      until @line.empty? or (delimiters.count == 0 and @line =~ end_re)
+      until @line.empty? || (delimiters.count == 0 && @line =~ end_re)
         char = @line[0]
 
         # backslash escaped delimiter
@@ -46,25 +46,21 @@ module Bade
 
         when RUBY_END_DELIMITERS_RE
           # rising
-          if char == RUBY_DELIMITERS_REVERSE[delimiters.last]
-            delimiters.pop
-          end
+          delimiters.pop if char == RUBY_DELIMITERS_REVERSE[delimiters.last]
         end
 
         code << @line.slice!(0)
       end
 
-      unless delimiters.empty?
-        syntax_error('Unexpected end of ruby code')
-      end
+      syntax_error('Unexpected end of ruby code') unless delimiters.empty?
 
       code.strip
     end
 
     RUBY_DELIMITERS_REVERSE = {
-        '(' => ')',
-        '[' => ']',
-        '{' => '}'
+      '(' => ')',
+      '[' => ']',
+      '{' => '}',
     }.freeze
 
     RUBY_QUOTES = %w(' ").freeze
