@@ -81,16 +81,16 @@ module Bade
       #
       def __html_escaped(text)
         text.sub('&', '&amp;')
-            .sub('<', '&lt;')
-            .sub('>', '&gt;')
-            .sub('"', '&quot;')
+          .sub('<', '&lt;')
+          .sub('>', '&gt;')
+          .sub('"', '&quot;')
       end
 
       def __tag_render_attribute(name, *values)
         values = values.compact
         return if values.empty?
 
-        %Q{ #{name}="#{values.join(' ')}"}
+        %( #{name}="#{values.join(' ')}")
       end
     end
   end

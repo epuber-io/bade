@@ -50,8 +50,8 @@ module Bade
              end
 
       content = {
-          source_file_path: source_file_path,
-          code_string: code_string,
+        source_file_path: source_file_path,
+        code_string: code_string,
       }.to_yaml
 
       file.write(content)

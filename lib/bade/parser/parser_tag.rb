@@ -82,7 +82,7 @@ module Bade
         return
       end
 
-      while true
+      loop do
         case @line
         when CODE_ATTR_RE
           # Value ruby code

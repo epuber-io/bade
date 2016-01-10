@@ -198,7 +198,7 @@ describe Bade::Parser do
                   n(:newline),
                   n(:text, value: 'text'))),
               n(:newline),
-      )
+             )
 
       assert_ast(ast, source)
     end
@@ -239,10 +239,9 @@ describe Bade::Parser do
                   n(:newline),
                   n(:text, value: 'text2')),
                 n(:newline),
-                n(:text, value: 'text in default block'),
-              ),
-              n(:newline),
-      )
+                n(:text, value: 'text in default block')),
+              n(:newline))
+
       assert_ast(ast, source)
     end
 
@@ -263,7 +262,7 @@ describe Bade::Parser do
                 tag('tag2',
                     n(:text, value: 'text'))),
               n(:newline),
-      )
+             )
 
       assert_ast(ast, source)
     end

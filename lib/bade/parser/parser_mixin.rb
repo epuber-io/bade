@@ -59,7 +59,7 @@ module Bade
         return
       end
 
-      while true
+      loop do
         case @line
         when MixinRegexps::PARAMS_KEY_PARAM_NAME
           @line = $'
@@ -105,7 +105,7 @@ module Bade
         return
       end
 
-      while true
+      loop do
         case @line
         when MixinRegexps::PARAMS_KEY_PARAM_NAME
           # Value ruby code

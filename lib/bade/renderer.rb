@@ -22,7 +22,7 @@ module Bade
       # @param [String] reference_path  reference file from which is load performed
       # @param [String] msg  standard message
       #
-      def initialize(loading_path, reference_path, msg=nil)
+      def initialize(loading_path, reference_path, msg = nil)
         super(msg)
         @loading_path = loading_path
         @reference_path = reference_path
@@ -167,7 +167,8 @@ module Bade
     # ----------------------------------------------------------------------------- #
     # Render
 
-    # @param [Binding] binding  custom binding for evaluating the template, but it is not recommended to use, use :locals and #with_locals instead
+    # @param [Binding] binding  custom binding for evaluating the template, but it is not recommended to use,
+    #                           use :locals and #with_locals instead
     # @param [String] new_line  newline string, default is \n
     # @param [String] indent  indent string, default is two spaces
     #
@@ -177,8 +178,8 @@ module Bade
       self.lambda_binding = binding unless binding.nil? # backward compatibility
 
       run_vars = {
-          Generator::NEW_LINE_NAME.to_sym => new_line,
-          Generator::BASE_INDENT_NAME.to_sym => indent,
+        Generator::NEW_LINE_NAME.to_sym => new_line,
+        Generator::BASE_INDENT_NAME.to_sym => indent,
       }
       run_vars.reject! { |_key, value| value.nil? } # remove nil values
 
@@ -219,7 +220,8 @@ module Bade
       document
     end
 
-    # Tries to find file with name, if no file could be found or there are multiple files matching the name error is raised
+    # Tries to find file with name, if no file could be found or there are multiple files matching the name error is
+    # raised
     #
     # @param [String] name  name of the file that should be found
     # @param [String] reference_path  path to file from which is loading/finding
@@ -229,25 +231,28 @@ module Bade
     def _find_file!(name, reference_path)
       sub_path = File.expand_path(name, File.dirname(reference_path))
 
-      if File.exists?(sub_path)
+      if File.exist?(sub_path)
         return if sub_path.end_with?('.rb') # handled in Generator
         sub_path
       else
         bade_path = "#{sub_path}.bade"
         rb_path = "#{sub_path}.rb"
 
-        bade_exist = File.exists?(bade_path)
-        rb_exist = File.exists?(rb_path)
-        relative = Pathname.new(reference_path).relative_path_from(Pathname.new(File.dirname(self.file_path))).to_s
+        bade_exist = File.exist?(bade_path)
+        rb_exist = File.exist?(rb_path)
+        relative = Pathname.new(reference_path).relative_path_from(Pathname.new(File.dirname(file_path))).to_s
 
         if bade_exist && rb_exist
-          raise LoadError.new(name, reference_path, "Found both .bade and .rb files for `#{name}` in file #{relative}, change the import path so it references uniq file.")
+          message = "Found both .bade and .rb files for `#{name}` in file #{relative}, "\
+                    'change the import path so it references uniq file.'
+          raise LoadError.new(name, reference_path, message)
         elsif bade_exist
           return bade_path
         elsif rb_exist
           return # handled in Generator
         else
-          raise LoadError.new(name, reference_path, "Can't find file matching name `#{name}` referenced from file #{relative}")
+          message = "Can't find file matching name `#{name}` referenced from file #{relative}"
+          raise LoadError.new(name, reference_path, message)
         end
       end
     end

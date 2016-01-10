@@ -40,9 +40,7 @@ module Bade
         def create(type, lineno)
           klass = registered_types[type]
 
-          if klass.nil?
-            raise ::KeyError, "Undefined node type #{type.inspect}"
-          end
+          raise ::KeyError, "Undefined node type #{type.inspect}" if klass.nil?
 
           klass.new(type, lineno: lineno)
         end

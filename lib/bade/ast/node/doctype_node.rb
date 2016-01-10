@@ -10,14 +10,14 @@ module Bade
       #
       def xml_output
         case value
-          when 'xml'
-            '<?xml version="1.0" encoding="utf-8" ?>'
+        when 'xml'
+          '<?xml version="1.0" encoding="utf-8" ?>'
 
-          when 'html'
-            '<!DOCTYPE html>'
+        when 'html'
+          '<!DOCTYPE html>'
 
-          else
-            raise Parser::ParserInternalError 'Unknown doctype type'
+        else
+          raise Parser::ParserInternalError, 'Unknown doctype type'
         end
       end
     end

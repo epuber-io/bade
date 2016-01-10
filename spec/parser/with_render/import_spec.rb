@@ -5,7 +5,7 @@ describe Bade::Parser, 'import' do
   it 'parse import statement' do
     parser = Bade::Parser.new
     document = parser.parse('import "ahoj"')
-    import_nodes = document.root.children.reject { |node| node.type == :newline }
+    import_nodes = document.root.children.reject { |n| n.type == :newline }
 
     expect(parser.dependency_paths).to eq %w(ahoj)
 

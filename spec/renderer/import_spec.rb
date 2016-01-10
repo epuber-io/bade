@@ -65,7 +65,8 @@ describe Bade::Renderer, 'import feature' do
       expect do
         Bade::Renderer.from_source(source, base_path)
                       .render(new_line: '')
-      end.to raise_error(Bade::Renderer::LoadError, 'Found both .bade and .rb files for `folder/import_in_folder` in file base.bade, change the import path so it references uniq file.')
+      end.to raise_error(Bade::Renderer::LoadError, 'Found both .bade and .rb files for `folder/import_in_folder` in '\
+                                                    'file base.bade, change the import path so it references uniq file.')
     end
   end
 end

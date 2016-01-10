@@ -7,7 +7,7 @@ Style/EmptyLines:
   Enabled: false
 
 Style/RegexpLiteral:
-  MaxSlashes: 0
+  AllowInnerSlashes: false
 
 Style/Encoding:
   Enabled: false
@@ -28,6 +28,10 @@ Style/EmptyLiteral:
 Style/Documentation:
   Enabled: false
 
+# Only matches the good part of Perl backrefs ($1, $2, ...), not the bad part ($', $`, $<, ...)
+Style/PerlBackrefs:
+  Enabled: false
+
 # We adopted raise instead of fail.
 SignalException:
   EnforcedStyle: only_raise
@@ -36,6 +40,8 @@ SignalException:
 # We all have wide screen monitors, so why only 80?
 Metrics/LineLength:
   Max: 120
+  Exclude:
+    - spec/**/*_spec.rb
 
 # WTF: why is default 10?
 Metrics/MethodLength:

@@ -21,7 +21,8 @@ module Bade
         when Document
           node_to_s(root.root, 0)
         else
-          raise AttributeError, "Root attribute passed into initializer must be subclass of #{Node} or #{Document}, is #{root.class}!"
+          msg = "Root attribute passed into initializer must be subclass of #{Node} or #{Document}, is #{root.class}!"
+          raise AttributeError, msg
         end
       end
 

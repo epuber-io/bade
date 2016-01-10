@@ -44,7 +44,7 @@ module Bade
       # @return [Bool]
       #
       def ==(other)
-        return false unless Document === other
+        return false unless other.is_a?(Document)
 
         root == other.root && sub_documents == other.sub_documents
       end

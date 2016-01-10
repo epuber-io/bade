@@ -9,7 +9,8 @@ module Bade
         block.call(blocks, *args)
       rescue ArgumentError => e
         case e.message
-        when /\Awrong number of arguments \(given ([0-9]+), expected ([0-9]+)\)\Z/, /\Awrong number of arguments \(([0-9]+) for ([0-9]+)\)\Z/
+        when /\Awrong number of arguments \(given ([0-9]+), expected ([0-9]+)\)\Z/,
+             /\Awrong number of arguments \(([0-9]+) for ([0-9]+)\)\Z/
           # handle incorrect parameters count
 
           # minus one, because first argument is always hash of blocks

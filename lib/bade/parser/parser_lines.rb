@@ -10,8 +10,8 @@ module Bade
       MIXIN_DECL = /\Amixin #{NAME_RE_STRING}/
       MIXIN_CALL = /\A\+#{NAME_RE_STRING}/
       BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/
-      HTML_COMMENT = /\A\/\/! /
-      NORMAL_COMMENT = /\A\/\//
+      HTML_COMMENT = %r{\A//! }
+      NORMAL_COMMENT = %r{\A//}
       TEXT_BLOCK_START = /\A\|( ?)/
       INLINE_HTML = /\A</
       CODE_BLOCK = /\A-/
@@ -108,7 +108,7 @@ module Bade
         end
 
         # Remove old stacks we don't need
-        while not @stacks[indent].nil? and indent < @stacks[indent].length - 1
+        while !@stacks[indent].nil? && indent < @stacks[indent].length - 1
           last_newlines = remove_last_newlines
 
           @stacks[indent].pop

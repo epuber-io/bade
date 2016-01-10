@@ -19,7 +19,7 @@ module Bade
     # @return [String]
     #
     def self.document_to_lambda_string(document)
-      generator = self.new
+      generator = new
       generator.generate_lambda_string(document)
     end
 
@@ -37,7 +37,7 @@ module Bade
       buff_code ''
       buff_code "lambda do |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|"
 
-      code_indent {
+      code_indent do
         buff_code "self.#{NEW_LINE_NAME} = #{NEW_LINE_NAME}"
         buff_code "self.#{BASE_INDENT_NAME} = #{BASE_INDENT_NAME}"
 
@@ -46,7 +46,7 @@ module Bade
         buff_code "output = #{BUFF_NAME}.join"
         buff_code 'self.__reset'
         buff_code 'output'
-      }
+      end
 
       buff_code 'end'
 
@@ -58,13 +58,13 @@ module Bade
 
     # @param [String] text
     #
-    def buff_print_text(text, indent: false, new_line: false)
-      buff_print_value(%Q{%Q{#{text}}}) if text.length > 0
+    def buff_print_text(text, indent: false, new_line: false) # rubocop:disable Lint/UnusedMethodArgument
+      buff_print_value("%Q{#{text}}") if text.length > 0
     end
 
     def buff_print_value(value)
       # buff_code %Q{#{BUFF_NAME} << #{CURRENT_INDENT_NAME}} if indent
-      buff_code(%Q{#{BUFF_NAME} << #{value}})
+      buff_code("#{BUFF_NAME} << #{value}")
     end
 
     def buff_code(text)
@@ -93,80 +93,70 @@ module Bade
     # @param nodes [Array<Node>]
     #
     def visit_nodes(nodes)
-      nodes.each { |node|
+      nodes.each do |node|
         visit_node(node)
-      }
+      end
     end
 
     # @param current_node [Node]
     #
     def visit_node(current_node)
       case current_node.type
-        when :root
-          visit_node_children(current_node)
+      when :root
+        visit_node_children(current_node)
 
-        when :text
-          buff_print_text current_node.value
+      when :text
+        buff_print_text current_node.value
 
-        when :tag
-          visit_tag(current_node)
+      when :tag
+        visit_tag(current_node)
 
-        when :code
-          buff_code(current_node.value)
+      when :code
+        buff_code(current_node.value)
 
-        when :html_comment
-          buff_print_text '<!-- '
-          visit_node_children(current_node)
-          buff_print_text ' -->'
+      when :html_comment
+        buff_print_text '<!-- '
+        visit_node_children(current_node)
+        buff_print_text ' -->'
 
-        when :comment
-          comment_text = '#' + current_node.children.map(&:value).join("\n#")
-          buff_code(comment_text)
+      when :comment
+        comment_text = '#' + current_node.children.map(&:value).join("\n#")
+        buff_code(comment_text)
 
-        when :doctype
-          buff_print_text current_node.xml_output
+      when :doctype
+        buff_print_text current_node.xml_output
 
-        when :mixin_decl
-          params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
+      when :mixin_decl
+        visit_block_decl(current_node)
 
-          code_indent {
-            blocks_name_declaration(current_node)
-            visit_nodes(current_node.children - current_node.params)
-          }
+      when :mixin_call
+        params = formatted_mixin_params(current_node)
+        buff_code "#{MIXINS_NAME}['#{current_node.name}'].call!(#{params})"
 
-          buff_code '})'
-
-        when :mixin_call
-          params = formatted_mixin_params(current_node)
-          buff_code "#{MIXINS_NAME}['#{current_node.name}'].call!(#{params})"
-
-        when :output
-          data = current_node.value
-          output_code = if current_node.escaped
-                          "\#{__html_escaped(#{data})}"
-                        else
-                          "\#{#{data}}"
-                        end
-          buff_print_text output_code
-
-        when :newline
-          # buff_print_value(NEW_LINE_NAME)
-
-        when :import
-          base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
-          load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
-                        base_path
-                      elsif File.exist?("#{base_path}.rb")
-                        "#{base_path}.rb"
+      when :output
+        data = current_node.value
+        output_code = if current_node.escaped
+                        "\#{__html_escaped(#{data})}"
                       else
-                        nil # other cases are handled in Renderer
+                        "\#{#{data}}"
                       end
+        buff_print_text output_code
 
-          buff_code "load('#{load_path}')" unless load_path.nil?
+      when :newline
+        # buff_print_value(NEW_LINE_NAME)
 
-        else
-          raise "Unknown type #{current_node.type}"
+      when :import
+        base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
+        load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
+                      base_path
+                    elsif File.exist?("#{base_path}.rb")
+                      "#{base_path}.rb"
+                    end
+
+        buff_code "load('#{load_path}')" unless load_path.nil?
+
+      else
+        raise "Unknown type #{current_node.type}"
       end
     end
 
@@ -180,13 +170,9 @@ module Bade
 
       text = "<#{current_node.name}"
 
-      if attributes.length > 0
-        text += "#{attributes}"
-      end
+      text += "#{attributes}" if attributes.length > 0
 
-      other_than_new_lines = children_wo_attributes.any? { |node|
-        node.type != :newline
-      }
+      other_than_new_lines = children_wo_attributes.any? { |n| n.type != :newline }
 
       if other_than_new_lines
         text += '>'
@@ -223,7 +209,7 @@ module Bade
         visit_node(last_node) if is_last_newline
       end
 
-      unless conditional_nodes.empty?
+      unless conditional_nodes.empty? # rubocop:disable Style/GuardClause
         @code_indent -= 1
 
         buff_code 'end'
@@ -239,16 +225,14 @@ module Bade
       xml_attributes = []
 
       tag_node.attributes.each do |attr|
-        unless all_attributes.include?(attr.name)
-          xml_attributes << attr.name
-        end
+        xml_attributes << attr.name unless all_attributes.include?(attr.name)
 
         all_attributes[attr.name] << attr.value
       end
 
       xml_attributes.map do |attr_name|
         joined = all_attributes[attr_name].join('), (')
-        %Q{\#{__tag_render_attribute('#{attr_name}', (#{joined}))}}
+        "\#{__tag_render_attribute('#{attr_name}', (#{joined}))}"
       end.join
     end
 
@@ -274,7 +258,7 @@ module Bade
         blocks = mixin_node.blocks
 
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
-        if other_children.reject { |n| n.type == :newline }.count > 0
+        if other_children.count { |n| n.type != :newline } > 0
           def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
           def_block_node.name = DEFAULT_BLOCK_NAME
           def_block_node.children = other_children
@@ -345,6 +329,22 @@ module Bade
       mixin_node.params.select { |n| n.type == :mixin_block_param }.each do |param|
         block_name_declaration(param.value)
       end
+    end
+
+    # @param [MixinDeclarationNode] current_node
+    #
+    # @return [nil]
+    #
+    def visit_block_decl(current_node)
+      params = formatted_mixin_params(current_node)
+      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
+
+      code_indent do
+        blocks_name_declaration(current_node)
+        visit_nodes(current_node.children - current_node.params)
+      end
+
+      buff_code '})'
     end
 
 

@@ -4,6 +4,6 @@ TEMPLATE_VARS = {
   item: [
     { name: 'red', current: true, url: '#red' },
     { name: 'green', current: false, url: '#green' },
-    { name: 'blue', current: false, url: '#blue' }
+    { name: 'blue', current: false, url: '#blue' },
   ]
 }
