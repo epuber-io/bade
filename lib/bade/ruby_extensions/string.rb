@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :nodoc:
 class String
   SPACE_CHAR = ' '
   TAB_CHAR = "\t"
@@ -37,16 +38,14 @@ class String
 
   def __chars_count_for_indent(indent, tabsize)
     count = 0
-    self.each_char do |char|
+    each_char do |char|
       break if indent <= 0
 
       case char
       when SPACE_CHAR
         indent -= 1
       when TAB_CHAR
-        if indent - tabsize < 0
-          raise StandardError, 'malformed tabs'
-        end
+        raise StandardError, 'malformed tabs' if indent - tabsize < 0
 
         indent -= tabsize
       else
@@ -88,7 +87,7 @@ class String
   def get_indent(tabsize)
     count = 0
 
-    self.each_char do |char|
+    each_char do |char|
       if char == SPACE_CHAR
         count += 1
       elsif char == TAB_CHAR
@@ -101,4 +100,12 @@ class String
     count
   end
 
+  # source: http://apidock.com/rails/String/strip_heredoc
+  # @return [String]
+  #
+  def strip_heredoc
+    min_val = scan(/^[ \t]*(?=\S)/).min
+    indent = (min_val && min_val.size) || 0
+    gsub(/^[ \t]{#{indent}}/, '')
+  end
 end

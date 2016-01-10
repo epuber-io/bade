@@ -88,17 +88,3 @@ module ASTHelper
     n(:newline)
   end
 end
-
-
-# Some extensions to String only for tests
-#
-class String
-  # source: http://apidock.com/rails/String/strip_heredoc
-  # @return [String]
-  #
-  def strip_heredoc
-    min_val = scan(/^[ \t]*(?=\S)/).min
-    indent = (min_val && min_val.size) || 0
-    gsub(/^[ \t]{#{indent}}/, '')
-  end
-end

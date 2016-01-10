@@ -8,7 +8,11 @@ require_relative 'ruby_extensions/string'
 require_relative 'ruby_extensions/array'
 
 module Bade
+  # Class to parse input string into AST::Document
+  #
   class Parser
+    # Error representing syntax error in specific file, line and column
+    #
     class SyntaxError < StandardError
       attr_reader :error, :file, :line, :lineno, :column
 
@@ -23,11 +27,12 @@ module Bade
       def to_s
         line = @line.lstrip
         column = @column + line.size - @line.size
-        %{#{error}
-  #{file}, Line #{lineno}, Column #{@column}
-  #{line}
-  #{' ' * column}^
-}
+        <<-MSG.strip_heredoc
+          #{error}
+            #{file}, Line #{lineno}, Column #{@column}
+            #{line}
+            #{' ' * column}^
+        MSG
       end
     end
 
@@ -54,7 +59,7 @@ module Bade
       @tabsize = tabsize
       @file_path = file_path
 
-      @tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize-1}}\t/
+      @tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize - 1}}\t/
       @tab = '\1' + ' ' * tabsize
 
       reset
@@ -69,7 +74,7 @@ module Bade
 
       @dependency_paths = []
 
-      if str.kind_of? Array
+      if str.is_a?(Array)
         reset(str, [[@root]])
       else
         reset(str.split(/\r?\n/, -1), [[@root]]) # -1 is for not suppressing empty lines
@@ -97,9 +102,8 @@ module Bade
     # @param [Symbol] type
     #
     def append_node(type, indent: @indents.length, add: false, value: nil)
-      while indent >= @stacks.length
-        @stacks << @stacks.last.dup
-      end
+      # add necessary stack items to match required indent
+      @stacks << @stacks.last.dup while indent >= @stacks.length
 
       parent = @stacks[indent].last
       node = AST::NodeRegistrator.create(type, @lineno)
@@ -107,9 +111,7 @@ module Bade
 
       node.value = value unless value.nil?
 
-      if add
-        @stacks[indent] << node
-      end
+      @stacks[indent] << node if add
 
       node
     end
@@ -123,7 +125,8 @@ module Bade
     end
 
     def parse_import
-      path = eval(@line)
+      # TODO: change this to something better
+      path = eval(@line) # rubocop:disable Lint/Eval
       append_node(:import, value: path)
 
       @dependency_paths << path unless @dependency_paths.include?(path)
@@ -132,7 +135,7 @@ module Bade
     # @param value [String]
     #
     def fixed_trailing_colon(value)
-      if String === value && value.end_with?(':')
+      if value.is_a?(String) && value.end_with?(':')
         value = value.remove_last
         @line.prepend(':')
       end
