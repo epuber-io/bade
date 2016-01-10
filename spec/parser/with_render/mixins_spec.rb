@@ -2,15 +2,15 @@ require_relative '../../helper'
 
 
 describe Bade::Parser do
-	context 'mixins' do
-		it 'parse mixin declaration' do
-			source = <<-BADE.strip_heredoc
-				mixin mixin_name()
-					div
-			BADE
+  context 'mixins' do
+    it 'parse mixin declaration' do
+      source = <<-BADE.strip_heredoc
+        mixin mixin_name()
+          div
+      BADE
 
       expected = ''
-			assert_html expected, source
+      assert_html expected, source
     end
 
     it 'can parse mixin with colon in name' do
@@ -29,8 +29,8 @@ describe Bade::Parser do
       assert_html expected, source
     end
 
-		it 'parse mixin declaration and call' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin declaration and call' do
+      source = <<-BADE.strip_heredoc
         mixin mixin_name()
           div
 
@@ -38,23 +38,23 @@ describe Bade::Parser do
       BADE
 
       expected = '<div/>'
-			assert_html expected, source
-		end
+      assert_html expected, source
+    end
 
-		it 'parse mixin declaration and call, brackets can be omitted' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin declaration and call, brackets can be omitted' do
+      source = <<-BADE.strip_heredoc
         mixin mixin_name
           div
 
         +mixin_name
       BADE
 
-			expected = '<div/>'
-			assert_html expected, source
-		end
+      expected = '<div/>'
+      assert_html expected, source
+    end
 
-		it 'parse mixin declaration and call with one normal parameter' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin declaration and call with one normal parameter' do
+      source = <<-BADE.strip_heredoc
         mixin mixin_name(param)
           div
             &= param
@@ -63,11 +63,11 @@ describe Bade::Parser do
       BADE
 
       expected = '<div>abc</div>'
-			assert_html expected, source
-		end
+      assert_html expected, source
+    end
 
-		it 'parse mixin declaration and call with more normal parameters' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin declaration and call with more normal parameters' do
+      source = <<-BADE.strip_heredoc
         mixin mixin_name(param1, param2, param3)
           div
             &= param1
@@ -79,12 +79,12 @@ describe Bade::Parser do
         +mixin_name("abc","abc".upcase,"ASD")
       BADE
 
-			expected = '<div>abc</div><p>ABC</p><a>ASD</a>'
-			assert_html expected, source
-		end
+      expected = '<div>abc</div><p>ABC</p><a>ASD</a>'
+      assert_html expected, source
+    end
 
-		it 'parse mixin declaration and call with several normal and several keyed parameters' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin declaration and call with several normal and several keyed parameters' do
+      source = <<-BADE.strip_heredoc
         mixin mixin_name(a, b, c: "abc", d: {})
           a
             &= a
@@ -98,8 +98,8 @@ describe Bade::Parser do
         +mixin_name("aa", "bb", c: "cc")
       BADE
 
-			expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'
-			assert_html expected, source
+      expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'
+      assert_html expected, source
     end
 
     it 'parse mixin declaration and call with key-value parameter with symbols' do
@@ -119,8 +119,8 @@ describe Bade::Parser do
       assert_html expected, source
     end
 
-		it 'parse mixin with default block' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin with default block' do
+      source = <<-BADE.strip_heredoc
         mixin m()
           default
             - default_block.call
@@ -129,25 +129,25 @@ describe Bade::Parser do
           | text
       BADE
 
-			expected = '<default>text</default>'
-			assert_html expected, source
-		end
+      expected = '<default>text</default>'
+      assert_html expected, source
+    end
 
 
-		it 'should raise error on required block' do
-			source = <<-BADE.strip_heredoc
+    it 'should raise error on required block' do
+      source = <<-BADE.strip_heredoc
         mixin m()
           - default_block.call!
         +m()
       BADE
 
-			expect {
-				assert_html '', source, print_error_if_error: false
-			}.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError
-		end
+      expect {
+        assert_html '', source, print_error_if_error: false
+      }.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError
+    end
 
-		it 'parse mixin with custom blocks' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin with custom blocks' do
+      source = <<-BADE.strip_heredoc
         mixin m(a, &head)
           head
             - head.call
@@ -157,12 +157,12 @@ describe Bade::Parser do
             a text
       BADE
 
-			expected = '<head><a>text</a></head>'
-			assert_html expected, source
-		end
+      expected = '<head><a>text</a></head>'
+      assert_html expected, source
+    end
 
-		it 'parse mixin with default block and custom block' do
-			source = <<-BADE.strip_heredoc
+    it 'parse mixin with default block and custom block' do
+      source = <<-BADE.strip_heredoc
         mixin m(a, &head)
           default
             - default_block.call
@@ -177,22 +177,22 @@ describe Bade::Parser do
       BADE
 
       expected = '<default><a>text in default block</a></default><head><a>text</a></head>'
-			assert_html expected, source
-		end
+      assert_html expected, source
+    end
 
-		it 'block keyword can be used outside of mixin call' do
-			source = <<-BADE.strip_heredoc
+    it 'block keyword can be used outside of mixin call' do
+      source = <<-BADE.strip_heredoc
         block
           | text
       BADE
 
       expected = '<block>text</block>'
-			assert_html expected, source
-		end
+      assert_html expected, source
+    end
 
 
-		it 'parse text after mixin call' do
-			source = <<-BADE.strip_heredoc
+    it 'parse text after mixin call' do
+      source = <<-BADE.strip_heredoc
         mixin m()
           a
             - default_block.call
@@ -200,13 +200,13 @@ describe Bade::Parser do
         +m() text
       BADE
 
-			expected = '<a>text</a>'
-			assert_html expected, source
-		end
+      expected = '<a>text</a>'
+      assert_html expected, source
+    end
 
-		context 'block expansion' do
-			it 'parse two mixins' do
-				source = <<-BADE.strip_heredoc
+    context 'block expansion' do
+      it 'parse two mixins' do
+        source = <<-BADE.strip_heredoc
           mixin m()
             a
               - default_block.call
@@ -219,12 +219,12 @@ describe Bade::Parser do
         BADE
 
         expected = %q{<a><b>aaa</b></a>}
-				assert_html expected, source
-			end
-		end
+        assert_html expected, source
+      end
+    end
 
-		it 'support output after mixin calling' do
-			source = <<-BADE.strip_heredoc
+    it 'support output after mixin calling' do
+      source = <<-BADE.strip_heredoc
         mixin m()
           a
             - default_block.call
@@ -233,7 +233,7 @@ describe Bade::Parser do
       BADE
 
       expected = %q{<a>aaa</a>}
-			assert_html expected, source
+      assert_html expected, source
     end
 
     it 'support multiline mixin call' do
@@ -288,5 +288,5 @@ describe Bade::Parser do
         end.to_not raise_error
       end
     end
-	end
+  end
 end
