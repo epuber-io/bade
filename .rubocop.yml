@@ -2,10 +2,6 @@
 Style/Encoding:
   Enabled: true
 
-Style/GlobalVars:
-  AllowedVariables:
-    - $global_xpath # used in test/matchers/xml.rb
-
 # I want empty lines!
 Style/EmptyLines:
   Enabled: false
@@ -19,6 +15,10 @@ Style/Encoding:
 Style/MultilineOperationIndentation:
   Exclude:
     - spec/renderer/dsl_spec.rb
+
+Style/UnneededPercentQ:
+  Exclude:
+    - lib/bade/generator.rb # TODO: remove this
 
 # We adopted raise instead of fail.
 SignalException:

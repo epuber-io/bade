@@ -7,7 +7,7 @@ describe Bade::Parser do
         tag text bla \#{'text'}
       BADE
 
-      expected = %q{<tag>text bla text</tag>}
+      expected = '<tag>text bla text</tag>'
       assert_html expected, source
     end
 
@@ -16,7 +16,7 @@ describe Bade::Parser do
         tag text bla &{ '<>' }
       BADE
 
-      expected = %q{<tag>text bla &lt;&gt;</tag>}
+      expected = '<tag>text bla &lt;&gt;</tag>'
       assert_html expected, source
     end
   end

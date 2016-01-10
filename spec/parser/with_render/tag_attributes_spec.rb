@@ -87,7 +87,7 @@ describe Bade::Parser do
         a(href: 'selected' if true)
       BADE
 
-      expected = %q{<a href="selected"/>}
+      expected = '<a href="selected"/>'
       assert_html expected, source
     end
 
@@ -96,7 +96,7 @@ describe Bade::Parser do
         a(href: 'selected' if false)
       BADE
 
-      expected = %q{<a/>}
+      expected = '<a/>'
       assert_html expected, source
     end
 

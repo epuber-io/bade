@@ -218,7 +218,7 @@ describe Bade::Parser do
           +m(): +f() aaa
         BADE
 
-        expected = %q{<a><b>aaa</b></a>}
+        expected = '<a><b>aaa</b></a>'
         assert_html expected, source
       end
     end
@@ -232,7 +232,7 @@ describe Bade::Parser do
         +m()= 'aaa'
       BADE
 
-      expected = %q{<a>aaa</a>}
+      expected = '<a>aaa</a>'
       assert_html expected, source
     end
 

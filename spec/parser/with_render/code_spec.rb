@@ -50,7 +50,7 @@ describe Bade::Parser do
           div&= "<>"
         BADE
 
-        expected = %q{<div>text</div><div>&lt;&gt;</div>}
+        expected = '<div>text</div><div>&lt;&gt;</div>'
         assert_html expected, source
       end
 
@@ -60,7 +60,7 @@ describe Bade::Parser do
           div= "<>"
         BADE
 
-        expected = %q{<div>text</div><div><></div>}
+        expected = '<div>text</div><div><></div>'
         assert_html expected, source
       end
 

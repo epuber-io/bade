@@ -152,7 +152,7 @@ describe Bade::Parser do
         a: +abc() text
       BADE
 
-      expected = %q{<a><div>text</div></a>}
+      expected = '<a><div>text</div></a>'
       assert_html expected, source
     end
 
@@ -161,7 +161,7 @@ describe Bade::Parser do
         li.selected: a(href: "/href/text") text
       BADE
 
-      expected = %q{<li class="selected"><a href="/href/text">text</a></li>}
+      expected = '<li class="selected"><a href="/href/text">text</a></li>'
       assert_html expected, source
     end
 
@@ -170,7 +170,7 @@ describe Bade::Parser do
         li#selected: a(href: "/href/text") text
       BADE
 
-      expected = %q{<li id="selected"><a href="/href/text">text</a></li>}
+      expected = '<li id="selected"><a href="/href/text">text</a></li>'
       assert_html expected, source
     end
 
@@ -179,7 +179,7 @@ describe Bade::Parser do
         li.selected#id_li: a(href: "/href/text") text
       BADE
 
-      expected = %q{<li class="selected" id="id_li"><a href="/href/text">text</a></li>}
+      expected = '<li class="selected" id="id_li"><a href="/href/text">text</a></li>'
       assert_html expected, source
     end
   end
