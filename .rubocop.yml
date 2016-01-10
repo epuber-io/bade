@@ -13,6 +13,12 @@ Style/EmptyLines:
 Style/RegexpLiteral:
   MaxSlashes: 0
 
+Style/Encoding:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Exclude:
+    - spec/renderer/dsl_spec.rb
 
 # We adopted raise instead of fail.
 SignalException:
@@ -45,12 +51,6 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Enabled: false
 
-
-
-# At the moment not ready to be used
-# https://github.com/bbatsov/rubocop/issues/947
-Documentation:
-  Enabled: false
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
