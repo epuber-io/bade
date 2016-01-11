@@ -73,3 +73,7 @@ TrailingComma:
 
 Lint/RequireParentheses:
   Enabled: true
+
+Lint/LiteralInInterpolation:
+  Exclude:
+  - spec/**/*.rb

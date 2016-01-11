@@ -47,7 +47,7 @@ module Bade
           other = node.name
         when KeyValueNode
           other = "#{node.name}:#{node.value}"
-        when ValueNode
+        when ValueNode, StaticTextNode
           escaped_sign = if node.escaped
                            '& '
                          elsif node.escaped.nil?

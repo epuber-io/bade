@@ -5,10 +5,45 @@ module Bade
   require_relative '../parser'
 
   class Parser
+    module TextRegexps
+      INTERPOLATION_START = /(\\)?(&|#)\{/
+      INTERPOLATION_END = /\A\}/
+    end
+
     def parse_text
-      text = @line
-      text = text.gsub(/&\{/, '#{ __html_escaped ')
-      append_node(:text, value: text)
+      new_index = @line.index(TextRegexps::INTERPOLATION_START)
+
+      # the interpolation sequence is not in text, mark whole text as static
+      if new_index.nil?
+        append_node(:static_text, value: @line)
+        return
+      end
+
+      unparsed_part = String.new
+
+      while (new_index = @line.index(TextRegexps::INTERPOLATION_START))
+        if $1.nil?
+          static_part = unparsed_part + @line.remove_first!(new_index)
+          append_node(:static_text, value: static_part)
+
+          @line.remove_first!(2) # #{ or &{
+
+          dynamic_part = parse_ruby_code(TextRegexps::INTERPOLATION_END)
+          node = append_node(:output, value: dynamic_part)
+          node.escaped = $2 == '&'
+
+          @line.remove_first! # ending }
+
+          unparsed_part = String.new
+        else
+          unparsed_part << @line.remove_first!(new_index)
+          @line.remove_first! # symbol \
+          unparsed_part << @line.remove_first!(2) # #{ or &{
+        end
+      end
+
+      # add the rest of line
+      append_node(:static_text, value: unparsed_part + @line) unless @line.empty?
     end
 
     def parse_text_block(first_line, text_indent = nil)

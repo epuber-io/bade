@@ -23,7 +23,7 @@ describe Bade::Parser do
                 n(:newline),
                 code('if abc.empty?'),
                 n(:newline),
-                n(:text, value: 'empty'),
+                n(:static_text, value: 'empty'),
                 n(:newline),
                 code('else'),
                 n(:newline),

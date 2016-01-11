@@ -33,7 +33,7 @@ describe Bade::AST::StringSerializer do
                n(:tag_attr, name: 'attr', value: 'value'),
                tag('tag_2',
                    n(:tag_attr, name: 'attr2', value: 'value2'),
-                   n(:text, value: 'baf')))
+                   n(:static_text, value: 'baf')))
     sut = Bade::AST::StringSerializer.new(root)
 
     expected = <<-AST.strip_heredoc.rstrip
@@ -41,7 +41,7 @@ describe Bade::AST::StringSerializer do
         (:tag_attr attr:value)
         (:tag tag_2
           (:tag_attr attr2:value2)
-          (:text baf)
+          (:static_text baf)
         )
       )
     AST

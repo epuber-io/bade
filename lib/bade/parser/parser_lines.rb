@@ -171,7 +171,7 @@ module Bade
 
       when LineIndicatorRegexps::INLINE_HTML
         # Inline html
-        append_node(:text, value: @line)
+        parse_text
 
       when LineIndicatorRegexps::CODE_BLOCK
         # Found a code block.

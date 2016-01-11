@@ -62,6 +62,12 @@ module Bade
       buff_print_value("%Q{#{text}}") if text.length > 0
     end
 
+    # @param [String] text
+    #
+    def buff_print_static_text(text)
+      buff_print_value("'#{text.gsub("'", "\\'")}'") if text.length > 0
+    end
+
     def buff_print_value(value)
       # buff_code %Q{#{BUFF_NAME} << #{CURRENT_INDENT_NAME}} if indent
       buff_code("#{BUFF_NAME} << #{value}")
@@ -105,8 +111,8 @@ module Bade
       when :root
         visit_node_children(current_node)
 
-      when :text
-        buff_print_text current_node.value
+      when :static_text
+        buff_print_static_text(current_node.value)
 
       when :tag
         visit_tag(current_node)

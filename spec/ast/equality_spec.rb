@@ -51,6 +51,35 @@ describe Bade::AST::ValueNode do
   end
 end
 
+describe Bade::AST::StaticTextNode do
+  context '#==' do
+    it 'equals correctly for same instances' do
+      node1 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node1.value = 'abc some text'
+      expect(node1).to eq node1
+    end
+    it 'equals correctly for same objects' do
+      node1 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node1.value = 'abc some text'
+      node2 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node2.value = 'abc some text'
+      expect(node1).to eq node2
+    end
+    it 'not equals correctly for different types' do
+      node1 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node2 = Bade::AST::StaticTextNode.new(:root)
+      expect(node1).to_not eq node2
+    end
+    it 'not equals correctly for same type with different values' do
+      node1 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node1.value = 'abc'
+      node2 = Bade::AST::StaticTextNode.new(:random_tag_123)
+      node2.value = 'xyz'
+      expect(node1).to_not eq node2
+    end
+  end
+end
+
 describe Bade::AST::KeyValueNode do
   context '#==' do
     it 'equals correctly for same instances' do

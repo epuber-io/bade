@@ -73,7 +73,7 @@ module ASTHelper
   end
 
   def text(text)
-    n(:text, value: text)
+    n(:static_text, value: text)
   end
 
   def code(text)

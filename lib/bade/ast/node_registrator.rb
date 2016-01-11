@@ -9,6 +9,7 @@ module Bade
       require_relative 'node/value_node'
       require_relative 'node/mixin_node'
       require_relative 'node/doctype_node'
+      require_relative 'node/static_text_node'
 
       class << self
         # @return [Hash<Symbol, Class>]
@@ -46,7 +47,7 @@ module Bade
         end
       end
 
-      register_type ValueNode, :text
+      register_type StaticTextNode, :static_text
       register_type ValueNode, :newline
       register_type ValueNode, :code
       register_type ValueNode, :output
