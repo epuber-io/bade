@@ -80,10 +80,10 @@ module Bade
       # @return [String]
       #
       def __html_escaped(text)
-        text.sub('&', '&amp;')
-          .sub('<', '&lt;')
-          .sub('>', '&gt;')
-          .sub('"', '&quot;')
+        text.gsub('&', '&amp;')
+            .gsub('<', '&lt;')
+            .gsub('>', '&gt;')
+            .gsub('"', '&quot;')
       end
 
       def __tag_render_attribute(name, *values)

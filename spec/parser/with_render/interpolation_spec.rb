@@ -19,5 +19,14 @@ describe Bade::Parser do
       expected = '<tag>text bla &lt;&gt;</tag>'
       assert_html expected, source
     end
+
+    it 'parse simple escaping interpolation' do
+      source = <<-BADE.strip_heredoc
+        tag text bla &{ '&&&&&&&&&&&' }
+      BADE
+
+      expected = '<tag>text bla &amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;</tag>'
+      assert_html expected, source
+    end
   end
 end
