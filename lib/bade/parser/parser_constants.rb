@@ -6,9 +6,9 @@ module Bade
 
   class Parser
     WORD_RE = ''.respond_to?(:encoding) ? '\p{Word}' : '\w'
-    NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)"
+    NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)".freeze
 
-    ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}"
+    ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}".freeze
     CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*&?:\s*/
 
     TAG_RE = /\A#{NAME_RE_STRING}/

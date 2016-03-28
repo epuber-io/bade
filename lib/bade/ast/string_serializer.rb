@@ -64,7 +64,7 @@ module Bade
           raise "Unknown node class #{node.class} of type #{node.type} for serializing"
         end
 
-        other = ' ' + other if other && other.length > 0
+        other = ' ' + other if other && !other.empty?
 
         "#{indent}(#{type_s}#{other}#{children_s})"
       end

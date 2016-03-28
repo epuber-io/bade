@@ -66,7 +66,7 @@ module Bade
     end
 
     def parse_line
-      if @line.strip.length == 0
+      if @line.strip.empty?
         append_node(:newline) unless @lines.empty?
         return
       end

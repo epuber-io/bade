@@ -2,8 +2,8 @@
 
 # :nodoc:
 class String
-  SPACE_CHAR = ' '
-  TAB_CHAR = "\t"
+  SPACE_CHAR = ' '.freeze
+  TAB_CHAR = "\t".freeze
 
   # Creates new string surrounded by single quotes
   #
@@ -15,7 +15,7 @@ class String
 
 
   def blank?
-    strip.length == 0
+    strip.empty?
   end
 
 

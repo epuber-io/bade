@@ -53,11 +53,10 @@ module Bade
     def parse_mixin_call_params
       # between tag name and attribute must not be space
       # and skip when is nothing other
-      if @line.start_with?('(')
-        @line.remove_first!
-      else
-        return
-      end
+      return unless @line.start_with?('(')
+
+      # remove starting bracket
+      @line.remove_first!
 
       loop do
         case @line
@@ -99,11 +98,10 @@ module Bade
     def parse_mixin_declaration_params
       # between tag name and attribute must not be space
       # and skip when is nothing other
-      if @line.start_with?('(')
-        @line.remove_first!
-      else
-        return
-      end
+      return unless @line.start_with?('(')
+
+      # remove starting bracket
+      @line.remove_first!
 
       loop do
         case @line

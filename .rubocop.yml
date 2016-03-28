@@ -68,7 +68,10 @@ Metrics/PerceivedComplexity:
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
-TrailingComma:
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
 
 Lint/RequireParentheses:

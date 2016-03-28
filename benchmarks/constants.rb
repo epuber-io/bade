@@ -5,5 +5,5 @@ TEMPLATE_VARS = {
     { name: 'red', current: true, url: '#red' },
     { name: 'green', current: false, url: '#green' },
     { name: 'blue', current: false, url: '#blue' },
-  ]
-}
+  ],
+}.freeze

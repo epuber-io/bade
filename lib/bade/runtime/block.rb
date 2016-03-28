@@ -57,11 +57,9 @@ module Bade
       end
 
       def call!(*args)
-        if @block.nil?
-          raise MissingBlockDefinitionError.new(name, :call)
-        else
-          render_binding.__buff.concat(@block.call(*args))
-        end
+        raise MissingBlockDefinitionError.new(name, :call) if @block.nil?
+
+        render_binding.__buff.concat(@block.call(*args))
       end
 
       # --- Rendering methods
@@ -75,11 +73,9 @@ module Bade
       end
 
       def render!(*args)
-        if @block.nil?
-          raise MissingBlockDefinitionError.new(name, :render)
-        else
-          @block.call(*args).join
-        end
+        raise MissingBlockDefinitionError.new(name, :render) if @block.nil?
+
+        @block.call(*args).join
       end
     end
   end

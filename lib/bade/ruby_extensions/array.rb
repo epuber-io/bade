@@ -7,19 +7,17 @@ class Array
   #
   # @return [Fixnum]
   #
-  def rindex_last_matching(&block)
+  def rindex_last_matching
     return nil if empty?
 
     index = nil
 
     current_index = count - 1
     reverse_each do |item|
-      if block.call(item)
-        index = current_index
-        current_index -= 1
-      else
-        break
-      end
+      break unless yield item
+
+      index = current_index
+      current_index -= 1
     end
 
     index
@@ -29,15 +27,13 @@ class Array
   #
   # @return [Fixnum] count of items
   #
-  def rcount_matching(&block)
+  def rcount_matching
     count = 0
 
     reverse_each do |item|
-      if block.call(item)
-        count += 1
-      else
-        break
-      end
+      break unless yield item
+
+      count += 1
     end
 
     count

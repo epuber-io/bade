@@ -12,7 +12,7 @@ module Bade
     CURRENT_INDENT_NAME = :__indent
     BASE_INDENT_NAME = :__base_indent
 
-    DEFAULT_BLOCK_NAME = 'default_block'
+    DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
     # @param [Document] document
     #
@@ -59,13 +59,13 @@ module Bade
     # @param [String] text
     #
     def buff_print_text(text, indent: false, new_line: false) # rubocop:disable Lint/UnusedMethodArgument
-      buff_print_value("%Q{#{text}}") if text.length > 0
+      buff_print_value("%Q{#{text}}") unless text.empty?
     end
 
     # @param [String] text
     #
     def buff_print_static_text(text)
-      buff_print_value("'#{text.gsub("'", "\\'")}'") if text.length > 0
+      buff_print_value("'#{text.gsub("'", "\\'")}'") unless text.empty?
     end
 
     def buff_print_value(value)
@@ -176,15 +176,15 @@ module Bade
 
       text = "<#{current_node.name}"
 
-      text += "#{attributes}" if attributes.length > 0
+      text += attributes.to_s unless attributes.empty?
 
       other_than_new_lines = children_wo_attributes.any? { |n| n.type != :newline }
 
-      if other_than_new_lines
-        text += '>'
-      else
-        text += '/>'
-      end
+      text += if other_than_new_lines
+                '>'
+              else
+                '/>'
+              end
 
       conditional_nodes = current_node.children.select { |n| n.type == :output && n.conditional }
 
@@ -272,7 +272,7 @@ module Bade
           blocks << def_block_node
         end
 
-        if blocks.length > 0
+        if !blocks.empty?
           buff_code '__blocks = {}'
 
           blocks.each do |block|
