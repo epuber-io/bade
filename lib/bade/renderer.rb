@@ -29,6 +29,10 @@ module Bade
       end
     end
 
+    def initialize
+      @optimize = false
+    end
+
     TEMPLATE_FILE_NAME = '(__template__)'.freeze
 
     # @return [String]
@@ -50,6 +54,10 @@ module Bade
     # @return [RenderBinding]
     #
     attr_accessor :render_binding
+
+    # @return [Bool]
+    #
+    attr_accessor :optimize
 
 
     # ----------------------------------------------------------------------------- #
@@ -122,6 +130,11 @@ module Bade
       self
     end
 
+    def optimized
+      self.optimize = true
+      self
+    end
+
 
     # ----------------------------------------------------------------------------- #
     # Getters
@@ -139,7 +152,7 @@ module Bade
     # @return [Precompiled]
     #
     def precompiled
-      @precompiled ||= Precompiled.new(Generator.document_to_lambda_string(root_document), file_path)
+      @precompiled ||= Precompiled.new(Generator.document_to_lambda_string(root_document, optimize: @optimize), file_path)
     end
 
     # @return [String]

@@ -18,20 +18,21 @@ module Bade
     #
     # @return [String]
     #
-    def self.document_to_lambda_string(document)
+    def self.document_to_lambda_string(document, optimize: false)
       generator = new
-      generator.generate_lambda_string(document)
+      generator.generate_lambda_string(document, optimize: optimize)
     end
 
     # @param [Bade::AST::Document] document
     #
     # @return [String] string to parse with Ruby
     #
-    def generate_lambda_string(document)
+    def generate_lambda_string(document, optimize: false)
       @document = document
       @buff = []
       @indent = 0
       @code_indent = 0
+      @optimize = optimize
 
       buff_code '# frozen_string_literal: true' # so it can be faster on Ruby 2.3+
       buff_code ''
@@ -86,7 +87,15 @@ module Bade
       end
 
       buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
-      visit_node(document.root)
+
+      if @optimize
+        new_root = Optimizer.new(document.root).optimize
+      else
+        new_root = document.root
+      end
+
+      visit_node(new_root)
+
       buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
     end
 
