@@ -5,7 +5,7 @@ require_relative 'parser'
 require_relative 'generator'
 require_relative 'runtime'
 require_relative 'precompiled'
-
+require_relative 'assembler'
 
 module Bade
   class Renderer

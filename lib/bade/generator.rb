@@ -38,16 +38,14 @@ module Bade
       buff_code ''
       buff_code "lambda do |#{NEW_LINE_NAME}: \"\\n\", #{BASE_INDENT_NAME}: '  '|"
 
-      code_indent do
-        buff_code "self.#{NEW_LINE_NAME} = #{NEW_LINE_NAME}"
-        buff_code "self.#{BASE_INDENT_NAME} = #{BASE_INDENT_NAME}"
+        buff_code "  self.#{NEW_LINE_NAME} = #{NEW_LINE_NAME}"
+        buff_code "  self.#{BASE_INDENT_NAME} = #{BASE_INDENT_NAME}"
 
         visit_document(document)
 
-        buff_code "output = #{BUFF_NAME}.join"
-        buff_code 'self.__reset'
-        buff_code 'output'
-      end
+        buff_code "  output = #{BUFF_NAME}.join"
+        buff_code '  self.__reset'
+        buff_code '  output'
 
       buff_code 'end'
 
@@ -88,281 +86,25 @@ module Bade
 
       buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
 
-      if @optimize
-        new_root = Optimizer.new(document.root).optimize
-      else
-        new_root = document.root
-      end
+      instructions = if @optimize
+                   Optimizer.new(Assembler.new(document).assembly).optimize
+                 else
+                   Assembler.new(document).assembly
+                 end
 
-      visit_node(new_root)
+      instructions.each do |i|
+        case i.type
+        when :static_text
+          buff_print_static_text(i.value)
+        when :dynamic_value
+          buff_print_value(i.value)
+        when :code
+          buff_code(i.value)
+        end
+      end
 
       buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
     end
-
-    # @param current_node [Node]
-    #
-    def visit_node_children(current_node)
-      visit_nodes(current_node.children)
-    end
-
-    # @param nodes [Array<Node>]
-    #
-    def visit_nodes(nodes)
-      nodes.each do |node|
-        visit_node(node)
-      end
-    end
-
-    # @param current_node [Node]
-    #
-    def visit_node(current_node)
-      case current_node.type
-      when :root
-        visit_node_children(current_node)
-
-      when :static_text
-        buff_print_static_text(current_node.value)
-
-      when :tag
-        visit_tag(current_node)
-
-      when :code
-        buff_code(current_node.value)
-
-      when :html_comment
-        buff_print_text '<!-- '
-        visit_node_children(current_node)
-        buff_print_text ' -->'
-
-      when :comment
-        comment_text = '#' + current_node.children.map(&:value).join("\n#")
-        buff_code(comment_text)
-
-      when :doctype
-        buff_print_text current_node.xml_output
-
-      when :mixin_decl
-        visit_block_decl(current_node)
-
-      when :mixin_call
-        params = formatted_mixin_params(current_node)
-        buff_code "#{MIXINS_NAME}['#{current_node.name}'].call!(#{params})"
-
-      when :output
-        data = current_node.value
-        output_code = if current_node.escaped
-                        "\#{__html_escaped(#{data})}"
-                      else
-                        "\#{#{data}}"
-                      end
-        buff_print_text output_code
-
-      when :newline
-        # buff_print_value(NEW_LINE_NAME)
-
-      when :import
-        base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
-        load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
-                      base_path
-                    elsif File.exist?("#{base_path}.rb")
-                      "#{base_path}.rb"
-                    end
-
-        buff_code "load('#{load_path}')" unless load_path.nil?
-
-      else
-        raise "Unknown type #{current_node.type}"
-      end
-    end
-
-    # @param [TagNode] current_node
-    #
-    # @return [nil]
-    #
-    def visit_tag(current_node)
-      attributes = formatted_attributes(current_node)
-      children_wo_attributes = (current_node.children - current_node.attributes)
-
-      text = "<#{current_node.name}"
-
-      text += attributes.to_s unless attributes.empty?
-
-      other_than_new_lines = children_wo_attributes.any? { |n| n.type != :newline }
-
-      text += if other_than_new_lines
-                '>'
-              else
-                '/>'
-              end
-
-      conditional_nodes = current_node.children.select { |n| n.type == :output && n.conditional }
-
-      unless conditional_nodes.empty?
-        buff_code "if (#{conditional_nodes.map(&:value).join(') && (')})"
-
-        @code_indent += 1
-      end
-
-      buff_print_text(text, new_line: true, indent: true)
-
-      if other_than_new_lines
-        last_node = children_wo_attributes.last
-        is_last_newline = !last_node.nil? && last_node.type == :newline
-        nodes = if is_last_newline
-                  children_wo_attributes[0...-1]
-                else
-                  children_wo_attributes
-                end
-
-        code_indent do
-          visit_nodes(nodes)
-        end
-
-        buff_print_text("</#{current_node.name}>", new_line: true, indent: true)
-
-        # print new line after the tag
-        visit_node(last_node) if is_last_newline
-      end
-
-      unless conditional_nodes.empty? # rubocop:disable Style/GuardClause
-        @code_indent -= 1
-
-        buff_code 'end'
-      end
-    end
-
-    # @param [TagNode] tag_node
-    #
-    # @return [String] formatted attributes
-    #
-    def formatted_attributes(tag_node)
-      all_attributes = Hash.new { |hash, key| hash[key] = [] }
-      xml_attributes = []
-
-      tag_node.attributes.each do |attr|
-        xml_attributes << attr.name unless all_attributes.include?(attr.name)
-
-        all_attributes[attr.name] << attr.value
-      end
-
-      xml_attributes.map do |attr_name|
-        joined = all_attributes[attr_name].join('), (')
-        "\#{__tag_render_attribute('#{attr_name}', (#{joined}))}"
-      end.join
-    end
-
-    # Method for indenting generated code, indent is raised only in passed block
-    #
-    # @return [nil]
-    #
-    def code_indent(plus = 1)
-      @code_indent += plus
-      yield
-      @code_indent -= plus
-    end
-
-    # @param [MixinCommonNode] mixin_node
-    #
-    # @return [String] formatted params
-    #
-    def formatted_mixin_params(mixin_node)
-      params = mixin_node.params
-      result = []
-
-      if mixin_node.type == :mixin_call
-        blocks = mixin_node.blocks
-
-        other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
-        if other_children.count { |n| n.type != :newline } > 0
-          def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
-          def_block_node.name = DEFAULT_BLOCK_NAME
-          def_block_node.children = other_children
-
-          blocks << def_block_node
-        end
-
-        if !blocks.empty?
-          buff_code '__blocks = {}'
-
-          blocks.each do |block|
-            block_definition(block)
-          end
-
-          result << '__blocks.dup'
-        else
-          result << '{}'
-        end
-      elsif mixin_node.type == :mixin_decl
-        result << '__blocks'
-      end
-
-
-      # normal params
-      result += params.select { |n| n.type == :mixin_param }.map(&:value)
-      result += params.select { |n| n.type == :mixin_key_param }.map { |param| "#{param.name}: #{param.value}" }
-
-      result.join(', ')
-    end
-
-    # Generates code for definition of block
-    #
-    # @param [MixinCallBlockNode] block_node
-    #
-    # @return [nil]
-    #
-    def block_definition(block_node)
-      buff_code "__blocks['#{block_node.name}'] = __create_block('#{block_node.name}') do"
-
-      code_indent do
-        buff_code '__buffs_push()'
-
-        visit_node_children(block_node)
-
-        buff_code '__buffs_pop()'
-      end
-
-      buff_code 'end'
-    end
-
-    # Generates code for block variables declaration in mixin definition
-    #
-    # @param [String] block_name
-    #
-    # @return [nil]
-    #
-    def block_name_declaration(block_name)
-      buff_code "#{block_name} = __blocks.delete('#{block_name}') { __create_block('#{block_name}') }"
-    end
-
-    # @param [MixinDeclarationNode] mixin_node
-    #
-    # @return [nil]
-    #
-    def blocks_name_declaration(mixin_node)
-      block_name_declaration(DEFAULT_BLOCK_NAME)
-
-      mixin_node.params.select { |n| n.type == :mixin_block_param }.each do |param|
-        block_name_declaration(param.value)
-      end
-    end
-
-    # @param [MixinDeclarationNode] current_node
-    #
-    # @return [nil]
-    #
-    def visit_block_decl(current_node)
-      params = formatted_mixin_params(current_node)
-      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
-
-      code_indent do
-        blocks_name_declaration(current_node)
-        visit_nodes(current_node.children - current_node.params)
-      end
-
-      buff_code '})'
-    end
-
-
 
     # @param [String] str
     #
