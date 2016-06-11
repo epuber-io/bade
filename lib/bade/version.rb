@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Bade
-  VERSION = '0.2.1'.freeze
+  VERSION = '0.2.2.beta'.freeze
 end
