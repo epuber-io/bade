@@ -27,6 +27,8 @@ module Bade
              end
 
       hash = YAML.load(file)
+      raise LoadError, 'YAML file is not in valid format' unless hash.is_a?(Hash)
+
       file_path = hash[:source_file_path]
       content = hash[:code_string]
 
