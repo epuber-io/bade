@@ -80,6 +80,8 @@ module Bade
       # @return [String]
       #
       def __html_escaped(text)
+        return nil if text.nil?
+
         text.gsub('&', '&amp;')
             .gsub('<', '&lt;')
             .gsub('>', '&gt;')
