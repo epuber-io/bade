@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bade (0.2.1)
+    bade (0.2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -76,4 +76,4 @@ DEPENDENCIES
   ruby-prof
 
 BUNDLED WITH
-   1.11.2
+   1.13.1

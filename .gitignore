@@ -38,3 +38,4 @@ build/
 .rvmrc
 .idea
 benchmarks/*.html
+vendor/gems
