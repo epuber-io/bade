@@ -88,11 +88,11 @@ module Bade
 
       buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
 
-      if @optimize
-        new_root = Optimizer.new(document.root).optimize
-      else
-        new_root = document.root
-      end
+      new_root = if @optimize
+                   Optimizer.new(document.root).optimize
+                 else
+                   document.root
+                 end
 
       visit_node(new_root)
 

@@ -152,7 +152,8 @@ module Bade
     # @return [Precompiled]
     #
     def precompiled
-      @precompiled ||= Precompiled.new(Generator.document_to_lambda_string(root_document, optimize: @optimize), file_path)
+      document = Generator.document_to_lambda_string(root_document, optimize: @optimize)
+      @precompiled ||= Precompiled.new(document, file_path)
     end
 
     # @return [String]
