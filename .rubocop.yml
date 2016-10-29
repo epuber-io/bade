@@ -32,6 +32,9 @@ Style/Documentation:
 Style/PerlBackrefs:
   Enabled: false
 
+Style/RedundantReturn:
+  Enabled: false
+
 # We adopted raise instead of fail.
 SignalException:
   EnforcedStyle: only_raise

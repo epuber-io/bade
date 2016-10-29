@@ -9,7 +9,7 @@ require_relative 'precompiled'
 
 module Bade
   class Renderer
-    class LoadError < ::LoadError
+    class LoadError < ::RuntimeError
       # @return [String]
       #
       attr_reader :loading_path
@@ -210,9 +210,11 @@ module Bade
     # @return [Bade::AST::Document]
     #
     def _parsed_document(content, file_path)
-      content = if file_path.nil? && content.nil?
-                  raise LoadError.new(nil, file_path, "Don't know what to do with nil values for both content and path")
-                elsif !file_path.nil? && content.nil?
+      if file_path.nil? && content.nil?
+        raise LoadError.new(nil, file_path, "Don't know what to do with nil values for both content and path")
+      end
+
+      content = if !file_path.nil? && content.nil?
                   File.read(file_path)
                 else
                   content

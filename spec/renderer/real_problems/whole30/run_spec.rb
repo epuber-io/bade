@@ -21,7 +21,7 @@ describe Bade::Renderer do
         renderer = Bade::Renderer.from_file(path)
         output = renderer.render(new_line: '')
 
-        expect(output).to eq "<div class=\"green_box\"><p class=\"title\">ŠKODÍ ZDRAVÍ</p><p>Abychom byli fér: mléko zase vápník. Čtěte dál…</p></div>"
+        expect(output).to eq '<div class="green_box"><p class="title">ŠKODÍ ZDRAVÍ</p><p>Abychom byli fér: mléko zase vápník. Čtěte dál…</p></div>'
       end
     end
   end

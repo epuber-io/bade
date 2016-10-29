@@ -197,8 +197,7 @@ describe Bade::Parser do
                 n(:mixin_block, { name: 'first' },
                   n(:newline),
                   n(:static_text, value: 'text'))),
-              n(:newline),
-             )
+              n(:newline))
 
       assert_ast(ast, source)
     end
@@ -261,8 +260,7 @@ describe Bade::Parser do
                 n(:mixin_key_param, name: 'key2', value: 'key2'),
                 tag('tag2',
                     n(:static_text, value: 'text'))),
-              n(:newline),
-             )
+              n(:newline))
 
       assert_ast(ast, source)
     end

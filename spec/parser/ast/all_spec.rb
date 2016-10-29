@@ -29,12 +29,10 @@ describe Bade::Parser do
                 n(:newline),
                 tag('items',
                     n(:newline),
-                    n(:output, value: 'abc.join()'),
-                   ),
+                    n(:output, value: 'abc.join()')),
                 n(:newline),
                 code('end')),
-              n(:newline),
-             )
+              n(:newline))
 
       assert_ast(ast, source)
     end

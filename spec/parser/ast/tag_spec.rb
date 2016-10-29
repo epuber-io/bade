@@ -42,9 +42,7 @@ describe Bade::Parser do
                   n(:tag_attr, name: 'a7', value: '"a7"'),
                   n(:tag_attr, name: 'a8', value: '"a8"'),
                   n(:tag_attr, name: 'a9', value: '"a9"'),
-                  n(:tag_attr, name: 'a10', value: '"a10"'),
-                 ),
-             )
+                  n(:tag_attr, name: 'a10', value: '"a10"')))
 
       assert_ast(ast, source)
     end

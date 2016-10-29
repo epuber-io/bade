@@ -26,7 +26,7 @@ module Bade
       delimiters = []
       string_start_quote_char = nil
 
-      until @line.empty? || (delimiters.count == 0 && @line =~ end_re)
+      until @line.empty? || (delimiters.empty? && @line =~ end_re)
         char = @line[0]
 
         # backslash escaped delimiter
