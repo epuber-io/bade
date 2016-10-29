@@ -51,7 +51,7 @@ module Bade
             end
           end
 
-         when RUBY_END_DELIMITERS_RE
+        when RUBY_END_DELIMITERS_RE
           # rising
           delimiters.pop if char == RUBY_DELIMITERS_REVERSE[delimiters.last]
         end
