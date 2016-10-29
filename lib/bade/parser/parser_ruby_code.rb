@@ -24,6 +24,7 @@ module Bade
                  /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
                end
       delimiters = []
+      string_start_quote_char = nil
 
       until @line.empty? || (delimiters.count == 0 && @line =~ end_re)
         char = @line[0]
@@ -39,12 +40,18 @@ module Bade
           if RUBY_NOT_NESTABLE_DELIMITERS.include?(char) && delimiters.last == char
             # end char of not nestable delimiter
             delimiters.pop
+            string_start_quote_char = nil
           else
-            # diving
-            delimiters << char
+            # diving into nestable delimiters
+            delimiters << char if string_start_quote_char.nil?
+
+            # mark start char of the not nestable delimiters, for example strings
+            if RUBY_NOT_NESTABLE_DELIMITERS.include?(char) && string_start_quote_char.nil?
+              string_start_quote_char = char
+            end
           end
 
-        when RUBY_END_DELIMITERS_RE
+         when RUBY_END_DELIMITERS_RE
           # rising
           delimiters.pop if char == RUBY_DELIMITERS_REVERSE[delimiters.last]
         end

@@ -39,3 +39,4 @@ build/
 .idea
 benchmarks/*.html
 vendor/gems
+vendor/bundle

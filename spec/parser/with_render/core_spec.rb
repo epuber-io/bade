@@ -71,6 +71,22 @@ describe Bade::Parser do
       assert_ruby_code '  hash.map { |baf| baf, baf }  ', 'hash.map { |baf| baf, baf }'
     end
 
+    it 'parse simple string with pipe' do
+      assert_ruby_code "'|'", "'|'"
+    end
+
+    it 'parse simple string with opening square bracket' do
+      assert_ruby_code "'['", "'['"
+    end
+
+    it 'parse simple string with opening bracket' do
+      assert_ruby_code "'{'", "'{'"
+    end
+
+    it 'parse simple string with opening parenthesis' do
+      assert_ruby_code "'('", "'('"
+    end
+
     it 'parse multi lined code' do
       source = <<-BADE.strip_heredoc
         test code multi lined
