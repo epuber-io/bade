@@ -66,7 +66,7 @@ module Bade
     # @param [String] text
     #
     def buff_print_static_text(text)
-      buff_print_value("'#{text.gsub("'", "\\'")}'") unless text.empty?
+      buff_print_value("'#{text.gsub("'", "\\\\'")}'") unless text.empty?
     end
 
     def buff_print_value(value)
