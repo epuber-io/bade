@@ -6,19 +6,19 @@ module Bade
 
   class Parser
     module LineIndicatorRegexps
-      IMPORT = /\Aimport /
-      MIXIN_DECL = /\Amixin #{NAME_RE_STRING}/
-      MIXIN_CALL = /\A\+#{NAME_RE_STRING}/
-      BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/
-      HTML_COMMENT = %r{\A//! }
-      NORMAL_COMMENT = %r{\A//}
-      TEXT_BLOCK_START = /\A\|( ?)/
-      INLINE_HTML = /\A</
-      CODE_BLOCK = /\A-/
-      OUTPUT_BLOCK = /\A(\??)(&?)=/
-      DOCTYPE = /\Adoctype\s/i
-      TAG_CLASS_START_BLOCK = /\A\./
-      TAG_ID_START_BLOCK = /\A#/
+      IMPORT = /\Aimport /.freeze
+      MIXIN_DECL = /\Amixin #{NAME_RE_STRING}/.freeze
+      MIXIN_CALL = /\A\+#{NAME_RE_STRING}/.freeze
+      BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/.freeze
+      HTML_COMMENT = %r{\A//! }.freeze
+      NORMAL_COMMENT = %r{\A//}.freeze
+      TEXT_BLOCK_START = /\A\|( ?)/.freeze
+      INLINE_HTML = /\A</.freeze
+      CODE_BLOCK = /\A-/.freeze
+      OUTPUT_BLOCK = /\A(\??)(&?)=/.freeze
+      DOCTYPE = /\Adoctype\s/i.freeze
+      TAG_CLASS_START_BLOCK = /\A\./.freeze
+      TAG_ID_START_BLOCK = /\A#/.freeze
     end
 
     def reset(lines = nil, stacks = nil)

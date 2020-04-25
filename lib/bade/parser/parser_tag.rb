@@ -6,12 +6,12 @@ module Bade
 
   class Parser
     module TagRegexps
-      BLOCK_EXPANSION = /\A:\s+/
+      BLOCK_EXPANSION = /\A:\s+/.freeze
       OUTPUT_CODE = LineIndicatorRegexps::OUTPUT_BLOCK
-      TEXT_START = /\A /
+      TEXT_START = /\A /.freeze
 
-      PARAMS_ARGS_DELIMITER = /\A\s*,/
-      PARAMS_END = /\A\s*\)/
+      PARAMS_ARGS_DELIMITER = /\A\s*,/.freeze
+      PARAMS_END = /\A\s*\)/.freeze
     end
 
     # @param [String] tag  tag name

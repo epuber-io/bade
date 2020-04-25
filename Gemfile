@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gemspec
 
-gem 'coveralls', require: false
 gem 'benchmark-ips', require: false
-gem 'ruby-prof'
-gem 'flamegraph'
+gem 'coveralls', require: false
+
+group :banchmarks, optional: true do
+  gem 'flamegraph'
+  gem 'ruby-prof'
+end

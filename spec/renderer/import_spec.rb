@@ -2,7 +2,6 @@
 
 require_relative '../helper'
 
-
 describe Bade::Renderer, 'import feature' do
   it 'supports importing another file' do
     base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))

@@ -6,8 +6,8 @@ module Bade
 
   class Parser
     module ParseRubyCodeRegexps
-      END_NEW_LINE = /\A\s*\n/
-      END_PARAMS_ARG = /\A\s*[,)]/
+      END_NEW_LINE = /\A\s*\n/.freeze
+      END_PARAMS_ARG = /\A\s*[,)]/.freeze
     end
 
     # Parse ruby code, ended with outer delimiters
@@ -16,17 +16,27 @@ module Bade
     #
     # @return [Void] parsed ruby code
     #
-    def parse_ruby_code(outer_delimiters)
+    def parse_ruby_code(outer_delimiters, allow_multiline: false)
       code = String.new
       end_re = if outer_delimiters.is_a?(Regexp)
                  outer_delimiters
                else
                  /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
                end
+
       delimiters = []
       string_start_quote_char = nil
 
-      until @line.empty? || (delimiters.empty? && @line =~ end_re)
+      loop do
+        break if !allow_multiline && @line.empty?
+        break if allow_multiline && @line.empty? && (@lines && @lines.empty?)
+        break if delimiters.empty? && @line =~ end_re
+
+        if @line.empty? && allow_multiline && !(@lines && @lines.empty?)
+          next_line
+          code << "\n"
+        end
+
         char = @line[0]
 
         # backslash escaped delimiter
@@ -70,7 +80,7 @@ module Bade
       '{' => '}',
     }.freeze
 
-    RUBY_QUOTES = %w(' ").freeze
+    RUBY_QUOTES = %w[' "].freeze
 
     RUBY_NOT_NESTABLE_DELIMITERS = RUBY_QUOTES
 
@@ -78,7 +88,7 @@ module Bade
     RUBY_END_DELIMITERS = (%w(\) ] }) + RUBY_NOT_NESTABLE_DELIMITERS).freeze
     RUBY_ALL_DELIMITERS = (RUBY_START_DELIMITERS + RUBY_END_DELIMITERS).uniq.freeze
 
-    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join}]/
-    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join}]/
+    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join}]/.freeze
+    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join}]/.freeze
   end
 end

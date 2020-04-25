@@ -175,20 +175,17 @@ describe Bade::Parser do
                 n(:mixin_param, value: "'abc'"),
                 n(:static_text, value: 'text')),
               n(:newline),
-
               # second line
               n(:mixin_call, { name: 'abc' },
                 n(:mixin_key_param, name: 'key1', value: "'key1'"),
                 n(:static_text, value: 'text')),
               n(:newline),
-
               # third line
               n(:mixin_call, { name: 'abc' },
                 n(:mixin_param, value: "'abc'"),
                 n(:mixin_key_param, name: 'key1', value: "'key1'"),
                 n(:static_text, value: 'text')),
               n(:newline),
-
               # rest (lines 4, 5 and 6)
               n(:mixin_call, { name: 'abc' },
                 n(:mixin_param, value: "'abc'"),

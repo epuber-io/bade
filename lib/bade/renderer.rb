@@ -164,9 +164,11 @@ module Bade
 
     # @return [RenderBinding]
     #
+    # rubocop:disable Lint/DuplicateMethods
     def render_binding
       @render_binding ||= Runtime::RenderBinding.new(locals || {})
     end
+    # rubocop:enable Lint/DuplicateMethods
 
     # @return [Proc]
     #
@@ -249,6 +251,7 @@ module Bade
 
       if File.exist?(sub_path)
         return if sub_path.end_with?('.rb') # handled in Generator
+
         sub_path
       else
         bade_path = "#{sub_path}.bade"

@@ -1,10 +1,14 @@
 
-Style/Encoding:
-  Enabled: true
+AllCops:
+  TargetRubyVersion: 2.0
 
 # I want empty lines!
-Style/EmptyLines:
+Layout/EmptyLines:
   Enabled: false
+
+Layout/MultilineOperationIndentation:
+  Exclude:
+    - spec/renderer/*_spec.rb
 
 Style/RegexpLiteral:
   AllowInnerSlashes: false
@@ -12,13 +16,12 @@ Style/RegexpLiteral:
 Style/Encoding:
   Enabled: false
 
-Style/MultilineOperationIndentation:
+Style/PercentQLiterals:
   Exclude:
-    - spec/renderer/*_spec.rb
+    - lib/bade/generator.rb
 
-Style/UnneededPercentQ:
-  Exclude:
-    - lib/bade/generator.rb # TODO: remove this
+Style/NumericPredicate:
+  Enabled: false
 
 # We are supporting Ruby 2.3 with frozen strings, so not working
 Style/EmptyLiteral:
@@ -35,10 +38,19 @@ Style/PerlBackrefs:
 Style/RedundantReturn:
   Enabled: false
 
-# We adopted raise instead of fail.
-SignalException:
-  EnforcedStyle: only_raise
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - spec/**/*.rb
 
+Style/RedundantFreeze:
+  Enabled: false
+
+Style/RedundantBegin:
+  Enabled: false
+
+# We adopted raise instead of fail.
+Style/SignalException:
+  EnforcedStyle: only_raise
 
 # We all have wide screen monitors, so why only 80?
 Metrics/LineLength:
@@ -55,6 +67,11 @@ Metrics/ClassLength:
 
 Metrics/BlockNesting:
   Max: 4
+
+Metrics/BlockLength:
+  Max: 40
+  Exclude:
+    - spec/**/*_spec.rb
 
 # It will be obvious which code is complex, Rubocop should only lint simple
 # rules for us.
@@ -74,10 +91,7 @@ Metrics/PerceivedComplexity:
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: comma
-
-Style/TrailingCommaInHashLiteral:
+Style/TrailingCommaInLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/TrailingCommaInArguments:
@@ -89,3 +103,6 @@ Lint/RequireParentheses:
 Lint/LiteralInInterpolation:
   Exclude:
   - spec/**/*.rb
+
+Lint/EmptyWhen:
+  Enabled: false

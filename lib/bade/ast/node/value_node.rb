@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../ruby2_keywords'
+
 module Bade
   module AST
     class ValueNode < Node
@@ -15,8 +17,8 @@ module Bade
       #
       attr_accessor :conditional
 
-      def initialize(*args)
-        super
+      ruby2_keywords def initialize(*args)
+        super(*args)
 
         @escaped = false
         @conditional = false

@@ -9,10 +9,10 @@ module Bade
     NAME_RE_STRING = "(#{WORD_RE}(?:#{WORD_RE}|:|-|_)*)".freeze
 
     ATTR_NAME_RE_STRING = "\\A\\s*#{NAME_RE_STRING}".freeze
-    CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*&?:\s*/
+    CODE_ATTR_RE = /#{ATTR_NAME_RE_STRING}\s*&?:\s*/.freeze
 
-    TAG_RE = /\A#{NAME_RE_STRING}/
-    CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/
-    ID_TAG_RE = /\A##{NAME_RE_STRING}/
+    TAG_RE = /\A#{NAME_RE_STRING}/.freeze
+    CLASS_TAG_RE = /\A\.#{NAME_RE_STRING}/.freeze
+    ID_TAG_RE = /\A##{NAME_RE_STRING}/.freeze
   end
 end

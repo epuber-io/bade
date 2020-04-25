@@ -3,13 +3,13 @@ require 'rspec'
 
 describe Bade::Parser do
   context '#parse_ruby_code' do
-    def assert_ruby_code(source, expected_ruby, end_delimiter = ',)', options = {})
-      sut = Bade::Parser.new(options)
+    def assert_ruby_code(source, expected_ruby, end_delimiter = ',)', allow_multiline: false)
+      sut = Bade::Parser.new
 
-      sut.instance_eval { @lines = [source] }
+      sut.instance_eval { @lines = source.split("\n") }
       sut.next_line
 
-      result_ruby = sut.parse_ruby_code end_delimiter
+      result_ruby = sut.parse_ruby_code end_delimiter, allow_multiline: allow_multiline
 
       expect(result_ruby).to eq expected_ruby
     end
@@ -87,18 +87,22 @@ describe Bade::Parser do
       assert_ruby_code "'('", "'('"
     end
 
-    it 'parse multi lined code' do
+    it 'parse multiline code as parameters' do
       source = <<-BADE.strip_heredoc
-        test code multi lined
-          code
+        [
+          'text',
+          'second text',
+        ]
       BADE
 
       expected = <<-RESULT.strip_heredoc.rstrip
-        test code multi lined
-          code
+        [
+          'text',
+          'second text',
+        ]
       RESULT
 
-      assert_ruby_code source, expected
+      assert_ruby_code source, expected, allow_multiline: true
     end
   end
 end

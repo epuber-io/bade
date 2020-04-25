@@ -78,7 +78,6 @@ module Bade
       @buff << '  ' * @code_indent + text
     end
 
-
     # @param document [Bade::Document]
     #
     def visit_document(document)
@@ -158,8 +157,7 @@ module Bade
         buff_print_text output_code
 
       when :newline
-        # buff_print_value(NEW_LINE_NAME)
-
+        # no-op
       when :import
         base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
         load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
@@ -361,8 +359,6 @@ module Bade
 
       buff_code '})'
     end
-
-
 
     # @param [String] str
     #

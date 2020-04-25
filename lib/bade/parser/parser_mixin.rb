@@ -6,17 +6,17 @@ module Bade
 
   class Parser
     module MixinRegexps
-      TEXT_START = /\A /
-      BLOCK_EXPANSION = /\A:\s+/
-      OUTPUT_CODE = /\A(&?)=/
+      TEXT_START = /\A /.freeze
+      BLOCK_EXPANSION = /\A:\s+/.freeze
+      OUTPUT_CODE = /\A(&?)=/.freeze
 
-      PARAMS_END = /\A\s*\)/
+      PARAMS_END = /\A\s*\)/.freeze
 
-      PARAMS_END_SPACES = /^\s*$/
-      PARAMS_ARGS_DELIMITER = /\A\s*,/
+      PARAMS_END_SPACES = /^\s*$/.freeze
+      PARAMS_ARGS_DELIMITER = /\A\s*,/.freeze
 
-      PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/
-      PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/
+      PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/.freeze
+      PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/.freeze
       PARAMS_KEY_PARAM_NAME = CODE_ATTR_RE
     end
 
@@ -64,7 +64,7 @@ module Bade
           @line = $'
           attr_node = append_node(:mixin_key_param)
           attr_node.name = fixed_trailing_colon($1)
-          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
+          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG, allow_multiline: true)
 
         when MixinRegexps::PARAMS_ARGS_DELIMITER
           # args delimiter
@@ -83,7 +83,7 @@ module Bade
 
         else
           attr_node = append_node(:mixin_param)
-          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
+          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG, allow_multiline: true)
         end
       end
     end

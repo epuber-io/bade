@@ -249,6 +249,26 @@ describe Bade::Parser do
       assert_html expected, source
     end
 
+    it 'support complex multiline mixin calling' do
+      source = <<-BADE.strip_heredoc
+        mixin chapter(title: nil, name: nil, items: nil)
+          title= title
+          name= name
+          items= items.join(' — ')
+
+        +chapter(title: 'PROLOG',
+           name: 'Na letišti',
+           items: [
+             'Scéna letiště',
+             'Proč studovat tradiční společnosti?',
+           ])
+      BADE
+
+      expected = '<title>PROLOG</title><name>Na letišti</name><items>Scéna letiště — Proč studovat tradiční společnosti?</items>'
+
+      assert_html expected, source
+    end
+
     context 'rendered content of block' do
       it 'support for mutating of rendered content of block' do
         source = <<-BADE.strip_heredoc

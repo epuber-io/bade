@@ -26,7 +26,7 @@ describe Bade::Renderer do
 
       expect do
         assert_html('', source, print_error_if_error: false)
-      end.to raise_error ArgumentError, 'unknown key-value argument `two` for mixin `abc`'
+      end.to raise_error(ArgumentError) { |error| expect(error.message).to match(/^unknown key-value argument `:?two` for mixin `abc`$/) }
     end
 
     it 'not raises error when calling mixin with empty block' do

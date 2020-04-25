@@ -22,19 +22,19 @@ module Bade
 
     class MixinDeclarationNode < MixinCommonNode
       def allowed_parameter_types
-        [:mixin_param, :mixin_key_param, :mixin_block_param]
+        %i[mixin_param mixin_key_param mixin_block_param]
       end
     end
 
     class MixinBlockNode < MixinCommonNode
       def allowed_parameter_types
-        [:mixin_param, :mixin_key_param]
+        %i[mixin_param mixin_key_param]
       end
     end
 
     class MixinCallNode < MixinCommonNode
       def allowed_parameter_types
-        [:mixin_param, :mixin_key_param]
+        %i[mixin_param mixin_key_param]
       end
 
       def blocks

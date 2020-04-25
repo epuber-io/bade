@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 TEMPLATE_PATH = File.join(File.dirname(__FILE__), 'template.bade')
 TEMPLATE_VARS = {

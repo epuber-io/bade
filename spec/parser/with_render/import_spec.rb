@@ -1,4 +1,3 @@
-
 require_relative '../../helper'
 
 describe Bade::Parser, 'import' do
@@ -7,7 +6,7 @@ describe Bade::Parser, 'import' do
     document = parser.parse('import "ahoj"')
     import_nodes = document.root.children.reject { |n| n.type == :newline }
 
-    expect(parser.dependency_paths).to eq %w(ahoj)
+    expect(parser.dependency_paths).to eq %w[ahoj]
 
     expect(import_nodes.length).to eq 1
     expect(import_nodes.first.value).to eq 'ahoj'

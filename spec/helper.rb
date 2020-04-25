@@ -22,7 +22,7 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
     str = renderer.render(new_line: '', indent: '')
 
     expect(str).to eq expectation
-  rescue
+  rescue StandardError
     puts renderer.lambda_string if print_error_if_error
 
     raise

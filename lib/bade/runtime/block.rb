@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../ruby2_keywords'
+
 module Bade
   module Runtime
     class RuntimeError < ::StandardError; end
@@ -52,11 +54,11 @@ module Bade
 
       # --- Calling methods
 
-      def call(*args)
+      ruby2_keywords def call(*args)
         call!(*args) unless @block.nil?
       end
 
-      def call!(*args)
+      ruby2_keywords def call!(*args)
         raise MissingBlockDefinitionError.new(name, :call) if @block.nil?
 
         render_binding.__buff.concat(@block.call(*args))
