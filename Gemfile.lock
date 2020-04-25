@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     bade (0.2.4)
+      psych (~> 3.1)
       ruby2_keywords (~> 0.0)
 
 GEM
@@ -23,6 +24,7 @@ GEM
     parallel (1.19.1)
     parser (2.7.1.1)
       ast (~> 2.4.0)
+    psych (3.1.0)
     rainbow (3.0.0)
     rake (13.0.1)
     rexml (3.2.4)
