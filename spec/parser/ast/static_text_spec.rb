@@ -49,5 +49,14 @@ describe Bade::Parser do
 
       assert_ast ast, source
     end
+
+    it 'detects text with @' do
+      source = '| Here is some text @bla and @ ha.'
+
+      ast = n(:root,
+              n(:static_text, value: 'Here is some text @bla and @ ha.'))
+
+      assert_ast ast, source
+    end
   end
 end
