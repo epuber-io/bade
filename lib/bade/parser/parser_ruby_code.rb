@@ -16,17 +16,27 @@ module Bade
     #
     # @return [Void] parsed ruby code
     #
-    def parse_ruby_code(outer_delimiters)
+    def parse_ruby_code(outer_delimiters, allow_multiline: false)
       code = String.new
       end_re = if outer_delimiters.is_a?(Regexp)
                  outer_delimiters
                else
                  /\A\s*[#{Regexp.escape outer_delimiters.to_s}]/
                end
+
       delimiters = []
       string_start_quote_char = nil
 
-      until @line.empty? || (delimiters.empty? && @line =~ end_re)
+      loop do
+        break if (!allow_multiline && @line.empty?)
+        break if (allow_multiline && @line.empty? && @lines&.empty?)
+        break if (delimiters.empty? && @line =~ end_re)
+
+        if @line.empty? && allow_multiline && !@lines&.empty?
+          next_line
+          code << "\n"
+        end
+
         char = @line[0]
 
         # backslash escaped delimiter

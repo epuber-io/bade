@@ -64,7 +64,7 @@ module Bade
           @line = $'
           attr_node = append_node(:mixin_key_param)
           attr_node.name = fixed_trailing_colon($1)
-          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
+          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG, allow_multiline: true)
 
         when MixinRegexps::PARAMS_ARGS_DELIMITER
           # args delimiter
@@ -83,7 +83,7 @@ module Bade
 
         else
           attr_node = append_node(:mixin_param)
-          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
+          attr_node.value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG, allow_multiline: true)
         end
       end
     end
