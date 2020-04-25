@@ -40,4 +40,3 @@ build/
 benchmarks/*.html
 vendor/gems
 vendor/bundle
-Gemfile.lock
