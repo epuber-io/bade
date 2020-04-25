@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'ruby2_keywords'
+
 module Bade
   module AST
     class StaticTextNode < Node
@@ -11,8 +13,8 @@ module Bade
       #
       attr_accessor :escaped
 
-      def initialize(*args)
-        super
+      ruby2_keywords def initialize(*args)
+        super(*args)
 
         @escaped = false
       end

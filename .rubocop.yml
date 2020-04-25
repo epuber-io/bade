@@ -45,8 +45,11 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - spec/**/*.rb
 
+Style/RedundantBegin:
+  Enabled: false
+
 # We adopted raise instead of fail.
-SignalException:
+Style/SignalException:
   EnforcedStyle: only_raise
 
 # WTF: why is default 10?
@@ -60,6 +63,7 @@ Metrics/BlockNesting:
   Max: 4
 
 Metrics/BlockLength:
+  Max: 40
   Exclude:
     - spec/**/*_spec.rb
 
@@ -98,4 +102,25 @@ Lint/LiteralInInterpolation:
   - spec/**/*.rb
 
 Lint/EmptyWhen:
-  AllowComments: true
+  Enabled: false
+
+
+
+
+
+
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Style/ExponentialNotation:
+  Enabled: true
+Style/HashEachMethods:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: true

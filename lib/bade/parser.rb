@@ -126,7 +126,9 @@ module Bade
 
     def parse_import
       # TODO: change this to something better
-      path = eval(@line) # rubocop:disable Lint/Eval
+      # rubocop:todo Security/Eval
+      path = eval(@line)
+      # rubocop:enable Security/Eval
       append_node(:import, value: path)
 
       @dependency_paths << path unless @dependency_paths.include?(path)

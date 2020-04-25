@@ -164,9 +164,11 @@ module Bade
 
     # @return [RenderBinding]
     #
+    # rubocop:disable Lint/DuplicateMethods
     def render_binding
       @render_binding ||= Runtime::RenderBinding.new(locals || {})
     end
+    # rubocop:enable Lint/DuplicateMethods
 
     # @return [Proc]
     #

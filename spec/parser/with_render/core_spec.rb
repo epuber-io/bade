@@ -4,7 +4,7 @@ require 'rspec'
 describe Bade::Parser do
   context '#parse_ruby_code' do
     def assert_ruby_code(source, expected_ruby, end_delimiter = ',)', allow_multiline: false)
-      sut = Bade::Parser.new({})
+      sut = Bade::Parser.new
 
       sut.instance_eval { @lines = source.split("\n") }
       sut.next_line

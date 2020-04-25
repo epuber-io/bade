@@ -23,7 +23,6 @@ module Bade
       def initialize(type, lineno: nil)
         @type = type
         @children = []
-
         @lineno = lineno
       end
 

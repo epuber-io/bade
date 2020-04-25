@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     bade (0.2.4)
+      ruby2_keywords (~> 0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -48,6 +49,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     ruby-prof (1.3.2)
     ruby-progressbar (1.10.1)
+    ruby2_keywords (0.0.2)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
