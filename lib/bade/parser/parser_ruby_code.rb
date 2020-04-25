@@ -29,10 +29,10 @@ module Bade
 
       loop do
         break if !allow_multiline && @line.empty?
-        break if allow_multiline && @line.empty? && @lines&.empty?
+        break if allow_multiline && @line.empty? && (@lines && @lines.empty?)
         break if delimiters.empty? && @line =~ end_re
 
-        if @line.empty? && allow_multiline && !@lines&.empty?
+        if @line.empty? && allow_multiline && !(@lines && @lines.empty?)
           next_line
           code << "\n"
         end

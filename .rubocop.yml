@@ -1,4 +1,7 @@
 
+AllCops:
+  TargetRubyVersion: 2.0
+
 # I want empty lines!
 Layout/EmptyLines:
   Enabled: false
@@ -6,12 +9,6 @@ Layout/EmptyLines:
 Layout/MultilineOperationIndentation:
   Exclude:
     - spec/renderer/*_spec.rb
-
-# We all have wide screen monitors, so why only 80?
-Layout/LineLength:
-  Max: 120
-  Exclude:
-    - spec/**/*_spec.rb
 
 Style/RegexpLiteral:
   AllowInnerSlashes: false
@@ -45,12 +42,21 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - spec/**/*.rb
 
+Style/RedundantFreeze:
+  Enabled: false
+
 Style/RedundantBegin:
   Enabled: false
 
 # We adopted raise instead of fail.
 Style/SignalException:
   EnforcedStyle: only_raise
+
+# We all have wide screen monitors, so why only 80?
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - spec/**/*_spec.rb
 
 # WTF: why is default 10?
 Metrics/MethodLength:
@@ -85,10 +91,7 @@ Metrics/PerceivedComplexity:
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: comma
-
-Style/TrailingCommaInHashLiteral:
+Style/TrailingCommaInLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/TrailingCommaInArguments:
@@ -103,24 +106,3 @@ Lint/LiteralInInterpolation:
 
 Lint/EmptyWhen:
   Enabled: false
-
-
-
-
-
-
-
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-Lint/RaiseException:
-  Enabled: true
-Lint/StructNewOverride:
-  Enabled: true
-Style/ExponentialNotation:
-  Enabled: true
-Style/HashEachMethods:
-  Enabled: true
-Style/HashTransformKeys:
-  Enabled: true
-Style/HashTransformValues:
-  Enabled: true

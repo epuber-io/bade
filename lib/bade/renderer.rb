@@ -33,7 +33,7 @@ module Bade
       @optimize = false
     end
 
-    TEMPLATE_FILE_NAME = '(__template__)'
+    TEMPLATE_FILE_NAME = '(__template__)'.freeze
 
     # @return [String]
     #

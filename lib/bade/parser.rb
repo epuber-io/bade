@@ -126,7 +126,7 @@ module Bade
 
     def parse_import
       # TODO: change this to something better
-      # rubocop:todo Security/Eval
+      # rubocop:disable Security/Eval
       path = eval(@line)
       # rubocop:enable Security/Eval
       append_node(:import, value: path)

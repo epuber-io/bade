@@ -2,8 +2,8 @@
 
 # :nodoc:
 class String
-  SPACE_CHAR = ' '
-  TAB_CHAR = "\t"
+  SPACE_CHAR = ' '.freeze
+  TAB_CHAR = "\t".freeze
 
   # Creates new string surrounded by single quotes
   #
@@ -100,7 +100,7 @@ class String
   #
   def strip_heredoc
     min_val = scan(/^[ \t]*(?=\S)/).min
-    indent = min_val&.size || 0
+    indent = (min_val && min_val.size) || 0
     gsub(/^[ \t]{#{indent}}/, '')
   end
 end

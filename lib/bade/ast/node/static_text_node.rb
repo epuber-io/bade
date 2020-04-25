@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ruby2_keywords'
+require_relative '../../ruby2_keywords'
 
 module Bade
   module AST

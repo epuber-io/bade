@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'yaml'
-
+require 'psych'
 
 module Bade
   class Precompiled
@@ -26,7 +25,11 @@ module Bade
                file
              end
 
-      hash = YAML.safe_load(file, filename: file.path, permitted_classes: [Symbol])
+      hash = if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.0')
+               YAML.safe_load(file, filename: file.path, permitted_classes: [Symbol])
+             else
+               YAML.safe_load(file, [Symbol])
+             end
       raise LoadError, 'YAML file is not in valid format' unless hash.is_a?(Hash)
 
       file_path = hash[:source_file_path]

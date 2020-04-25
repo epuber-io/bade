@@ -12,7 +12,7 @@ module Bade
     CURRENT_INDENT_NAME = :__indent
     BASE_INDENT_NAME = :__base_indent
 
-    DEFAULT_BLOCK_NAME = 'default_block'
+    DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
     # @param [Document] document
     #

@@ -6,5 +6,8 @@ gemspec
 
 gem 'benchmark-ips', require: false
 gem 'coveralls', require: false
-gem 'flamegraph'
-gem 'ruby-prof'
+
+group :banchmarks, optional: true do
+  gem 'flamegraph'
+  gem 'ruby-prof'
+end

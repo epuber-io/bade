@@ -6,7 +6,6 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'bade/version'
 
-
 Gem::Specification.new do |spec|
   spec.name        = 'bade'
   spec.version     = Bade::VERSION
@@ -15,17 +14,16 @@ Gem::Specification.new do |spec|
   spec.summary     = 'Minimalistic template engine for Ruby.'
   spec.homepage    = 'https://github.com/epuber-io/bade'
   spec.license     = 'MIT'
-  spec.required_ruby_version = '>= 2.4'
+  spec.required_ruby_version = '>= 2.0'
 
   spec.files         = Dir['bin/**/*'] + Dir['lib/**/*'] + %w[Bade.gemspec Gemfile README.md]
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'psych', '~> 3.1'
-  spec.add_dependency 'ruby2_keywords', '~> 0.0'
+  spec.add_dependency 'psych', '>= 2.2', '< 4.0'
 
-  spec.add_development_dependency 'rake', '~> 13'
+  spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.2'
-  spec.add_development_dependency 'rubocop', '~> 0.35'
+  spec.add_development_dependency 'rubocop', '~> 0.50.0'
 end
