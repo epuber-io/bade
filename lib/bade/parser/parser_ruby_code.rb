@@ -6,8 +6,8 @@ module Bade
 
   class Parser
     module ParseRubyCodeRegexps
-      END_NEW_LINE = /\A\s*\n/
-      END_PARAMS_ARG = /\A\s*[,)]/
+      END_NEW_LINE = /\A\s*\n/.freeze
+      END_PARAMS_ARG = /\A\s*[,)]/.freeze
     end
 
     # Parse ruby code, ended with outer delimiters
@@ -70,7 +70,7 @@ module Bade
       '{' => '}',
     }.freeze
 
-    RUBY_QUOTES = %w(' ").freeze
+    RUBY_QUOTES = %w[' "].freeze
 
     RUBY_NOT_NESTABLE_DELIMITERS = RUBY_QUOTES
 
@@ -78,7 +78,7 @@ module Bade
     RUBY_END_DELIMITERS = (%w(\) ] }) + RUBY_NOT_NESTABLE_DELIMITERS).freeze
     RUBY_ALL_DELIMITERS = (RUBY_START_DELIMITERS + RUBY_END_DELIMITERS).uniq.freeze
 
-    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join}]/
-    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join}]/
+    RUBY_START_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_START_DELIMITERS.join}]/.freeze
+    RUBY_END_DELIMITERS_RE = /\A[#{Regexp.escape RUBY_END_DELIMITERS.join}]/.freeze
   end
 end

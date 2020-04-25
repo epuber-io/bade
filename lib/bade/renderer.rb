@@ -33,7 +33,7 @@ module Bade
       @optimize = false
     end
 
-    TEMPLATE_FILE_NAME = '(__template__)'.freeze
+    TEMPLATE_FILE_NAME = '(__template__)'
 
     # @return [String]
     #
@@ -249,6 +249,7 @@ module Bade
 
       if File.exist?(sub_path)
         return if sub_path.end_with?('.rb') # handled in Generator
+
         sub_path
       else
         bade_path = "#{sub_path}.bade"

@@ -26,7 +26,6 @@ module Bade
         else
           raise
         end
-
       rescue Block::MissingBlockDefinitionError => e
         msg = case e.context
               when :call

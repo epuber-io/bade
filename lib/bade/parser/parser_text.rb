@@ -6,8 +6,8 @@ module Bade
 
   class Parser
     module TextRegexps
-      INTERPOLATION_START = /(\\)?(&|#)\{/
-      INTERPOLATION_END = /\A\}/
+      INTERPOLATION_START = /(\\)?(&|#)\{/.freeze
+      INTERPOLATION_END = /\A\}/.freeze
     end
 
     def parse_text
@@ -64,7 +64,7 @@ module Bade
 
           next_line
 
-          @line.remove_indent!(text_indent ? text_indent : indent, @tabsize)
+          @line.remove_indent!(text_indent || indent, @tabsize)
 
           parse_text
 

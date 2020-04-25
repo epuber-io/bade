@@ -12,7 +12,7 @@ module Bade
     CURRENT_INDENT_NAME = :__indent
     BASE_INDENT_NAME = :__base_indent
 
-    DEFAULT_BLOCK_NAME = 'default_block'.freeze
+    DEFAULT_BLOCK_NAME = 'default_block'
 
     # @param [Document] document
     #
@@ -77,7 +77,6 @@ module Bade
     def buff_code(text)
       @buff << '  ' * @code_indent + text
     end
-
 
     # @param document [Bade::Document]
     #
@@ -361,8 +360,6 @@ module Bade
 
       buff_code '})'
     end
-
-
 
     # @param [String] str
     #

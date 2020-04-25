@@ -6,17 +6,17 @@ module Bade
 
   class Parser
     module MixinRegexps
-      TEXT_START = /\A /
-      BLOCK_EXPANSION = /\A:\s+/
-      OUTPUT_CODE = /\A(&?)=/
+      TEXT_START = /\A /.freeze
+      BLOCK_EXPANSION = /\A:\s+/.freeze
+      OUTPUT_CODE = /\A(&?)=/.freeze
 
-      PARAMS_END = /\A\s*\)/
+      PARAMS_END = /\A\s*\)/.freeze
 
-      PARAMS_END_SPACES = /^\s*$/
-      PARAMS_ARGS_DELIMITER = /\A\s*,/
+      PARAMS_END_SPACES = /^\s*$/.freeze
+      PARAMS_ARGS_DELIMITER = /\A\s*,/.freeze
 
-      PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/
-      PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/
+      PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/.freeze
+      PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/.freeze
       PARAMS_KEY_PARAM_NAME = CODE_ATTR_RE
     end
 

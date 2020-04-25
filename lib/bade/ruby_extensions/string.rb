@@ -2,8 +2,8 @@
 
 # :nodoc:
 class String
-  SPACE_CHAR = ' '.freeze
-  TAB_CHAR = "\t".freeze
+  SPACE_CHAR = ' '
+  TAB_CHAR = "\t"
 
   # Creates new string surrounded by single quotes
   #
@@ -13,11 +13,9 @@ class String
     %('#{self}')
   end
 
-
   def blank?
     strip.empty?
   end
-
 
   def remove_last(count = 1)
     slice(0, length - count)
@@ -26,7 +24,6 @@ class String
   def remove_last!(count = 1)
     slice!(length - count, count)
   end
-
 
   def remove_first(count = 1)
     slice(count, length - count)
@@ -67,7 +64,6 @@ class String
     remove_first(__chars_count_for_indent(indent, tabsize))
   end
 
-
   # Remove indent
   #
   # @param [Int] indent
@@ -76,7 +72,6 @@ class String
   def remove_indent!(indent, tabsize)
     remove_first!(__chars_count_for_indent(indent, tabsize))
   end
-
 
   # Calculate indent for line
   #
@@ -105,7 +100,7 @@ class String
   #
   def strip_heredoc
     min_val = scan(/^[ \t]*(?=\S)/).min
-    indent = (min_val && min_val.size) || 0
+    indent = min_val&.size || 0
     gsub(/^[ \t]{#{indent}}/, '')
   end
 end
