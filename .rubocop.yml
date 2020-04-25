@@ -1,10 +1,17 @@
 
-Style/Encoding:
-  Enabled: true
-
 # I want empty lines!
-Style/EmptyLines:
+Layout/EmptyLines:
   Enabled: false
+
+Layout/MultilineOperationIndentation:
+  Exclude:
+    - spec/renderer/*_spec.rb
+
+# We all have wide screen monitors, so why only 80?
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - spec/**/*_spec.rb
 
 Style/RegexpLiteral:
   AllowInnerSlashes: false
@@ -12,13 +19,12 @@ Style/RegexpLiteral:
 Style/Encoding:
   Enabled: false
 
-Style/MultilineOperationIndentation:
-  Exclude:
-    - spec/renderer/*_spec.rb
-
 Style/PercentQLiterals:
   Exclude:
     - lib/bade/generator.rb
+
+Style/NumericPredicate:
+  Enabled: false
 
 # We are supporting Ruby 2.3 with frozen strings, so not working
 Style/EmptyLiteral:
@@ -42,13 +48,6 @@ Style/FrozenStringLiteralComment:
 # We adopted raise instead of fail.
 SignalException:
   EnforcedStyle: only_raise
-
-
-# We all have wide screen monitors, so why only 80?
-Metrics/LineLength:
-  Max: 120
-  Exclude:
-    - spec/**/*_spec.rb
 
 # WTF: why is default 10?
 Metrics/MethodLength:
@@ -97,3 +96,6 @@ Lint/RequireParentheses:
 Lint/LiteralInInterpolation:
   Exclude:
   - spec/**/*.rb
+
+Lint/EmptyWhen:
+  AllowComments: true

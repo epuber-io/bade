@@ -28,9 +28,9 @@ module Bade
       string_start_quote_char = nil
 
       loop do
-        break if (!allow_multiline && @line.empty?)
-        break if (allow_multiline && @line.empty? && @lines&.empty?)
-        break if (delimiters.empty? && @line =~ end_re)
+        break if !allow_multiline && @line.empty?
+        break if allow_multiline && @line.empty? && @lines&.empty?
+        break if delimiters.empty? && @line =~ end_re
 
         if @line.empty? && allow_multiline && !@lines&.empty?
           next_line
