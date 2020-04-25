@@ -24,7 +24,7 @@ GEM
       ast (~> 2.4.0)
     powerpack (0.1.2)
     rainbow (3.0.0)
-    rake (11.3.0)
+    rake (12.3.3)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -67,7 +67,7 @@ DEPENDENCIES
   benchmark-ips
   coveralls
   flamegraph
-  rake (~> 11)
+  rake (~> 12)
   rspec (~> 3.2)
   rubocop (~> 0.35)
   ruby-prof
