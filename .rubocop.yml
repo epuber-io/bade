@@ -16,9 +16,9 @@ Style/MultilineOperationIndentation:
   Exclude:
     - spec/renderer/*_spec.rb
 
-Style/UnneededPercentQ:
+Style/PercentQLiterals:
   Exclude:
-    - lib/bade/generator.rb # TODO: remove this
+    - lib/bade/generator.rb
 
 # We are supporting Ruby 2.3 with frozen strings, so not working
 Style/EmptyLiteral:
@@ -34,6 +34,10 @@ Style/PerlBackrefs:
 
 Style/RedundantReturn:
   Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - spec/**/*.rb
 
 # We adopted raise instead of fail.
 SignalException:
@@ -55,6 +59,10 @@ Metrics/ClassLength:
 
 Metrics/BlockNesting:
   Max: 4
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb
 
 # It will be obvious which code is complex, Rubocop should only lint simple
 # rules for us.
