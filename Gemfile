@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'benchmark-ips', require: false
-gem 'coveralls', require: false
 
 group :banchmarks, optional: true do
   gem 'flamegraph'
