@@ -6,8 +6,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu]
-        ruby: [2.7, 2.6, 2.5]
+        os: [ubuntu, macos]
+        ruby: [3.0, 2.7, 2.6, 2.5]
 
     steps:
     - uses: actions/checkout@v2
