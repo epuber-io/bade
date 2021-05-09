@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'coveralls'
-Coveralls.wear! if Coveralls.will_run?
-
-
 require 'rspec'
 
 require_relative '../lib/bade'

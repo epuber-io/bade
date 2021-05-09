@@ -26,9 +26,9 @@ module Bade
              end
 
       hash = if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.0')
-               YAML.safe_load(file, filename: file.path, permitted_classes: [Symbol])
+               Psych.safe_load(file, filename: file.path, permitted_classes: [Symbol])
              else
-               YAML.safe_load(file, [Symbol])
+               Psych.safe_load(file, [Symbol])
              end
       raise LoadError, 'YAML file is not in valid format' unless hash.is_a?(Hash)
 

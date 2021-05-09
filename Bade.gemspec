@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.summary     = 'Minimalistic template engine for Ruby.'
   spec.homepage    = 'https://github.com/epuber-io/bade'
   spec.license     = 'MIT'
-  spec.required_ruby_version = '>= 2.0'
+  spec.required_ruby_version = '>= 2.5'
 
   spec.files         = Dir['bin/**/*'] + Dir['lib/**/*'] + %w[Bade.gemspec Gemfile README.md]
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.2'
-  spec.add_development_dependency 'rubocop', '~> 0.50.0'
+  spec.add_development_dependency 'rubocop', '~> 1.14.0'
 end
