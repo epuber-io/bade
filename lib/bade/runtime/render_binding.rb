@@ -34,7 +34,7 @@ module Bade
         end
       end
 
-      # Resets this binding to default state, this method should be envoked after running the template lambda
+      # Resets this binding to default state, this method should be evoked after running the template lambda
       #
       # @return [nil]
       #
@@ -77,7 +77,12 @@ module Bade
 
       # @param [String] filename
       def __load(filename)
-        load(filename)
+        # FakeFS does not fake `load` method
+        if defined?(:FakeFS) && FakeFS.activated?
+          eval(File.read(filename), __get_binding, filename)
+        else
+          load(filename)
+        end
       end
 
       # Escape input text with html escapes

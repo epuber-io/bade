@@ -1,12 +1,24 @@
 # frozen_string_literal: true
 
 require_relative '../helper'
-require 'fakefs/safe'
+require 'fakefs/spec_helpers'
 
 describe Bade::Renderer, 'import feature' do
+  include FakeFS::SpecHelpers
+
   it 'supports importing another file' do
-    base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))
-    output = Bade::Renderer.from_file(File.new(base_path, 'r'))
+    File.write('imported.bade', <<~BADE)
+      mixin baf(text)
+        div= text
+    BADE
+
+    File.write('base.bade', <<~BADE)
+      import "imported.bade"
+
+      +baf('ahoj')
+    BADE
+
+    output = Bade::Renderer.from_file('base.bade')
                            .render(new_line: '')
 
     expect(output).to eq '<div>ahoj</div>'
@@ -14,83 +26,95 @@ describe Bade::Renderer, 'import feature' do
 
   context 'importing ruby file' do
     it 'supports importing relatively with extension' do
-      base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))
+      File.write('imported.rb', <<~RB)
+        def z
+          'imported_rb'
+        end
+      RB
 
-      source = <<-BADE.strip_heredoc
-        import "imported_rb.rb"
+      File.write('base.bade', <<~BADE)
+        import "imported.rb"
         = z
       BADE
 
-      output = Bade::Renderer.from_source(source, base_path)
+      output = Bade::Renderer.from_file('base.bade')
                              .render(new_line: '')
 
       expect(output).to eq 'imported_rb'
     end
 
     it 'supports importing relatively without extension' do
-      base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))
+      File.write('imported.rb', <<~RB)
+        def z
+          'imported_rb_2'
+        end
+      RB
 
-      source = <<-BADE.strip_heredoc
-        import "imported_rb"
+      File.write('base.bade', <<~BADE)
+        import "imported"
         = z
       BADE
 
-      output = Bade::Renderer.from_source(source, base_path)
+      output = Bade::Renderer.from_file('base.bade')
                              .render(new_line: '')
 
-      expect(output).to eq 'imported_rb'
+      expect(output).to eq 'imported_rb_2'
     end
 
     it 'pass correct __FILE__ variable to loaded ruby file' do
-      base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))
+      File.write('imported.rb', <<~RB)
+        def file_path
+          __FILE__
+        end
+      RB
 
-      source = <<-BADE.strip_heredoc
-        import "imported_rb"
+      File.write('base.bade', <<~BADE)
+        import "imported"
         = file_path
       BADE
 
-      output = Bade::Renderer.from_source(source, base_path)
+      output = Bade::Renderer.from_file('base.bade')
                              .render(new_line: '')
 
-      expect(output).to eq File.expand_path('files/imported_rb.rb', File.dirname(__FILE__))
+      expect(output).to eq '/imported.rb'
     end
 
     it 'raises error when referenced file name matches multiple files' do
-      base_path = File.expand_path('files/base.bade', File.dirname(__FILE__))
+      File.write('imported.bade', '')
+      File.write('imported.rb', '')
 
-      source = <<-BADE.strip_heredoc
-        import "folder/import_in_folder"
+      File.write('base.bade', <<~BADE)
+        import "imported"
+        = file_path
       BADE
 
       expect do
-        Bade::Renderer.from_source(source, base_path)
+        Bade::Renderer.from_file('base.bade')
                       .render(new_line: '')
-      end.to raise_error(Bade::Renderer::LoadError, 'Found both .bade and .rb files for `folder/import_in_folder` in '\
+      end.to raise_error(Bade::Renderer::LoadError, 'Found both .bade and .rb files for `imported` in '\
                                                     'file base.bade, change the import path so it references uniq file.')
     end
 
     it 'can import ruby file from imported bade file' do
-      FakeFS do
-        File.write('root.bade', <<~BADE)
-          import 'imported.bade'
-        BADE
+      File.write('root.bade', <<~BADE)
+        import 'imported.bade'
+        = abc
+      BADE
 
-        File.write('imported.bade', <<~BADE)
-          import 'ruby.rb'
-        BADE
+      File.write('imported.bade', <<~BADE)
+        import 'ruby.rb'
+      BADE
 
-        File.write('ruby.rb', <<~RUBY)
-        RUBY
+      File.write('ruby.rb', <<~RUBY)
+        def abc
+          '123'
+        end
+      RUBY
 
-        kernel_mock = Bade::Runtime::RenderBinding.new({})
-        expect(kernel_mock).to receive(:__load).with('/ruby.rb')
+      output = Bade::Renderer.from_file('root.bade')
+                             .render(new_line: '')
 
-        Bade::Renderer.from_file('root.bade')
-                      .with_render_binding(kernel_mock)
-                      .render(new_line: '')
-
-
-      end
+      expect(output).to eq '123'
     end
   end
 end
