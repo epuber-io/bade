@@ -1,6 +1,6 @@
 
 AllCops:
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.5
 
 # I want empty lines!
 Layout/EmptyLines:
@@ -91,7 +91,9 @@ Metrics/PerceivedComplexity:
 
 # Having these make it easier to *not* forget to add one when adding a new
 # value and you can simply copy the previous line.
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/TrailingCommaInArguments:

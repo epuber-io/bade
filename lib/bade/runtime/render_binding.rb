@@ -73,6 +73,13 @@ module Bade
         __buffs_stack.pop
       end
 
+      # --- Other internal methods
+
+      # @param [String] filename
+      def __load(filename)
+        load(filename)
+      end
+
       # Escape input text with html escapes
       #
       # @param [String] text

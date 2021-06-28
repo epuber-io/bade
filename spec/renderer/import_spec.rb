@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../helper'
+require 'fakefs/safe'
 
 describe Bade::Renderer, 'import feature' do
   it 'supports importing another file' do
@@ -66,6 +67,30 @@ describe Bade::Renderer, 'import feature' do
                       .render(new_line: '')
       end.to raise_error(Bade::Renderer::LoadError, 'Found both .bade and .rb files for `folder/import_in_folder` in '\
                                                     'file base.bade, change the import path so it references uniq file.')
+    end
+
+    it 'can import ruby file from imported bade file' do
+      FakeFS do
+        File.write('root.bade', <<~BADE)
+          import 'imported.bade'
+        BADE
+
+        File.write('imported.bade', <<~BADE)
+          import 'ruby.rb'
+        BADE
+
+        File.write('ruby.rb', <<~RUBY)
+        RUBY
+
+        kernel_mock = Bade::Runtime::RenderBinding.new({})
+        expect(kernel_mock).to receive(:__load).with('/ruby.rb')
+
+        Bade::Renderer.from_file('root.bade')
+                      .with_render_binding(kernel_mock)
+                      .render(new_line: '')
+
+
+      end
     end
   end
 end
