@@ -1,6 +1,0 @@
-
-import "imported"
-
-import "imported.bade"
-
-+baf('ahoj')

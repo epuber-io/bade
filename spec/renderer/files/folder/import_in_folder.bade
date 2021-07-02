@@ -1,6 +1,0 @@
-
-mixin z
-  | folder/import_in_folder
-
-mixin file_path
-  = __FILE__

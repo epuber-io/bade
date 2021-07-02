@@ -166,8 +166,7 @@ module Bade
                       "#{base_path}.rb"
                     end
 
-        buff_code "load('#{load_path}')" unless load_path.nil?
-
+        buff_code "__load('#{load_path}')" unless load_path.nil?
       else
         raise "Unknown type #{current_node.type}"
       end

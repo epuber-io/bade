@@ -125,8 +125,17 @@ module Bade
       self
     end
 
+    # @return [self]
     def with_binding(binding)
       self.lambda_binding = binding
+      self
+    end
+
+    # @param [RenderBinding] binding
+    # @return [self]
+    def with_render_binding(binding)
+      self.lambda_binding = nil
+      self.render_binding = binding
       self
     end
 

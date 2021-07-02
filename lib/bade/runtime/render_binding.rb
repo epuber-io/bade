@@ -34,7 +34,7 @@ module Bade
         end
       end
 
-      # Resets this binding to default state, this method should be envoked after running the template lambda
+      # Resets this binding to default state, this method should be evoked after running the template lambda
       #
       # @return [nil]
       #
@@ -71,6 +71,32 @@ module Bade
 
       def __buffs_pop
         __buffs_stack.pop
+      end
+
+      # --- Other internal methods
+
+      # @param [String] filename
+      def __load(filename)
+        # FakeFS does not fake `load` method
+        if defined?(:FakeFS) && FakeFS.activated?
+          # rubocop:disable Security/Eval
+          eval(File.read(filename), __get_binding, filename)
+          # rubocop:enable Security/Eval
+        else
+          load(filename)
+        end
+      end
+
+      # @param [String] filename
+      def require_relative(filename)
+        # FakeFS does not fake `require_relative` method
+        if defined?(:FakeFS) && FakeFS.activated?
+          # rubocop:disable Security/Eval
+          eval(File.read(filename), __get_binding, filename)
+          # rubocop:enable Security/Eval
+        else
+          Kernel.require_relative(filename)
+        end
       end
 
       # Escape input text with html escapes

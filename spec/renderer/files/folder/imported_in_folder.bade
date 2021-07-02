@@ -1,3 +1,0 @@
-
-mixin baf(param1)
-    div= param1
