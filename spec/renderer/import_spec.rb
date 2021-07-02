@@ -98,7 +98,7 @@ describe Bade::Renderer, 'import feature' do
     it 'can import ruby file from imported bade file' do
       File.write('root.bade', <<~BADE)
         import 'imported.bade'
-        = abc
+        = abc1
       BADE
 
       File.write('imported.bade', <<~BADE)
@@ -106,7 +106,7 @@ describe Bade::Renderer, 'import feature' do
       BADE
 
       File.write('ruby.rb', <<~RUBY)
-        def abc
+        def abc1
           '123'
         end
       RUBY
@@ -115,6 +115,33 @@ describe Bade::Renderer, 'import feature' do
                              .render(new_line: '')
 
       expect(output).to eq '123'
+    end
+
+    it 'can import ruby file from imported bade file' do
+      File.write('root.bade', <<~BADE)
+        import 'imported.bade'
+        = abc2
+      BADE
+
+      File.write('imported.bade', <<~BADE)
+        import 'ruby.rb'
+      BADE
+
+      File.write('ruby.rb', <<~RUBY)
+        require_relative 'lib/utils.rb'
+      RUBY
+
+      FileUtils.mkdir_p('lib')
+      File.write('lib/utils.rb', <<~RUBY)
+        def abc2
+          '123-123'
+        end
+      RUBY
+
+      output = Bade::Renderer.from_file('root.bade')
+                             .render(new_line: '')
+
+      expect(output).to eq '123-123'
     end
   end
 end
