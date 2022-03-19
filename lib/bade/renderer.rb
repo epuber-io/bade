@@ -29,8 +29,21 @@ module Bade
       end
     end
 
-    def initialize
+    class << self
+      def _globals_tracker
+        @globals_tracker ||= Bade::Runtime::GlobalsTracker.new
+      end
+
+      # When set to true it will remove all constants that template created. Off by default.
+      #
+      # @return [Boolean]
+      attr_accessor :clear_constants
+    end
+
+    # @param clear_constants [Boolean] When set to true it will remove all constants that template created. Off by default.
+    def initialize(clear_constants: Bade::Renderer.clear_constants)
       @optimize = false
+      @clear_constants = clear_constants
     end
 
     TEMPLATE_FILE_NAME = '(__template__)'.freeze
@@ -59,6 +72,10 @@ module Bade
     #
     attr_accessor :optimize
 
+    # @return [Boolean] When set to true it will remove all constants that template created. Off by default.
+    #
+    attr_accessor :clear_constants
+
 
     # ----------------------------------------------------------------------------- #
     # Internal attributes
@@ -77,8 +94,8 @@ module Bade
     #
     # @return [Renderer] preconfigured instance of this class
     #
-    def self.from_source(source, file_path = nil)
-      inst = new
+    def self.from_source(source, file_path = nil, clear_constants: Bade::Renderer.clear_constants)
+      inst = new(clear_constants: clear_constants)
       inst.source_text = source
       inst.file_path = file_path
       inst
@@ -88,14 +105,14 @@ module Bade
     #
     # @return [Renderer] preconfigured instance of this class
     #
-    def self.from_file(file)
+    def self.from_file(file, clear_constants: Bade::Renderer.clear_constants)
       path = if file.is_a?(File)
                file.path
              else
                file
              end
 
-      from_source(nil, path)
+      from_source(nil, path, clear_constants: clear_constants)
     end
 
     # Method to create Renderer from Precompiled object, for example when you want to reuse precompiled object from disk
@@ -104,8 +121,8 @@ module Bade
     #
     # @return [Renderer] preconfigured instance of this class
     #
-    def self.from_precompiled(precompiled)
-      inst = new
+    def self.from_precompiled(precompiled, clear_constants: Bade::Renderer.clear_constants)
+      inst = new(clear_constants: clear_constants)
       inst.precompiled = precompiled
       inst
     end
@@ -182,10 +199,12 @@ module Bade
     # @return [Proc]
     #
     def lambda_instance
-      if lambda_binding
-        lambda_binding.eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
-      else
-        render_binding.instance_eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
+      _catching_globals do
+        if lambda_binding
+          lambda_binding.eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
+        else
+          render_binding.instance_eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
+        end
       end
     end
 
@@ -208,7 +227,13 @@ module Bade
       }
       run_vars.compact! # remove nil values
 
-      lambda_instance.call(**run_vars)
+      res = _catching_globals do
+        lambda_instance.call(**run_vars)
+      end
+
+      self.class._globals_tracker.clear_constants if @clear_constants
+
+      res
     end
 
 
@@ -284,5 +309,16 @@ module Bade
         end
       end
     end
+
+    def _catching_globals(&block)
+      if @clear_constants
+        self.class._globals_tracker.catch(&block)
+      else
+        block.call
+      end
+    end
   end
 end
+
+# Set default value to clear_constants
+Bade::Renderer.clear_constants = false
