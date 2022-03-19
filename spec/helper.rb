@@ -54,10 +54,8 @@ module ASTHelper
       properties = nil
     end
 
-    unless properties.nil?
-      properties.each do |key, value|
-        node.send(key.to_s + '=', value)
-      end
+    properties&.each do |key, value|
+      node.send("#{key}=", value)
     end
 
     node.children.replace(children)

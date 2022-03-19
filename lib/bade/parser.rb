@@ -17,6 +17,8 @@ module Bade
       attr_reader :error, :file, :line, :lineno, :column
 
       def initialize(error, file, line, lineno, column)
+        super(error)
+
         @error = error
         @file = file || '(__TEMPLATE__)'
         @line = line.to_s
@@ -60,7 +62,7 @@ module Bade
       @file_path = file_path
 
       @tab_re = /\G((?: {#{tabsize}})*) {0,#{tabsize - 1}}\t/
-      @tab = '\1' + ' ' * tabsize
+      @tab = "\1#{' ' * tabsize}"
 
       reset
     end

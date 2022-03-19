@@ -206,7 +206,7 @@ module Bade
         Generator::NEW_LINE_NAME.to_sym => new_line,
         Generator::BASE_INDENT_NAME.to_sym => indent,
       }
-      run_vars.reject! { |_key, value| value.nil? } # remove nil values
+      run_vars.compact! # remove nil values
 
       lambda_instance.call(**run_vars)
     end

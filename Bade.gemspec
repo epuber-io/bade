@@ -14,7 +14,8 @@ Gem::Specification.new do |spec|
   spec.summary     = 'Minimalistic template engine for Ruby.'
   spec.homepage    = 'https://github.com/epuber-io/bade'
   spec.license     = 'MIT'
-  spec.required_ruby_version = '>= 2.0'
+  spec.metadata    = { 'rubygems_mfa_required' => 'true' }
+  spec.required_ruby_version = '>= 2.5'
 
   spec.files         = Dir['bin/**/*'] + Dir['lib/**/*'] + %w[Bade.gemspec Gemfile README.md]
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
