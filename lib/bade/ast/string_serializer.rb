@@ -37,13 +37,13 @@ module Bade
 
         children_s = ''
         if node.children.count > 0
-          children_s = "\n" + node.children.map { |n| node_to_s(n, level + 1) }.join("\n") + "\n#{indent}"
+          children_s = "\n#{node.children.map { |n| node_to_s(n, level + 1) }.join("\n")}\n#{indent}"
         end
 
         other = ''
 
         case node
-        when TagNode
+        when TagNode, MixinCommonNode
           other = node.name
         when KeyValueNode
           other = "#{node.name}:#{node.value}"
@@ -56,15 +56,13 @@ module Bade
                            ''
                          end
           other = "#{escaped_sign}#{node.value}"
-        when MixinCommonNode
-          other = node.name
         when Node
           # nothing
         else
           raise "Unknown node class #{node.class} of type #{node.type} for serializing"
         end
 
-        other = ' ' + other if other && !other.empty?
+        other = " #{other}" if other && !other.empty?
 
         "#{indent}(#{type_s}#{other}#{children_s})"
       end

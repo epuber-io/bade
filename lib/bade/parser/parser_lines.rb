@@ -195,12 +195,8 @@ module Bade
         @line = $' if $1
         parse_tag($&)
 
-      when LineIndicatorRegexps::TAG_CLASS_START_BLOCK
-        # Found class name -> implicit div
-        parse_tag 'div'
-
-      when LineIndicatorRegexps::TAG_ID_START_BLOCK
-        # Found id name -> implicit div
+      when LineIndicatorRegexps::TAG_CLASS_START_BLOCK, LineIndicatorRegexps::TAG_ID_START_BLOCK
+        # Found a class or id selector.
         parse_tag 'div'
 
       else

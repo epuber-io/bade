@@ -75,7 +75,7 @@ module Bade
     end
 
     def buff_code(text)
-      @buff << '  ' * @code_indent + text
+      @buff << "#{'  ' * @code_indent}#{text}"
     end
 
     # @param document [Bade::Document]
@@ -134,7 +134,7 @@ module Bade
         buff_print_text ' -->'
 
       when :comment
-        comment_text = '#' + current_node.children.map(&:value).join("\n#")
+        comment_text = "##{current_node.children.map(&:value).join("\n#")}"
         buff_code(comment_text)
 
       when :doctype
@@ -266,7 +266,8 @@ module Bade
       params = mixin_node.params
       result = []
 
-      if mixin_node.type == :mixin_call
+      case mixin_node.type
+      when :mixin_call
         blocks = mixin_node.blocks
 
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
@@ -278,7 +279,9 @@ module Bade
           blocks << def_block_node
         end
 
-        if !blocks.empty?
+        if blocks.empty?
+          result << '{}'
+        else
           buff_code '__blocks = {}'
 
           blocks.each do |block|
@@ -286,13 +289,10 @@ module Bade
           end
 
           result << '__blocks.dup'
-        else
-          result << '{}'
         end
-      elsif mixin_node.type == :mixin_decl
+      when :mixin_decl
         result << '__blocks'
       end
-
 
       # normal params
       result += params.select { |n| n.type == :mixin_param }.map(&:value)

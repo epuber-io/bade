@@ -83,9 +83,10 @@ class String
     count = 0
 
     each_char do |char|
-      if char == SPACE_CHAR
+      case char
+      when SPACE_CHAR
         count += 1
-      elsif char == TAB_CHAR
+      when TAB_CHAR
         count += tabsize
       else
         break
@@ -100,7 +101,7 @@ class String
   #
   def strip_heredoc
     min_val = scan(/^[ \t]*(?=\S)/).min
-    indent = (min_val && min_val.size) || 0
+    indent = min_val&.size || 0
     gsub(/^[ \t]{#{indent}}/, '')
   end
 end
