@@ -18,6 +18,7 @@ module Bade
       PARAMS_PARAM_NAME = /\A\s*#{NAME_RE_STRING}/.freeze
       PARAMS_BLOCK_NAME = /\A\s*&#{NAME_RE_STRING}/.freeze
       PARAMS_KEY_PARAM_NAME = CODE_ATTR_RE
+      PARAMS_PARAM_DEFAULT_START = /\A\s*=/.freeze
     end
 
     def parse_mixin_call(mixin_name)
@@ -114,7 +115,12 @@ module Bade
 
         when MixinRegexps::PARAMS_PARAM_NAME
           @line = $'
-          append_node(:mixin_param, value: $1)
+          attr_node = append_node(:mixin_param, value: $1)
+
+          if @line =~ MixinRegexps::PARAMS_PARAM_DEFAULT_START
+            @line = $'
+            attr_node.default_value = parse_ruby_code(ParseRubyCodeRegexps::END_PARAMS_ARG)
+          end
 
         when MixinRegexps::PARAMS_BLOCK_NAME
           @line = $'

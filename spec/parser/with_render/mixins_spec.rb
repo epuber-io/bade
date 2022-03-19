@@ -86,6 +86,32 @@ describe Bade::Parser do
         assert_html expected, source
       end
 
+      it 'parse mixin declaration with default param' do
+        source = <<-BADE.strip_heredoc
+        mixin mixin_name(param = nil)
+          div
+            &= param
+
+        +mixin_name("abc")
+        BADE
+
+        expected = '<div>abc</div>'
+        assert_html expected, source
+      end
+
+      it 'parse mixin declaration with multiple default params' do
+        source = <<-BADE.strip_heredoc
+        mixin mixin_name(param1 = nil, param2 = "123", param3 = {})
+          div
+            &= param1
+
+        +mixin_name("abc")
+        BADE
+
+        expected = '<div>abc</div>'
+        assert_html expected, source
+      end
+
       it 'parse mixin declaration and call with several normal and several keyed parameters' do
         source = <<-BADE.strip_heredoc
         mixin mixin_name(a, b, c: "abc", d: {})
