@@ -122,6 +122,44 @@ describe Bade::Parser do
         assert_html expected, source
       end
 
+      it 'parse required key-value arguments' do
+        source = <<-BADE.strip_heredoc
+        mixin mixin_name(a:)
+          a
+            &= a.inspect
+
+        +mixin_name(a: :abc)
+        BADE
+
+        expected = '<a>:abc</a>'
+        assert_html expected, source
+      end
+
+      it 'parse required key-value arguments' do
+        source = <<-BADE.strip_heredoc
+        mixin mixin_name(a:, b:, c:)
+          a \#{a} \#{b} \#{c}
+
+        +mixin_name(a: "1", b: "2", c: "3")
+        BADE
+
+        expected = '<a>1 2 3</a>'
+        assert_html expected, source
+      end
+
+      it 'parse required key-value arguments' do
+        source = <<-BADE.strip_heredoc
+        mixin mixin_name(a:, b:, c:)
+          a \#{a} \#{b} \#{c}
+
+        +mixin_name(a: "1", b: "2")
+        BADE
+
+        expect do
+          assert_html '', source
+        end.to raise_error ArgumentError, 'missing value for required key-value argument `c` for mixin `mixin_name`'
+      end
+
       it 'support multiline mixin call' do
         source = <<-BADE.strip_heredoc
         mixin m(a, b)

@@ -85,7 +85,7 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
 
-    it 'can parse mixin declaration with with symbol parameters' do
+    it 'can parse mixin declaration with with key-value parameters' do
       source = <<-BADE.strip_heredoc
         mixin abc(a, key: :value, &block)
       BADE
@@ -95,6 +95,21 @@ describe Bade::Parser do
                 n(:mixin_param, value: 'a'),
                 n(:mixin_key_param, name: 'key', value: ':value'),
                 n(:mixin_block_param, value: 'block')),
+              n(:newline))
+
+      assert_ast(ast, source)
+    end
+
+    it 'can parse mixin declaration with required key-value params' do
+      source = <<-BADE.strip_heredoc
+        mixin abc(a:, b:, c:)
+      BADE
+
+      ast = n(:root,
+              n(:mixin_decl, { name: 'abc' },
+                n(:mixin_key_param, name: 'a', value: ''),
+                n(:mixin_key_param, name: 'b', value: ''),
+                n(:mixin_key_param, name: 'c', value: '')),
               n(:newline))
 
       assert_ast(ast, source)
@@ -199,7 +214,7 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
 
-    it 'can parse mixin call with with symbol parameters' do
+    it 'can parse mixin call with with key-value parameters' do
       source = <<-BADE.strip_heredoc
         +abc(:a, :b, key: :value)
       BADE
