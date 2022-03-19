@@ -14,14 +14,14 @@ Gem::Specification.new do |spec|
   spec.summary     = 'Minimalistic template engine for Ruby.'
   spec.homepage    = 'https://github.com/epuber-io/bade'
   spec.license     = 'MIT'
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 2.0'
 
   spec.files         = Dir['bin/**/*'] + Dir['lib/**/*'] + %w[Bade.gemspec Gemfile README.md]
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'psych', '>= 2.2', '< 4.0'
+  spec.add_dependency 'psych', '>= 2.2', '< 5.0'
 
   spec.add_development_dependency 'fakefs', '~> 1.3'
   spec.add_development_dependency 'rake'
