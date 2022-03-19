@@ -30,7 +30,7 @@ Or install it yourself as:
 
 ## Development
 
-After checking out the repo, run `bundle install` to install dependencies. Then, run `rake spec` to run the tests.
+After checking out the repo, run `bundle install --with dev` to install dependencies. Then, run `rake spec` to run the tests.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
@@ -40,7 +40,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 Bug reports and pull requests are welcome on GitHub at https://github.com/epuber-io/bade. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
-## TODO
+## TODO
 
 - [ ] create documentation about syntax
 - [ ] create several examples
