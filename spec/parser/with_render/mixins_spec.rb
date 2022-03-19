@@ -1,6 +1,5 @@
 require_relative '../../helper'
 
-
 describe Bade::Parser do
   context 'mixins' do
     it 'parse mixin declaration' do
@@ -182,7 +181,7 @@ describe Bade::Parser do
         BADE
 
         expect do
-          assert_html '', source
+          assert_html '', source, print_error_if_error: false
         end.to raise_error ArgumentError, 'missing value for required key-value argument `c` for mixin `mixin_name`'
       end
 
@@ -226,7 +225,7 @@ describe Bade::Parser do
           mixin m()
             default
               - default_block.call
-  
+
           +m()
             | text
         BADE
@@ -234,7 +233,6 @@ describe Bade::Parser do
         expected = '<default>text</default>'
         assert_html expected, source
       end
-
 
       it 'should raise error on required block' do
         source = <<-BADE.strip_heredoc
@@ -253,7 +251,7 @@ describe Bade::Parser do
           mixin m(a, &head)
             head
               - head.call
-  
+
           +m("aa")
             block head
               a text
@@ -270,10 +268,10 @@ describe Bade::Parser do
               - default_block.call
             head
               - head.call
-  
+
           +m("aa")
             a text in default block
-  
+
             block head
               a text
         BADE
@@ -298,7 +296,7 @@ describe Bade::Parser do
           mixin m()
             a
               - default_block.call
-  
+
           +m() text
         BADE
 
@@ -312,11 +310,11 @@ describe Bade::Parser do
             mixin m()
               a
                 - default_block.call
-  
+
             mixin f()
               b
                 - default_block.call
-  
+
             +m(): +f() aaa
           BADE
 
@@ -330,12 +328,57 @@ describe Bade::Parser do
           mixin m()
             a
               - default_block.call
-  
+
           +m()= 'aaa'
         BADE
 
         expected = '<a>aaa</a>'
         assert_html expected, source
+      end
+
+      context 'yield keyword' do
+        it 'basic example' do
+          source = <<-BADE.strip_heredoc
+          mixin m()
+            default
+              yield
+
+          +m()
+            | text
+          BADE
+
+          expected = '<default>text</default>'
+          assert_html expected, source
+        end
+
+        it 'required example' do
+          source = <<-BADE.strip_heredoc
+          mixin m()
+            default
+              yield!
+
+          +m()
+            | text
+          BADE
+
+          expected = '<default>text</default>'
+          assert_html expected, source
+        end
+
+        it 'required example' do
+          source = <<-BADE.strip_heredoc
+          mixin m()
+            default
+              yield!
+
+          +m
+          BADE
+
+          message = 'Mixin `m` requires block to get called of block `default_block`'
+          expect do
+            assert_html '', source, print_error_if_error: false
+          end.to raise_error Bade::Runtime::Block::MissingBlockDefinitionError, message
+        end
       end
     end
 

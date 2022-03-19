@@ -167,6 +167,10 @@ module Bade
                     end
 
         buff_code "__load('#{load_path}')" unless load_path.nil?
+      when :yield
+        block_name = DEFAULT_BLOCK_NAME
+        method = current_node.conditional ? 'call' : 'call!'
+        buff_code "#{block_name}.#{method}"
       else
         raise "Unknown type #{current_node.type}"
       end

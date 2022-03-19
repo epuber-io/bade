@@ -55,6 +55,7 @@ module Bade
       register_type DoctypeNode, :doctype
 
       register_type ValueNode, :import
+      register_type ValueNode, :yield
 
       # --- Comments
 
