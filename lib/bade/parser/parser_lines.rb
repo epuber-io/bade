@@ -7,6 +7,7 @@ module Bade
   class Parser
     module LineIndicatorRegexps
       IMPORT = /\Aimport /.freeze
+      YIELD = /\Ayield(!?)/.freeze
       MIXIN_DECL = /\Amixin #{NAME_RE_STRING}/.freeze
       MIXIN_CALL = /\A\+#{NAME_RE_STRING}/.freeze
       BLOCK_DECLARATION = /\Ablock #{NAME_RE_STRING}/.freeze
@@ -134,6 +135,11 @@ module Bade
       when LineIndicatorRegexps::IMPORT
         @line = $'
         parse_import
+
+      when LineIndicatorRegexps::YIELD
+        @line = $'
+        node = append_node(:yield, add: true)
+        node.conditional = $1.nil?
 
       when LineIndicatorRegexps::MIXIN_DECL
         # Mixin declaration
