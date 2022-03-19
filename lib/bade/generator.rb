@@ -294,9 +294,13 @@ module Bade
         result << '__blocks'
       end
 
-      # normal params
-      result += params.select { |n| n.type == :mixin_param }.map(&:value)
-      result += params.select { |n| n.type == :mixin_key_param }.map { |param| "#{param.name}: #{param.value}" }
+      # positional params
+      result += params.select { |n| n.type == :mixin_param }
+                      .map { |param| param.default_value ? "#{param.value} = #{param.default_value}" : param.value }
+
+      # key-value params
+      result += params.select { |n| n.type == :mixin_key_param }
+                      .map { |param| "#{param.name}: #{param.value}" }
 
       result.join(', ')
     end

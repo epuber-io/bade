@@ -26,6 +26,10 @@ module Bade
             key_name = $1
             raise ArgumentError, "unknown key-value argument `#{key_name}` for mixin `#{name}`"
 
+          when /\Amissing keyword: :?(.*)\Z/
+            key_name = $1
+            raise ArgumentError, "missing value for required key-value argument `#{key_name}` for mixin `#{name}`"
+
           else
             raise
           end
