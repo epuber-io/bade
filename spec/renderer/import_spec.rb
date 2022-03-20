@@ -200,5 +200,40 @@ describe Bade::Renderer, 'import feature' do
 
       expect(output).to eq 'some_result_updated'
     end
+
+    it 'can show location of error from ruby file' do
+      File.write('abc.rb', <<~RB)
+        def raise_some_error1
+          raise_some_error2
+        end
+
+        def raise_some_error2
+          raise_some_error3
+        end
+
+        def raise_some_error3
+          raise StandardError
+        end
+      RB
+
+      File.write('root.bade', <<~BADE)
+        import 'abc.rb'
+        = raise_some_error1
+      BADE
+
+      expect do
+        assert_html_from_file '', 'root.bade', print_error_if_error: false
+      end.to(raise_error do |error|
+        expect(error.message).to end_with(<<~MSG.rstrip)
+          template backtrace:
+            /abc.rb:10:in `raise_some_error3'
+            /abc.rb:6:in `raise_some_error2'
+            /abc.rb:2:in `raise_some_error1'
+            root.bade:2:in `<top>'
+        MSG
+
+        expect(error.cause).to be_an_instance_of(StandardError)
+      end)
+    end
   end
 end

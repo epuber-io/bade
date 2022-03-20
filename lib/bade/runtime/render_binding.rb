@@ -66,19 +66,19 @@ module Bade
       # --- Methods for dealing with pushing and popping buffers in stack
 
       def __buff
-        __buffs_stack.last
+        __buffs_stack.first
       end
 
       # @param [RenderBinding::Location, nil] location
       def __buffs_push(location)
-        __buffs_stack.push([])
-        __location_stack.push(location) unless location.nil?
+        __buffs_stack.unshift([])
+        __location_stack.unshift(location) unless location.nil?
       end
 
       # @return [Array<String>, nil]
       def __buffs_pop
-        __location_stack.pop
-        __buffs_stack.pop
+        __location_stack.shift
+        __buffs_stack.shift
       end
 
       # --- Other internal methods
@@ -130,12 +130,12 @@ module Bade
       end
 
       def __update_lineno(number)
-        __location_stack.last&.lineno = number
+        __location_stack.first&.lineno = number
       end
 
       # @return [Location, nil]
       def __current_location
-        __location_stack.last
+        __location_stack.first
       end
     end
   end

@@ -233,7 +233,7 @@ module Bade
         raise e
       rescue StandardError => e
         msg = "Exception raised during execution of template: #{e}"
-        raise Bade::Runtime::RuntimeError.new(msg, render_binding.__location_stack, original: e)
+        raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
       ensure
         self.class._globals_tracker.clear_constants if @clear_constants
       end
