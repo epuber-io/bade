@@ -105,4 +105,18 @@ describe Bade::Parser do
       assert_ruby_code source, expected, allow_multiline: true
     end
   end
+
+  context 'errors' do
+    it 'can handle error at top of document' do
+      source = <<~BADE
+        - raise StandardError
+      BADE
+
+      expect do
+        assert_html '', source, print_error_if_error: false
+      end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+        expect(error.message).to match(/\(__template__\):1:in `<top>'/)
+      }
+    end
+  end
 end

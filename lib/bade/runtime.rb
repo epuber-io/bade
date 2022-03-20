@@ -11,9 +11,11 @@ module Bade
 
       # @param [String] msg
       # @param [Array<Location>] template_backtrace
-      def initialize(msg, template_backtrace = [])
+      # @param [Exception, nil] original
+      def initialize(msg, template_backtrace = [], original: nil)
         super(msg)
         @template_backtrace = template_backtrace
+        @original = original
       end
 
       def message
@@ -28,6 +30,10 @@ module Bade
         end
       end
 
+      def cause
+        @original
+      end
+
       # @return [Array<String>]
       def __formatted_backtrace
         bt = @template_backtrace.reverse
@@ -36,7 +42,7 @@ module Bade
         bt.delete_at(0) if last && bt.length > 1 && last == bt[1]
 
         bt.map do |loc|
-          "  #{loc.path || '(__TEMPLATE__)'}:#{loc.lineno}:in `#{loc.label}'"
+          "  #{loc.path || TEMPLATE_FILE_NAME}:#{loc.lineno}:in `#{loc.label}'"
         end
       end
     end
@@ -44,6 +50,8 @@ module Bade
     class KeyError < RuntimeError; end
 
     class ArgumentError < RuntimeError; end
+
+    TEMPLATE_FILE_NAME = '(__template__)'.freeze
 
     require_relative 'runtime/block'
     require_relative 'runtime/mixin'

@@ -184,7 +184,7 @@ describe Bade::Parser do
           assert_html '', source, print_error_if_error: false
         end.to raise_error(Bade::Runtime::ArgumentError) { |error|
           expect(error.message).to match(/missing value for required key-value argument `c` for mixin `mixin_name`/)
-          expect(error.message).to match(/\(__TEMPLATE__\):4/)
+          expect(error.message).to match(/\(__template__\):4/)
         }
       end
 
@@ -354,8 +354,8 @@ describe Bade::Parser do
           expect(error.message).to eq <<~TEXT.rstrip
             Exception raised during execution of mixin `m`: StandardError
             template backtrace:
-              (__TEMPLATE__):3:in `+m'
-              (__TEMPLATE__):5:in `<top>'
+              (__template__):3:in `+m'
+              (__template__):5:in `<top>'
           TEXT
         }
       end
@@ -376,9 +376,9 @@ describe Bade::Parser do
           expect(error.message).to eq <<~TEXT.rstrip
             Exception raised during execution of mixin `m`: StandardError
             template backtrace:
-              (__TEMPLATE__):6:in `default_block in +m'
-              (__TEMPLATE__):3:in `+m'
-              (__TEMPLATE__):5:in `<top>'
+              (__template__):6:in `default_block in +m'
+              (__template__):3:in `+m'
+              (__template__):5:in `<top>'
           TEXT
         }
       end

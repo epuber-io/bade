@@ -44,7 +44,7 @@ module Bade
       def __reset
         @__buffs_stack = []
         @__location_stack = []
-        @__mixins = Hash.new { |_hash, key| raise "Undefined mixin '#{key}'" }
+        @__mixins = Hash.new { |_hash, key| raise Bade::Runtime::KeyError.new("Undefined mixin '#{key}'", __location_stack) }
       end
 
       # @return [Binding]
