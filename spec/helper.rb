@@ -18,6 +18,8 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
   begin
     str = renderer.render(new_line: '', indent: '')
 
+    puts renderer.lambda_string if str != expectation
+
     expect(str).to eq expectation
   rescue StandardError
     puts renderer.lambda_string if print_error_if_error
@@ -25,6 +27,22 @@ def assert_html(expectation, source, print_error_if_error: true, vars: {})
     raise
   end
 end
+
+def assert_html_from_file(expectation, source_file_path, print_error_if_error: true, vars: {})
+  renderer = Bade::Renderer.from_file(source_file_path).with_locals(vars)
+
+  begin
+    str = renderer.render(new_line: '', indent: '')
+
+    puts renderer.lambda_string if str != expectation
+    expect(str).to eq expectation
+  rescue StandardError
+    puts renderer.lambda_string if print_error_if_error
+
+    raise
+  end
+end
+
 
 def assert_ast(root_node, source)
   parser = Bade::Parser.new
@@ -46,7 +64,7 @@ module ASTHelper
     node = if type == :root
              Bade::AST::Node.new(:root, lineno: nil)
            else
-             Bade::AST::NodeRegistrator.create(type, nil)
+             Bade::AST::NodeRegistrator.create(type, nil, lineno: nil)
            end
 
     if properties.is_a?(Bade::AST::Node)

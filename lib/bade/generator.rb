@@ -86,6 +86,7 @@ module Bade
       end
 
       buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
+      buff_code "__buffs_push(#{location(filename: document.file_path, lineno: 0, label: '<top>')})"
 
       new_root = if @optimize
                    Optimizer.new(document.root).optimize
@@ -115,6 +116,8 @@ module Bade
     # @param current_node [Node]
     #
     def visit_node(current_node)
+      update_location_node(current_node)
+
       case current_node.type
       when :root
         visit_node_children(current_node)
@@ -276,7 +279,7 @@ module Bade
 
         other_children = (mixin_node.children - mixin_node.blocks - mixin_node.params)
         if other_children.count { |n| n.type != :newline } > 0
-          def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node.lineno)
+          def_block_node = AST::NodeRegistrator.create(:mixin_block, mixin_node, lineno: mixin_node.lineno)
           def_block_node.name = DEFAULT_BLOCK_NAME
           def_block_node.children = other_children
 
@@ -316,14 +319,10 @@ module Bade
     # @return [nil]
     #
     def block_definition(block_node)
-      buff_code "__blocks['#{block_node.name}'] = __create_block('#{block_node.name}') do"
+      buff_code "__blocks['#{block_node.name}'] = __create_block('#{block_node.name}', #{location_node(block_node)}) do"
 
       code_indent do
-        buff_code '__buffs_push()'
-
         visit_node_children(block_node)
-
-        buff_code '__buffs_pop()'
       end
 
       buff_code 'end'
@@ -357,7 +356,7 @@ module Bade
     #
     def visit_block_decl(current_node)
       params = formatted_mixin_params(current_node)
-      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', &lambda { |#{params}|"
+      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', #{location_node(current_node)}, &lambda { |#{params}|"
 
       code_indent do
         blocks_name_declaration(current_node)
@@ -373,6 +372,51 @@ module Bade
     #
     def escape_double_quotes!(str)
       str.gsub!(/"/, '\"')
+    end
+
+    # @param [Bade::AST::Node]
+    # @return [Void]
+    def update_location_node(node)
+      should_add = case node.type
+                   when :code
+                     !%w[end }].include?(node.value.strip)
+                   when :newline
+                     false
+                   else
+                     true
+                   end
+      return unless should_add
+
+      buff_code "__update_lineno(#{node.lineno})" unless node.lineno.nil?
+    end
+
+    # @param [String] filename
+    # @param [Fixnum] lineno
+    # @param [String] label
+    # @return [String]
+    def location(filename:, lineno:, label:)
+      args = [
+        filename ? "path: '#{filename}'" : nil,
+        "lineno: #{lineno}",
+        "label: '#{label}'",
+      ].compact
+
+      "Location.new(#{args.join(',')})"
+    end
+
+    # @param [Node] node
+    # @return [String]
+    def location_node(node)
+      label = case node.type
+              when :mixin_decl
+                "+#{node.name}"
+              when :mixin_block
+                "#{node.name} in +#{node.parent.name}"
+              else
+                node.name
+              end
+
+      location(filename: node.filename, lineno: node.lineno, label: label)
     end
   end
 

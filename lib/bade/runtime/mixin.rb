@@ -9,8 +9,8 @@ module Bade
     class Mixin < Block
       ruby2_keywords def call!(blocks, *args)
         begin
-          block.call(blocks, *args)
-        rescue ArgumentError => e
+          __call(blocks, *args)
+        rescue ::ArgumentError => e
           case e.message
           when /\Awrong number of arguments \(given ([0-9]+), expected ([0-9]+)\)\Z/,
                /\Awrong number of arguments \(([0-9]+) for ([0-9]+)\)\Z/
@@ -19,16 +19,19 @@ module Bade
             # minus one, because first argument is always hash of blocks
             given = $1.to_i - 1
             expected = $2.to_i - 1
-            raise ArgumentError, "wrong number of arguments (given #{given}, expected #{expected}) for mixin `#{name}`"
+            msg = "wrong number of arguments (given #{given}, expected #{expected}) for mixin `#{name}`"
+            raise Bade::Runtime::ArgumentError.new(msg, render_binding.__location_stack)
 
           when /\Aunknown keyword: (.*)\Z/
             # handle unknown key-value parameter
             key_name = $1
-            raise ArgumentError, "unknown key-value argument `#{key_name}` for mixin `#{name}`"
+            msg = "unknown key-value argument `#{key_name}` for mixin `#{name}`"
+            raise Bade::Runtime::ArgumentError.new(msg, render_binding.__location_stack)
 
           when /\Amissing keyword: :?(.*)\Z/
             key_name = $1
-            raise ArgumentError, "missing value for required key-value argument `#{key_name}` for mixin `#{name}`"
+            msg = "missing value for required key-value argument `#{key_name}` for mixin `#{name}`"
+            raise Bade::Runtime::ArgumentError.new(msg, render_binding.__location_stack)
 
           else
             raise
@@ -40,10 +43,15 @@ module Bade
                 when :render
                   "Mixin `#{name}` requires block to get rendered content of block `#{e.name}`"
                 else
-                  raise ::ArgumentError, "Unknown context #{e.context} of error #{e}!"
+                  raise Bade::Runtime::ArgumentError.new("Unknown context #{e.context} of error #{e}!",
+                                                         render_binding.__location_stack)
                 end
 
-          raise Block::MissingBlockDefinitionError.new(e.name, e.context, msg)
+          raise Block::MissingBlockDefinitionError.new(e.name, e.context, msg, render_binding.__location_stack)
+
+        rescue StandardError => e
+          msg = "Exception raised during execution of mixin `#{name}`: #{e}"
+          raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
         end
       end
     end

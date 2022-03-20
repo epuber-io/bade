@@ -10,7 +10,11 @@ module Bade
       #
       attr_reader :type
 
-      # @return [Array<Bade::Node>]
+      # @return [Bade::AST::Node, nil]
+      #
+      attr_accessor :parent
+
+      # @return [Array<Bade::AST::Node>]
       #
       attr_accessor :children
 
@@ -20,10 +24,16 @@ module Bade
       #
       attr_reader :lineno
 
-      def initialize(type, lineno: nil)
+      # @return [String] filename
+      #
+      attr_reader :filename
+
+      def initialize(type, parent = nil, lineno: nil, filename: nil)
         @type = type
+        @parent = parent
         @children = []
         @lineno = lineno
+        @filename = filename
       end
 
       def to_s

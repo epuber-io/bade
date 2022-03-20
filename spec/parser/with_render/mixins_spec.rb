@@ -182,7 +182,10 @@ describe Bade::Parser do
 
         expect do
           assert_html '', source, print_error_if_error: false
-        end.to raise_error ArgumentError, 'missing value for required key-value argument `c` for mixin `mixin_name`'
+        end.to raise_error(Bade::Runtime::ArgumentError) { |error|
+          expect(error.message).to match(/missing value for required key-value argument `c` for mixin `mixin_name`/)
+          expect(error.message).to match(/\(__template__\):4/)
+        }
       end
 
       it 'support multiline mixin call' do
@@ -334,6 +337,50 @@ describe Bade::Parser do
 
         expected = '<a>aaa</a>'
         assert_html expected, source
+      end
+
+      it 'support for location' do
+        source = <<-BADE.strip_heredoc
+          mixin m()
+            a
+              - raise StandardError
+
+          +m
+        BADE
+
+        expect do
+          assert_html '', source, print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `m`: StandardError
+            template backtrace:
+              (__template__):3:in `+m'
+              (__template__):5:in `<top>'
+          TEXT
+        }
+      end
+
+      it 'support for location for blocks in mixin' do
+        source = <<-BADE.strip_heredoc
+          mixin m()
+            a
+              - default_block.call
+
+          +m
+            - raise StandardError
+        BADE
+
+        expect do
+          assert_html '', source, print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `m`: StandardError
+            template backtrace:
+              (__template__):6:in `default_block in +m'
+              (__template__):3:in `+m'
+              (__template__):5:in `<top>'
+          TEXT
+        }
       end
 
       context 'yield keyword' do

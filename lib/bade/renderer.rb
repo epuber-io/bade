@@ -9,7 +9,7 @@ require_relative 'precompiled'
 
 module Bade
   class Renderer
-    class LoadError < ::RuntimeError
+    class LoadError < Bade::Runtime::RuntimeError
       # @return [String]
       #
       attr_reader :loading_path
@@ -22,8 +22,8 @@ module Bade
       # @param [String] reference_path  reference file from which is load performed
       # @param [String] msg  standard message
       #
-      def initialize(loading_path, reference_path, msg = nil)
-        super(msg)
+      def initialize(loading_path, reference_path, msg, template_backtrace = [])
+        super(msg, template_backtrace)
         @loading_path = loading_path
         @reference_path = reference_path
       end
@@ -45,8 +45,6 @@ module Bade
       @optimize = false
       @clear_constants = clear_constants
     end
-
-    TEMPLATE_FILE_NAME = '(__template__)'.freeze
 
     # @return [String]
     #
@@ -201,9 +199,9 @@ module Bade
     def lambda_instance
       _catching_globals do
         if lambda_binding
-          lambda_binding.eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
+          lambda_binding.eval(lambda_string, file_path || Bade::Runtime::TEMPLATE_FILE_NAME)
         else
-          render_binding.instance_eval(lambda_string, file_path || TEMPLATE_FILE_NAME)
+          render_binding.instance_eval(lambda_string, file_path || Bade::Runtime::TEMPLATE_FILE_NAME)
         end
       end
     end
@@ -227,16 +225,19 @@ module Bade
       }
       run_vars.compact! # remove nil values
 
-      res = _catching_globals do
-        lambda_instance.call(**run_vars)
+      begin
+        return _catching_globals do
+          lambda_instance.call(**run_vars)
+        end
+      rescue Bade::Runtime::RuntimeError => e
+        raise e
+      rescue StandardError => e
+        msg = "Exception raised during execution of template: #{e}"
+        raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
+      ensure
+        self.class._globals_tracker.clear_constants if @clear_constants
       end
-
-      self.class._globals_tracker.clear_constants if @clear_constants
-
-      res
     end
-
-
 
     private
 

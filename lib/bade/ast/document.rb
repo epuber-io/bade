@@ -24,7 +24,7 @@ module Bade
 
       # @param root [Bade::Node]
       #
-      def initialize(root: Node.new(:root), file_path: nil)
+      def initialize(root: Node.new(:root, nil), file_path: nil)
         @root = root
 
         @file_path = file_path.dup.freeze unless file_path.nil?

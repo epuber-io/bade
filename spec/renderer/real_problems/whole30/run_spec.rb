@@ -17,11 +17,10 @@ describe Bade::Renderer do
       end
 
       it 'generates totally shit string' do
-        path = File.join(File.dirname(__FILE__), 'part_1/chapter_3.bade')
-        renderer = Bade::Renderer.from_file(path)
-        output = renderer.render(new_line: '')
+        source_path = File.join(File.dirname(__FILE__), 'part_1/chapter_3.bade')
 
-        expect(output).to eq '<div class="green_box"><p class="title">ŠKODÍ ZDRAVÍ</p><p>Abychom byli fér: mléko zase vápník. Čtěte dál…</p></div>'
+        expected = '<div class="green_box"><p class="title">ŠKODÍ ZDRAVÍ</p><p>Abychom byli fér: mléko zase vápník. Čtěte dál…</p></div>'
+        assert_html_from_file expected, source_path
       end
     end
   end

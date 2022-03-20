@@ -79,7 +79,9 @@ describe Bade::Parser do
 
         expect do
           assert_html expected, source, vars: vars, print_error_if_error: false
-        end.to raise_exception KeyError
+        end.to(raise_error do |error|
+          expect(error.cause).to be_a(::KeyError)
+        end)
       end
     end
 
