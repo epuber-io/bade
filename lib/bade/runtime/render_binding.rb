@@ -5,11 +5,14 @@ require_relative 'block'
 module Bade
   module Runtime
     class RenderBinding
-      class KeyError < ::StandardError; end
+      Location = Bade::Runtime::Location
 
       # @return [Array<Array<String>>]
       #
       attr_accessor :__buffs_stack
+
+      # @return [Array<Location>]
+      attr_accessor :__location_stack
 
       # @return [Hash<String, Mixin>]
       #
@@ -39,7 +42,8 @@ module Bade
       # @return [nil]
       #
       def __reset
-        @__buffs_stack = [[]]
+        @__buffs_stack = []
+        @__location_stack = []
         @__mixins = Hash.new { |_hash, key| raise "Undefined mixin '#{key}'" }
       end
 
@@ -51,25 +55,29 @@ module Bade
 
       # Shortcut for creating blocks
       #
-      def __create_block(name, &block)
-        Bade::Runtime::Block.new(name, self, &block)
+      def __create_block(name, location = nil, &block)
+        Bade::Runtime::Block.new(name, location, self, &block)
       end
 
-      def __create_mixin(name, &block)
-        Bade::Runtime::Mixin.new(name, self, &block)
+      def __create_mixin(name, location, &block)
+        Bade::Runtime::Mixin.new(name, location, self, &block)
       end
 
-      # --- Methods for dealing with pushing and poping buffers in stack
+      # --- Methods for dealing with pushing and popping buffers in stack
 
       def __buff
         __buffs_stack.last
       end
 
-      def __buffs_push
+      # @param [RenderBinding::Location, nil] location
+      def __buffs_push(location)
         __buffs_stack.push([])
+        __location_stack.push(location) unless location.nil?
       end
 
+      # @return [Array<String>, nil]
       def __buffs_pop
+        __location_stack.pop
         __buffs_stack.pop
       end
 
@@ -119,6 +127,15 @@ module Bade
         return if values.empty?
 
         %( #{name}="#{values.join(' ')}")
+      end
+
+      def __update_lineno(number)
+        __location_stack.last&.lineno = number
+      end
+
+      # @return [Location, nil]
+      def __current_location
+        __location_stack.last
       end
     end
   end

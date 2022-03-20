@@ -14,7 +14,9 @@ describe Bade::Renderer do
 
       expect do
         assert_html('', source, print_error_if_error: false)
-      end.to raise_error ArgumentError, 'wrong number of arguments (given 0, expected 1) for mixin `abc`'
+      end.to raise_error(Bade::Runtime::ArgumentError) { |error|
+        expect(error.message).to match(/wrong number of arguments \(given 0, expected 1\) for mixin `abc`/)
+      }
     end
 
     it 'raises meaningful message about unknown key-value parameter' do
@@ -26,7 +28,7 @@ describe Bade::Renderer do
 
       expect do
         assert_html('', source, print_error_if_error: false)
-      end.to raise_error(ArgumentError) { |error| expect(error.message).to match(/^unknown key-value argument `:?two` for mixin `abc`$/) }
+      end.to raise_error(Bade::Runtime::ArgumentError) { |error| expect(error.message).to match(/^unknown key-value argument `:?two` for mixin `abc`$/) }
     end
 
     it 'not raises error when calling mixin with empty block' do

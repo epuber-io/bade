@@ -38,12 +38,12 @@ module Bade
         #
         # @return [Bade::AST::Node]
         #
-        def create(type, lineno)
+        def create(type, parent, lineno: nil, filename: nil)
           klass = registered_types[type]
 
           raise ::KeyError, "Undefined node type #{type.inspect}" if klass.nil?
 
-          klass.new(type, lineno: lineno)
+          klass.new(type, parent, lineno: lineno, filename: filename)
         end
       end
 

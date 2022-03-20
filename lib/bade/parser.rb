@@ -108,7 +108,7 @@ module Bade
       @stacks << @stacks.last.dup while indent >= @stacks.length
 
       parent = @stacks[indent].last
-      node = AST::NodeRegistrator.create(type, @lineno)
+      node = AST::NodeRegistrator.create(type, parent, lineno: @lineno, filename: @file_path)
       parent.children << node
 
       node.value = value unless value.nil?
