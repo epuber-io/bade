@@ -4,7 +4,7 @@ module Bade
   module Runtime
     Location = Struct.new(:path, :lineno, :label, keyword_init: true) do
       def to_s
-        "  #{path || TEMPLATE_FILE_NAME}:#{lineno}:in `#{label}'"
+        "#{path || TEMPLATE_FILE_NAME}:#{lineno}:in `#{label}'"
       end
     end
 
@@ -46,7 +46,7 @@ module Bade
         last = bt.first
         bt.delete_at(0) if last && bt.length > 1 && last == bt[1]
 
-        bt.map(&:to_s)
+        bt.map { |loc| "  #{loc}" }
       end
 
       # @param [Array<Thread::Backtrace::Location>, nil] locations
