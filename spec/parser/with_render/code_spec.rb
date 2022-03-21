@@ -16,6 +16,43 @@ describe Bade::Parser do
 
       assert_html expected, source
     end
+
+    it 'case be used' do
+      source = <<-BADE.strip_heredoc
+        - abc = 1
+        - case abc
+        - when 1
+          a text_a
+        - when 2
+          b text_b
+        - else
+          a else
+        - end
+      BADE
+
+      expected = '<a>text_a</a>'
+
+      assert_html expected, source
+    end
+
+    it 'case be used (example 2)' do
+      source = <<-BADE.strip_heredoc
+        - abc = 2
+        - value = case abc
+        -         when 1
+        -           'text_a'
+        -         when 2
+        -           'text_b'
+        -         else
+        -          'else'
+        -         end
+        a= value
+      BADE
+
+      expected = '<a>text_b</a>'
+
+      assert_html expected, source
+    end
   end
 
   context 'output code' do

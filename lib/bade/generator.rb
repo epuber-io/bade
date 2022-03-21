@@ -377,17 +377,20 @@ module Bade
     # @param [Bade::AST::Node]
     # @return [Void]
     def update_location_node(node)
-      should_add = case node.type
-                   when :code
-                     !%w[end }].include?(node.value.strip)
-                   when :newline
-                     false
-                   else
-                     true
-                   end
-      return unless should_add
+      should_skip = case node.type
+                    when :code
+                      value = node.value.strip
 
-      buff_code "__update_lineno(#{node.lineno})" unless node.lineno.nil?
+                      %w[end else }].include?(value) || value.match(/^when /)
+                    when :newline
+                      true
+                    else
+                      false
+                    end
+      return if should_skip
+      return if node.lineno.nil?
+
+      buff_code "__update_lineno(#{node.lineno})"
     end
 
     # @param [String] filename
