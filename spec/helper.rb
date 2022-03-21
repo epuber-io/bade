@@ -14,29 +14,28 @@ require_relative '../lib/bade'
 #
 def assert_html(expectation, source, print_error_if_error: true, vars: {})
   renderer = Bade::Renderer.from_source(source).with_locals(vars)
-
-  begin
-    str = renderer.render(new_line: '', indent: '')
-
-    puts renderer.lambda_string if str != expectation
-
-    expect(str).to eq expectation
-  rescue StandardError
-    puts renderer.lambda_string if print_error_if_error
-
-    raise
-  end
+  assert_html_from_renderer renderer, expectation, print_error_if_error: print_error_if_error
 end
 
+# Render source file to html
+#
+# @param [String] expectation
+# @param [String] source_file_path
+#
 def assert_html_from_file(expectation, source_file_path, print_error_if_error: true, vars: {})
   renderer = Bade::Renderer.from_file(source_file_path).with_locals(vars)
+  assert_html_from_renderer renderer, expectation, print_error_if_error: print_error_if_error
+end
 
+# @param [Bade::Renderer] renderer
+def assert_html_from_renderer(renderer, expectation, print_error_if_error: true)
   begin
     str = renderer.render(new_line: '', indent: '')
 
     puts renderer.lambda_string if str != expectation
     expect(str).to eq expectation
-  rescue StandardError
+  rescue Exception => e
+    puts e if print_error_if_error
     puts renderer.lambda_string if print_error_if_error
 
     raise

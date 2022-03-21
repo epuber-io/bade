@@ -231,7 +231,7 @@ module Bade
         end
       rescue Bade::Runtime::RuntimeError => e
         raise e
-      rescue StandardError => e
+      rescue Exception => e
         msg = "Exception raised during execution of template: #{e}"
         raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
       ensure

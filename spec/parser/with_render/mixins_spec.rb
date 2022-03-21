@@ -52,7 +52,15 @@ describe Bade::Parser do
       assert_html expected, source
     end
 
+    it 'will not parse mixin call with invalid string' do
+      source = <<-BADE.strip_heredoc
+        +other_chapter(''Poděkování, align: :left)
+      BADE
 
+      expect do
+        assert_html '', source, print_error_if_error: false
+      end.to raise_error(Bade::Runtime::RuntimeError)
+    end
 
     context 'arguments' do
       it 'parse mixin declaration and call with one normal parameter' do
