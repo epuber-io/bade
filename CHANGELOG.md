@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## **0.3.1**
+
+Released 2022-03-22
+
+<details>
+<summary>Added option to filter constants to remove when using GlobalsTracker</summary>
+
+```ruby
+Bade::Runtime::GlobalsTracker.new(constants_location_prefixes: ['/Users/xyz/Projects/abc'])
+```
+
+</details>
+
+
 ## **0.3.0**
 
 Released 2022-03-21
