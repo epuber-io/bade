@@ -86,7 +86,7 @@ module Bade
       # @param [String] filename
       def __load(filename)
         # FakeFS does not fake `load` method
-        if defined?(:FakeFS) && FakeFS.activated?
+        if Object.const_defined?(:FakeFS) && Object.const_get(:FakeFS).activated?
           # rubocop:disable Security/Eval
           eval(File.read(filename), __get_binding, filename)
           # rubocop:enable Security/Eval
@@ -98,7 +98,7 @@ module Bade
       # @param [String] filename
       def require_relative(filename)
         # FakeFS does not fake `require_relative` method
-        if defined?(:FakeFS) && FakeFS.activated?
+        if Object.const_defined?(:FakeFS) && Object.const_get(:FakeFS).activated?
           # rubocop:disable Security/Eval
           eval(File.read(filename), __get_binding, filename)
           # rubocop:enable Security/Eval
