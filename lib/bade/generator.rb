@@ -381,12 +381,13 @@ module Bade
                     when :code
                       value = node.value.strip
 
-                      %w[end else }].include?(value) || value.match(/^when /)
+                      %w[end else }].include?(value) || value.match(/^(when|elsif) /)
                     when :newline
                       true
                     else
                       false
                     end
+
       return if should_skip
       return if node.lineno.nil?
 
