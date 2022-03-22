@@ -2,7 +2,7 @@
 
 ## **0.3.2**
 
-Not yet released
+Released 2022-03-22
 
 - Improve error messages and locations
 - Resolve infinite loop when requiring not existing library #19
