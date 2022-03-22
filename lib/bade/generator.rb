@@ -41,6 +41,7 @@ module Bade
       code_indent do
         buff_code "self.#{NEW_LINE_NAME} = #{NEW_LINE_NAME}"
         buff_code "self.#{BASE_INDENT_NAME} = #{BASE_INDENT_NAME}"
+        buff_code "__buffs_push(#{location(filename: document.file_path, lineno: 0, label: '<top>')})"
 
         visit_document(document)
 
@@ -86,7 +87,6 @@ module Bade
       end
 
       buff_code("# ----- start file #{document.file_path}") unless document.file_path.nil?
-      buff_code "__buffs_push(#{location(filename: document.file_path, lineno: 0, label: '<top>')})"
 
       new_root = if @optimize
                    Optimizer.new(document.root).optimize

@@ -421,15 +421,15 @@ describe Bade::Parser do
         BADE
 
         expect do
-          assert_html_from_file '<c/><b/><a/>', '/c.bade', print_error_if_error: false
+          assert_html_from_file '', '/c.bade', print_error_if_error: false
         end.to raise_error(Bade::Runtime::RuntimeError) { |error|
           expect(error.message).to eq <<~TEXT.rstrip
             Exception raised during execution of mixin `a`: StandardError
             template backtrace:
-              (__template__):2:in `+a'
-              (__template__):4:in `+b'
-              (__template__):6:in `+c'
-              (__template__):8:in `<top>'
+              /a.bade:3:in `+a'
+              /b.bade:5:in `+b'
+              /c.bade:5:in `+c'
+              /c.bade:7:in `<top>'
           TEXT
         }
       end
