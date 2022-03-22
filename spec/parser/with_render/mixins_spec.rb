@@ -1,7 +1,10 @@
 require_relative '../../helper'
+require 'fakefs/spec_helpers'
 
 describe Bade::Parser do
   context 'mixins' do
+    include FakeFS::SpecHelpers
+
     it 'parse mixin declaration' do
       source = <<-BADE.strip_heredoc
         mixin mixin_name()
@@ -364,6 +367,69 @@ describe Bade::Parser do
             template backtrace:
               (__template__):3:in `+m'
               (__template__):5:in `<top>'
+          TEXT
+        }
+      end
+
+      it 'support for location in nested mixin' do
+        source = <<-BADE.strip_heredoc
+          mixin a
+            - raise StandardError
+          mixin b()
+            +a
+          mixin c()
+            +b
+
+          +c
+        BADE
+
+        expect do
+          assert_html '', source, print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `a`: StandardError
+            template backtrace:
+              (__template__):2:in `+a'
+              (__template__):4:in `+b'
+              (__template__):6:in `+c'
+              (__template__):8:in `<top>'
+          TEXT
+        }
+      end
+
+      it 'support for location in nested mixin across files' do
+        File.write('/a.bade', <<-BADE.strip_heredoc)
+          mixin a
+            a
+            - raise StandardError
+        BADE
+
+        File.write('/b.bade', <<-BADE.strip_heredoc)
+          import 'a.bade'
+
+          mixin b
+            b
+            +a
+        BADE
+
+        File.write('/c.bade', <<-BADE.strip_heredoc)
+          import 'b.bade'
+
+          mixin c
+            c
+            +b
+        BADE
+
+        expect do
+          assert_html_from_file '<c/><b/><a/>', '/c.bade', print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `a`: StandardError
+            template backtrace:
+              (__template__):2:in `+a'
+              (__template__):4:in `+b'
+              (__template__):6:in `+c'
+              (__template__):8:in `<top>'
           TEXT
         }
       end
