@@ -201,6 +201,18 @@ describe Bade::Renderer, 'import feature' do
       expect(output).to eq 'some_result_updated'
     end
 
+    it 'will report correct error when trying to require not existing library' do
+      source = <<~BADE
+        - require 'activesupport'
+      BADE
+
+      expect do
+        assert_html '', source, print_error_if_error: false
+      end.to(raise_error do |error|
+        expect(error.message).to include 'cannot load such file -- activesupport'
+      end)
+    end
+
     it 'can show location of error from ruby file' do
       File.write('abc.rb', <<~RB)
         def raise_some_error1
