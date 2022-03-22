@@ -31,7 +31,7 @@ module Bade
         @print_locations_warning = print_locations_warning
       end
 
-      def message
+      def to_s
         if @template_backtrace.empty?
           super
         else
@@ -85,7 +85,7 @@ module Bade
         # get only locations inside template
         new_locations = new_locations[0...index] || []
 
-        # filter out not interested locations 
+        # filter out not interested locations
         new_locations
           .reject { |loc| loc.path.start_with?(__dir__) }
           .reject { |loc| loc.template? && loc.label.include?('lambda_instance') }

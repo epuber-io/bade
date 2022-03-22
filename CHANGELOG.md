@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.3**
+
+Released 2022-03-22
+
+- Fix formatting error messages (correct is overriding `#to_s` instead of `#message`)
+
+
 ## **0.3.2**
 
 Released 2022-03-22
