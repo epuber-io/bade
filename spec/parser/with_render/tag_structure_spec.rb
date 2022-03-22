@@ -2,7 +2,7 @@ require_relative '../../helper'
 
 describe Bade::Parser do
   it 'should parse simple string' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       abc ahoj
     BADE
 
@@ -11,7 +11,7 @@ describe Bade::Parser do
   end
 
   it 'should parse simple multi lined string' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       a baf
         b
           ab ad
@@ -24,7 +24,7 @@ describe Bade::Parser do
   end
 
   it 'should parse simple multi lined html' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       html
         head
           title Title
@@ -33,7 +33,7 @@ describe Bade::Parser do
             p text
     BADE
 
-    expected = <<-HTML.strip_heredoc.gsub(/\s/, '')
+    expected = <<~HTML.gsub(/\s/, '')
       <html>
         <head>
           <title>Title</title>
@@ -51,7 +51,7 @@ describe Bade::Parser do
 
 
   it 'should parse piped text' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       | text
       a
         | a_text1
@@ -62,7 +62,7 @@ describe Bade::Parser do
   end
 
   it 'should parse advanced piped text' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       | text
           text2
            text3
@@ -77,7 +77,7 @@ describe Bade::Parser do
   end
 
   it 'should parse piped text started on next line' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       |
         text aaa
     BADE
@@ -87,7 +87,7 @@ describe Bade::Parser do
   end
 
   it 'should handle trailing colon in tag name' do
-    source = <<-BADE.strip_heredoc
+    source = <<~BADE
       tag: baf
     BADE
 
@@ -97,7 +97,7 @@ describe Bade::Parser do
 
   context 'block expansion' do
     it 'should parse block expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a: b text
       BADE
 
@@ -106,7 +106,7 @@ describe Bade::Parser do
     end
 
     it 'should parse tags with namespace' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a:b text
       BADE
 
@@ -115,7 +115,7 @@ describe Bade::Parser do
     end
 
     it 'should parse more nested block expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a: b: c: d text
       BADE
 
@@ -124,7 +124,7 @@ describe Bade::Parser do
     end
 
     it 'should parse more nested block expansion and normal tag' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a: b: c: d text
         abc text_abc
       BADE
@@ -134,7 +134,7 @@ describe Bade::Parser do
     end
 
     it 'should parse more nested block expansion and normal sub tag' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a: b: c: d text
           abc text_abc
       BADE
@@ -144,7 +144,7 @@ describe Bade::Parser do
     end
 
     it 'supports mixin expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc()
           div
             - default_block.call
@@ -157,7 +157,7 @@ describe Bade::Parser do
     end
 
     it 'supports tag class with expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         li.selected: a(href: "/href/text") text
       BADE
 
@@ -166,7 +166,7 @@ describe Bade::Parser do
     end
 
     it 'supports tag id with expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         li#selected: a(href: "/href/text") text
       BADE
 
@@ -175,7 +175,7 @@ describe Bade::Parser do
     end
 
     it 'supports tag id and class with expansion' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         li.selected#id_li: a(href: "/href/text") text
       BADE
 
@@ -186,7 +186,7 @@ describe Bade::Parser do
 
   context 'normal comments' do
     it 'should parse one lined comment' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         // commented text
       BADE
 
@@ -198,7 +198,7 @@ describe Bade::Parser do
     end
 
     it 'should parse multi lined comment' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         // comment
             that continues to next line
              so we can comment our code
@@ -209,7 +209,7 @@ describe Bade::Parser do
       assert_html expected, source
 
       lambda_str = lambda_str_from_bade_code(source)
-      expect(lambda_str).to include <<-BADE.strip_heredoc.strip
+      expect(lambda_str).to include <<~BADE.strip
         # comment
         #that continues to next line
         # so we can comment our code
@@ -218,7 +218,7 @@ describe Bade::Parser do
     end
 
     it 'should parse multi lined comment with other tags' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a text
         // comment
             that continues to next line
@@ -233,7 +233,7 @@ describe Bade::Parser do
 
 
     it 'should parse simple comment nested in tag' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a text
           // comment
           | text2
@@ -244,7 +244,7 @@ describe Bade::Parser do
     end
 
     it 'should parse comment with immediate text after' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         //<p>baf</p>
       BADE
 
@@ -253,7 +253,7 @@ describe Bade::Parser do
     end
 
     it 'should parse comment in html tag block' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         <h1>Header</h1>
           //<p>baf</p>
       BADE
@@ -265,7 +265,7 @@ describe Bade::Parser do
 
   context 'html comments' do
     it 'should parse html comments' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         //! html comment
       BADE
 
@@ -274,7 +274,7 @@ describe Bade::Parser do
     end
 
     it 'should parse multi lined comments' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         //! html comment
           _nested
       BADE
@@ -284,7 +284,7 @@ describe Bade::Parser do
     end
 
     it 'should parse multi lined comments in between tags' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a text
         //! html comment
           _nested
@@ -298,7 +298,7 @@ describe Bade::Parser do
 
   context 'class' do
     it 'should parse tag with class name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a.class_name text
       BADE
 
@@ -307,7 +307,7 @@ describe Bade::Parser do
     end
 
     it 'should parse tags with only class name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         .class_name text
       BADE
 
@@ -316,7 +316,7 @@ describe Bade::Parser do
     end
 
     it 'should merge all classes to one attribute item' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a.class_1.class_2 some text
       BADE
 
@@ -327,7 +327,7 @@ describe Bade::Parser do
 
   context 'id' do
     it 'should parse tag with id name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a#id_name text
       BADE
 
@@ -336,7 +336,7 @@ describe Bade::Parser do
     end
 
     it 'should parse tags with only id name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         #id_name text
       BADE
 
@@ -347,7 +347,7 @@ describe Bade::Parser do
 
   context 'id and classes' do
     it 'should parse both' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
           a.class_name#id_name text
       BADE
 
@@ -356,7 +356,7 @@ describe Bade::Parser do
     end
 
     it 'should parse both' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
           a#id_name.class_name text
       BADE
 
@@ -367,7 +367,7 @@ describe Bade::Parser do
 
   context 'autoclose tag' do
     it 'should autoclose tag when there is no content' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
           a
       BADE
 
@@ -378,7 +378,7 @@ describe Bade::Parser do
 
   context 'inline html code' do
     it 'should support inline xhtml code' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
           <a href="dasdsad">asdfsfds</a>
       BADE
 
@@ -387,7 +387,7 @@ describe Bade::Parser do
     end
 
     it 'should support inline nested xhtml code' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         <a href="dasdsad">
           | asdfsfds
         </a>
@@ -400,7 +400,7 @@ describe Bade::Parser do
 
   context 'conditional output code' do
     it 'should not render tag when the value is nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag?= nil
       SOURCE
 
@@ -409,7 +409,7 @@ describe Bade::Parser do
     end
 
     it 'should not render tag when the value is nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag
           ?= nil
       SOURCE
@@ -419,7 +419,7 @@ describe Bade::Parser do
     end
 
     it 'should not render tag when the value is nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag
           ?= val
       SOURCE
@@ -429,7 +429,7 @@ describe Bade::Parser do
     end
 
     it 'should not render tag when values are nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag
           ?= val
           ?= val2
@@ -441,7 +441,7 @@ describe Bade::Parser do
     end
 
     it 'should render tag when the value is not nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag
           ?= val
       SOURCE
@@ -451,7 +451,7 @@ describe Bade::Parser do
     end
 
     it 'should render tag when values are not nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag
           ?= val
           ?= val2
@@ -463,7 +463,7 @@ describe Bade::Parser do
     end
 
     it 'should render tag when the value is not nil' do
-      source = <<-SOURCE.strip_heredoc
+      source = <<~SOURCE
         tag?= "abc"
       SOURCE
 

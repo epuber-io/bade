@@ -3,7 +3,7 @@ require_relative '../../helper'
 describe Bade::Parser do
   describe 'doctype' do
     it 'supports `doctype xml`' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         doctype xml
       BADE
 
@@ -12,7 +12,7 @@ describe Bade::Parser do
     end
 
     it 'supports `doctype html`' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         doctype html
       BADE
 

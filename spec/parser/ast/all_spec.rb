@@ -8,7 +8,7 @@ describe Bade::Parser do
 
   context 'mixing all things together' do
     it 'parse nested mixin call, code and tag' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc
           - if abc.empty?
             | empty

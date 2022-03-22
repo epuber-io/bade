@@ -8,7 +8,7 @@ describe Bade::Parser do
 
   context 'mixin declaration parsing' do
     it 'can parse empty mixin declaration' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc
       BADE
 
@@ -20,7 +20,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin with colon in name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin ab:c
         mixin ab:cd(abc)
       BADE
@@ -36,7 +36,7 @@ describe Bade::Parser do
     end
 
     it 'can parse empty mixin declaration with parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(a, b, key1: "a", &block_param)
       BADE
 
@@ -52,7 +52,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with implementation' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc
           | text
       BADE
@@ -67,7 +67,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with attributes and implementation' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(a, b, key1: "a", &block_param)
           | text
       BADE
@@ -86,7 +86,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with with key-value parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(a, key: :value, &block)
       BADE
 
@@ -101,7 +101,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with required key-value params' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(a:, b:, c:)
       BADE
 
@@ -116,7 +116,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin declaration with implementation with multiple blocks' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(&first, &second)
           - first.call
           - second.call!
@@ -138,7 +138,7 @@ describe Bade::Parser do
 
   context 'mixin calling parsing' do
     it 'can parse empty calling' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc
         +abc()
       BADE
@@ -152,7 +152,7 @@ describe Bade::Parser do
       assert_ast(ast, source)
     end
     it 'can parse empty calling with default block' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc some text
         +abc() some text
         +abc()
@@ -175,7 +175,7 @@ describe Bade::Parser do
     end
 
     it 'can parse calling with parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc('abc') text
         +abc(key1: 'key1') text
         +abc('abc', key1: 'key1') text
@@ -215,7 +215,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin call with with key-value parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc(:a, :b, key: :value)
       BADE
 
@@ -230,7 +230,7 @@ describe Bade::Parser do
     end
 
     it 'can parse calling with parameters and blocks' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc
           block first
             | text
@@ -257,7 +257,7 @@ describe Bade::Parser do
     end
 
     it 'can parse calling with inline' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +abc: tag2 text
         +abc(param, key2: key2): tag2 text
       BADE

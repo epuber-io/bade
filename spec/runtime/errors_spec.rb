@@ -6,7 +6,7 @@ require_relative '../helper'
 describe Bade::Renderer do
   context 'mixins wrong usage errors' do
     it 'raises meaningful message about wrong number of parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(one)
 
         +abc()
@@ -20,7 +20,7 @@ describe Bade::Renderer do
     end
 
     it 'raises meaningful message about unknown key-value parameter' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc(one: nil)
 
         +abc(two: 'str')
@@ -32,7 +32,7 @@ describe Bade::Renderer do
     end
 
     it 'not raises error when calling mixin with empty block' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin abc
         +abc
       BADE

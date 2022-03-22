@@ -3,7 +3,7 @@ require_relative '../../helper'
 describe Bade::Parser do
   context 'tag attributes' do
     it 'should parse one attribute' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'href_text')
       BADE
 
@@ -12,7 +12,7 @@ describe Bade::Parser do
     end
 
     it 'should parse one attribute and text after' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'href_text') abc
       BADE
 
@@ -22,7 +22,7 @@ describe Bade::Parser do
 
 
     it 'should parse two attributes' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'href_text', id : 'id_text')
       BADE
 
@@ -32,7 +32,7 @@ describe Bade::Parser do
 
 
     it 'should parse two attributes and text' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'href_text', id : 'id_text') abc_text_haha
       BADE
 
@@ -42,7 +42,7 @@ describe Bade::Parser do
 
 
     it 'should parse two attributes without spaces' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href:'href_text',id:'id_text')
       BADE
 
@@ -53,7 +53,7 @@ describe Bade::Parser do
 
 
     it 'should parse two attributes and text nested' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href : 'href_text', id : 'id_text') abc_text_haha
           b(class : 'aaa') bbb
       BADE
@@ -64,7 +64,7 @@ describe Bade::Parser do
     end
 
     it 'should parse attributes with double quoted attributes' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href : "href_text", id:"id_text") abc_text_haha
           b(class : "aaa") bbb
       BADE
@@ -74,7 +74,7 @@ describe Bade::Parser do
     end
 
     it 'removes attributes when the value is nil' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: nil)
       BADE
 
@@ -83,7 +83,7 @@ describe Bade::Parser do
     end
 
     it 'support if in attributes' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'selected' if true)
       BADE
 
@@ -92,7 +92,7 @@ describe Bade::Parser do
     end
 
     it 'support if in attributes' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         a(href: 'selected' if false)
       BADE
 
@@ -101,7 +101,7 @@ describe Bade::Parser do
     end
 
     it 'marks spaces between tag and attributes as start of text' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         tag (start of the text)
       BADE
 

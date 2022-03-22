@@ -36,7 +36,7 @@ describe Bade::AST::StringSerializer do
                    n(:static_text, value: 'baf')))
     sut = Bade::AST::StringSerializer.new(root)
 
-    expected = <<-AST.strip_heredoc.rstrip
+    expected = <<~AST.rstrip
       (:tag tag_name
         (:tag_attr attr:value)
         (:tag tag_2
