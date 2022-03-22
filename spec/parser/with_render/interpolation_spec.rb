@@ -3,7 +3,7 @@ require_relative '../../helper'
 describe Bade::Parser do
   context 'interpolation' do
     it 'parse simple unescaping interpolation' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         tag text bla \#{'text'}
       BADE
 
@@ -12,7 +12,7 @@ describe Bade::Parser do
     end
 
     it 'parse simple escaping interpolation' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         tag text bla &{ '<>' }
       BADE
 
@@ -21,7 +21,7 @@ describe Bade::Parser do
     end
 
     it 'parse simple escaping interpolation' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         tag text bla &{ '&&&&&&&&&&&' }
       BADE
 

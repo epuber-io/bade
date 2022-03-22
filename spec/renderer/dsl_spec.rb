@@ -165,7 +165,7 @@ describe Bade::Renderer do
 
   context 'it clears after running' do
     it 'defined method in template is not visible after running' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         - def abc(a)
         -   self
         - end

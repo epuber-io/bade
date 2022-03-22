@@ -201,6 +201,18 @@ describe Bade::Renderer, 'import feature' do
       expect(output).to eq 'some_result_updated'
     end
 
+    it 'will report correct error when trying to require not existing library' do
+      source = <<~BADE
+        - require 'activesupport'
+      BADE
+
+      expect do
+        assert_html '', source, print_error_if_error: false
+      end.to(raise_error do |error|
+        expect(error.message).to include 'cannot load such file -- activesupport'
+      end)
+    end
+
     it 'can show location of error from ruby file' do
       File.write('abc.rb', <<~RB)
         def raise_some_error1
@@ -224,11 +236,83 @@ describe Bade::Renderer, 'import feature' do
       expect do
         assert_html_from_file '', 'root.bade', print_error_if_error: false
       end.to(raise_error do |error|
+        expect(error.template_backtrace).to eq [
+          Bade::Runtime::Location.new(path: '/abc.rb', lineno: 10, label: 'raise_some_error3'),
+          Bade::Runtime::Location.new(path: '/abc.rb', lineno: 6, label: 'raise_some_error2'),
+          Bade::Runtime::Location.new(path: '/abc.rb', lineno: 2, label: 'raise_some_error1'),
+          Bade::Runtime::Location.new(path: 'root.bade', lineno: 2, label: '<top>'),
+        ]
+
+        expect(error.cause).to be_an_instance_of(StandardError)
+      end)
+    end
+
+    it 'it will show at least names of functions' do
+      File.write('abc.bade', <<~BADE)
+        - def raise_some_error1
+        -   raise_some_error2
+        - end
+        -
+        - def raise_some_error2
+        -   raise_some_error3
+        - end
+        -
+        - def raise_some_error3
+        -   raise StandardError
+        - end
+      BADE
+
+      File.write('root.bade', <<~BADE)
+        import 'abc.bade'
+        = raise_some_error1
+      BADE
+
+      expect do
+        assert_html_from_file '', 'root.bade', print_error_if_error: false
+      end.to(raise_error do |error|
+        expect(error.message).to match(<<~MSG.rstrip)
+          template backtrace:
+            .*?:in `raise_some_error3'
+            .*?:in `raise_some_error2'
+            .*?:in `raise_some_error1'
+            root.bade:.*?:in `<top>'
+
+          !!! WARNING !!!, filenames and line numbers of functions can be misleading due to using Ruby
+        MSG
+
+        expect(error.cause).to be_an_instance_of(StandardError)
+      end)
+    end
+
+    xit 'can show location of error from bade with ruby code' do
+      File.write('abc.bade', <<~BADE)
+        - def raise_some_error1
+        -   raise_some_error2
+        - end
+        -
+        - def raise_some_error2
+        -   raise_some_error3
+        - end
+        -
+        - def raise_some_error3
+        -   raise StandardError
+        - end
+      BADE
+
+      File.write('root.bade', <<~BADE)
+        import 'abc.bade'
+        = raise_some_error1
+      BADE
+
+      expect do
+        assert_html_from_file '', 'root.bade', print_error_if_error: false
+      end.to(raise_error do |error|
+        puts error.message
         expect(error.message).to end_with(<<~MSG.rstrip)
           template backtrace:
-            /abc.rb:10:in `raise_some_error3'
-            /abc.rb:6:in `raise_some_error2'
-            /abc.rb:2:in `raise_some_error1'
+            /abc.bade:10:in `raise_some_error3'
+            /abc.bade:6:in `raise_some_error2'
+            /abc.bade:2:in `raise_some_error1'
             root.bade:2:in `<top>'
         MSG
 

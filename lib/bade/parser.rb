@@ -29,7 +29,7 @@ module Bade
       def to_s
         line = @line.lstrip
         column = @column + line.size - @line.size
-        <<-MSG.strip_heredoc
+        <<~MSG
           #{error}
             #{file}, Line #{lineno}, Column #{@column}
             #{line}

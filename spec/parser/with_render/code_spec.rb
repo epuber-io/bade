@@ -4,7 +4,7 @@ require_relative '../../helper'
 describe Bade::Parser do
   context 'inline code' do
     it 'should parse code' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         - if true
           a text
         - else
@@ -18,7 +18,7 @@ describe Bade::Parser do
     end
 
     it 'case be used' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         - abc = 1
         - case abc
         - when 1
@@ -36,7 +36,7 @@ describe Bade::Parser do
     end
 
     it 'case be used (example 2)' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         - abc = 2
         - value = case abc
         -         when 1
@@ -58,7 +58,7 @@ describe Bade::Parser do
   context 'output code' do
     context 'parse output from ruby code' do
       it 'not-escaped text' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           div
             = "abc".upcase
           abc
@@ -70,7 +70,7 @@ describe Bade::Parser do
       end
 
       it 'escaped text' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           div
             &= "abc".upcase
           abc
@@ -82,7 +82,7 @@ describe Bade::Parser do
       end
 
       it 'escaped after tag' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           div&= "text"
           div&= "<>"
         BADE
@@ -92,7 +92,7 @@ describe Bade::Parser do
       end
 
       it 'unescaped after tag' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           div= "text"
           div= "<>"
         BADE
@@ -106,7 +106,7 @@ describe Bade::Parser do
           __const: Hash.new { |_hash, key| raise KeyError, "Not found key #{key}" },
         }
 
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           div
               h1.section NADEŠEL ČAS PRO PRÁCI NA DÁLKU
               p= __const[:some_undefined_key]
@@ -125,7 +125,7 @@ describe Bade::Parser do
 
     context 'corner cases' do
       it 'parse input source' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           h1.section NADEŠEL ČAS PRO PRÁCI NA DÁLKU
 
           = 'dsafdsgfd'
@@ -136,7 +136,7 @@ describe Bade::Parser do
       end
 
       it 'parse empty code line' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           a text
           -
           b text

@@ -27,7 +27,7 @@ describe Bade::Parser do
     end
 
     it 'parses minimalistic tag with multiple attributes' do
-      source = <<-BADE.strip_heredoc.rstrip
+      source = <<~BADE.rstrip
         tag_bla(a1: "a1", a2: "a2", a3: "a3", a4: "a4", a5: "a5", a6: "a6", a7: "a7", a8: "a8", a9: "a9", a10: "a10")
       BADE
 
@@ -105,7 +105,7 @@ describe Bade::Parser do
 
     context 'conditional output' do
       it 'parses conditional output after tag' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           tag?= nil_value
           tag?= value
         BADE
@@ -122,7 +122,7 @@ describe Bade::Parser do
       end
 
       it 'parses conditional output on next line' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           tag
             ?= nil_value
           tag

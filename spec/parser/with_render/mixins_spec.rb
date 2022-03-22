@@ -1,9 +1,12 @@
 require_relative '../../helper'
+require 'fakefs/spec_helpers'
 
 describe Bade::Parser do
   context 'mixins' do
+    include FakeFS::SpecHelpers
+
     it 'parse mixin declaration' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin mixin_name()
           div
       BADE
@@ -13,7 +16,7 @@ describe Bade::Parser do
     end
 
     it 'can parse mixin with colon in name' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin ab:c
           <a>
           | ab:c
@@ -29,7 +32,7 @@ describe Bade::Parser do
     end
 
     it 'parse mixin declaration and call' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin mixin_name()
           div
 
@@ -41,7 +44,7 @@ describe Bade::Parser do
     end
 
     it 'parse mixin declaration and call, brackets can be omitted' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         mixin mixin_name
           div
 
@@ -53,7 +56,7 @@ describe Bade::Parser do
     end
 
     it 'will not parse mixin call with invalid string' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         +other_chapter(''Poděkování, align: :left)
       BADE
 
@@ -64,7 +67,7 @@ describe Bade::Parser do
 
     context 'arguments' do
       it 'parse mixin declaration and call with one normal parameter' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(param)
           div
             &= param
@@ -77,7 +80,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin declaration and call with more normal parameters' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(param1, param2, param3)
           div
             &= param1
@@ -94,7 +97,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin declaration with default param' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(param = nil)
           div
             &= param
@@ -107,7 +110,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin declaration with multiple default params' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(param1 = nil, param2 = "123", param3 = {})
           div
             &= param1
@@ -120,7 +123,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin declaration and call with several normal and several keyed parameters' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(a, b, c: "abc", d: {})
           a
             &= a
@@ -139,7 +142,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin declaration and call with key-value parameter with symbols' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(a, c: :abc, d: {})
           a
             &= a.inspect
@@ -156,7 +159,7 @@ describe Bade::Parser do
       end
 
       it 'parse required key-value arguments' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(a:)
           a
             &= a.inspect
@@ -169,7 +172,7 @@ describe Bade::Parser do
       end
 
       it 'parse required key-value arguments' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(a:, b:, c:)
           a \#{a} \#{b} \#{c}
 
@@ -181,7 +184,7 @@ describe Bade::Parser do
       end
 
       it 'parse required key-value arguments' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin mixin_name(a:, b:, c:)
           a \#{a} \#{b} \#{c}
 
@@ -197,7 +200,7 @@ describe Bade::Parser do
       end
 
       it 'support multiline mixin call' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin m(a, b)
           a= a
           b= b
@@ -210,7 +213,7 @@ describe Bade::Parser do
       end
 
       it 'support complex multiline mixin calling' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
         mixin chapter(title: nil, name: nil, items: nil)
           title= title
           name= name
@@ -232,7 +235,7 @@ describe Bade::Parser do
 
     context 'blocks' do
       it 'parse mixin with default block' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             default
               - default_block.call
@@ -246,7 +249,7 @@ describe Bade::Parser do
       end
 
       it 'should raise error on required block' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             - default_block.call!
           +m()
@@ -258,7 +261,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin with custom blocks' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m(a, &head)
             head
               - head.call
@@ -273,7 +276,7 @@ describe Bade::Parser do
       end
 
       it 'parse mixin with default block and custom block' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m(a, &head)
             default
               - default_block.call
@@ -292,7 +295,7 @@ describe Bade::Parser do
       end
 
       it 'block keyword can be used outside of mixin call' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           block
             | text
         BADE
@@ -303,7 +306,7 @@ describe Bade::Parser do
 
 
       it 'parse text after mixin call' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             a
               - default_block.call
@@ -317,7 +320,7 @@ describe Bade::Parser do
 
       context 'block expansion' do
         it 'parse two mixins' do
-          source = <<-BADE.strip_heredoc
+          source = <<~BADE
             mixin m()
               a
                 - default_block.call
@@ -335,7 +338,7 @@ describe Bade::Parser do
       end
 
       it 'support output after mixin calling' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             a
               - default_block.call
@@ -348,7 +351,7 @@ describe Bade::Parser do
       end
 
       it 'support for location' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             a
               - raise StandardError
@@ -368,8 +371,73 @@ describe Bade::Parser do
         }
       end
 
+      it 'support for location in nested mixin' do
+        source = <<~BADE
+          mixin a
+            - raise StandardError
+          mixin b()
+            +a
+          mixin c()
+            +b
+
+          +c
+        BADE
+
+        expect do
+          assert_html '', source, print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `a`: StandardError
+            template backtrace:
+              (__template__):2:in `+a'
+              (__template__):4:in `+b'
+              (__template__):6:in `+c'
+              (__template__):8:in `<top>'
+          TEXT
+        }
+      end
+
+      it 'support for location in nested mixin across files' do
+        File.write('/a.bade', <<~BADE)
+          mixin a
+            a
+            - raise StandardError
+        BADE
+
+        File.write('/b.bade', <<~BADE)
+          import 'a.bade'
+
+          mixin b
+            b
+            +a
+        BADE
+
+        File.write('/c.bade', <<~BADE)
+          import 'b.bade'
+
+          mixin c
+            c
+            +b
+
+          +c
+        BADE
+
+        expect do
+          assert_html_from_file '', '/c.bade', print_error_if_error: false
+        end.to raise_error(Bade::Runtime::RuntimeError) { |error|
+          expect(error.message).to eq <<~TEXT.rstrip
+            Exception raised during execution of mixin `a`: StandardError
+            template backtrace:
+              /a.bade:3:in `+a'
+              /b.bade:5:in `+b'
+              /c.bade:5:in `+c'
+              /c.bade:7:in `<top>'
+          TEXT
+        }
+      end
+
       it 'support for location for blocks in mixin' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin m()
             a
               - default_block.call
@@ -393,7 +461,7 @@ describe Bade::Parser do
 
       context 'yield keyword' do
         it 'basic example' do
-          source = <<-BADE.strip_heredoc
+          source = <<~BADE
           mixin m()
             default
               yield
@@ -407,7 +475,7 @@ describe Bade::Parser do
         end
 
         it 'required example' do
-          source = <<-BADE.strip_heredoc
+          source = <<~BADE
           mixin m()
             default
               yield!
@@ -421,7 +489,7 @@ describe Bade::Parser do
         end
 
         it 'required example' do
-          source = <<-BADE.strip_heredoc
+          source = <<~BADE
           mixin m()
             default
               yield!
@@ -439,7 +507,7 @@ describe Bade::Parser do
 
     context 'rendered content of block' do
       it 'support for mutating of rendered content of block' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin a
             = default_block.render!.upcase
 
@@ -451,7 +519,7 @@ describe Bade::Parser do
       end
 
       it '#render! raises error when the block is not specified' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin a
             - default_block.render!.upcase
 
@@ -465,7 +533,7 @@ describe Bade::Parser do
       end
 
       it 'support for mutating of rendered content of block without specified block' do
-        source = <<-BADE.strip_heredoc
+        source = <<~BADE
           mixin a
             - default_block.render.upcase
 

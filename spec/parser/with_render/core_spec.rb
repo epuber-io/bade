@@ -88,14 +88,14 @@ describe Bade::Parser do
     end
 
     it 'parse multiline code as parameters' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         [
           'text',
           'second text',
         ]
       BADE
 
-      expected = <<-RESULT.strip_heredoc.rstrip
+      expected = <<~RESULT.rstrip
         [
           'text',
           'second text',

@@ -7,7 +7,7 @@ describe Bade::Parser do
 
   context 'static text detection' do
     it 'detects normal text' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         | abc
       BADE
 
@@ -28,7 +28,7 @@ describe Bade::Parser do
     end
 
     it 'detects text containing interpolation syntax' do
-      source = <<-BADE.strip_heredoc
+      source = <<~BADE
         | abc \#{abc}
         | Here is some text & other text. For example Mumford \#{'&'} and sons.
         | Here is some text & other text. For example Mumford &{'&'} and sons.
