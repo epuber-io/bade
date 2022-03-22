@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## **0.3.2**
+
+Not yet released
+
+- Improve error messages and locations
+- Resolve infinite loop when requiring not existing library #19
+
+
 ## **0.3.1**
 
 Released 2022-03-22
