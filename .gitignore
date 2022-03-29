@@ -41,3 +41,4 @@ benchmarks/*.html
 vendor/gems
 vendor/bundle
 Gemfile.lock
+bin/rspec

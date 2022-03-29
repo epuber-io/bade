@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## **Unreleased**
+
+- Do not remove constants defined in files that are in `$LOADED_FEATURES`
+
 ## **0.3.3**
 
 Released 2022-03-22

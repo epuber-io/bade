@@ -5,14 +5,22 @@
 module Bade
   module Where
     class << self
+      # @param [Proc] proc
+      # @return [[String, Integer], String]
       def is_proc(proc)
         source_location(proc)
       end
 
+      # @param [Class] klass
+      # @param [Symbol, String] method_name
+      # @return [[String, Integer], String]
       def is_method(klass, method_name)
         source_location(klass.method(method_name))
       end
 
+      # @param [Object] klass
+      # @param [Symbol, String] method_name
+      # @return [[String, Integer], String]
       def is_instance_method(klass, method_name)
         source_location(klass.instance_method(method_name))
       end
@@ -25,6 +33,8 @@ module Bade
         are_via_extractor(:method, klass, method_name)
       end
 
+      # @param [Class] klass
+      # @return [[String, Integer], String]
       def is_class(klass)
         defined_methods(klass)
           .group_by { |sl| sl[0] }
@@ -61,6 +71,8 @@ module Bade
 
       private
 
+      # @param [Method] method
+      # @return [[String, Integer], String]
       def source_location(method)
         method.source_location || (
           method.to_s =~ /: (.*)>/
@@ -77,6 +89,7 @@ module Bade
              .compact
       end
 
+      # @return [Array<Method>]
       def defined_methods(klass)
         methods = klass.methods(false).map { |m| klass.method(m) } +
                   klass.instance_methods(false).map { |m| klass.instance_method(m) }
@@ -87,6 +100,9 @@ module Bade
     end
   end
 
+  # @param [Object, Class] klass
+  # @param [String, Symbol] method
+  # @return [[String, Integer], String]
   def self.where_is(klass, method = nil)
     if method
       begin

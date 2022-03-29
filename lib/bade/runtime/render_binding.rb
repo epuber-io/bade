@@ -85,14 +85,10 @@ module Bade
 
       # @param [String] filename
       def __load(filename)
-        # FakeFS does not fake `load` method
-        if Object.const_defined?(:FakeFS) && Object.const_get(:FakeFS).activated?
-          # rubocop:disable Security/Eval
-          eval(File.read(filename), __get_binding, filename)
-          # rubocop:enable Security/Eval
-        else
-          load(filename)
-        end
+        # Universal way to load Ruby file (production or during tests)
+        # rubocop:disable Security/Eval
+        eval(File.read(filename), __get_binding, filename)
+        # rubocop:enable Security/Eval
       end
 
       # @param [String] filename
