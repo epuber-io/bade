@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
-require_relative 'utils/where'
+unless Object.respond_to?(:const_source_location)
+  class Object
+    def Object.const_source_location(name)
+      require_relative 'utils/where'
+
+      konst = const_get(name)
+      is_meta = konst.is_a?(Module) || konst.is_a?(Class)
+      if is_meta
+        Bade.where_is(konst)
+      else
+        nil
+      end
+    end
+  end
+end
 
 module Bade
   module Runtime
@@ -9,7 +23,7 @@ module Bade
       # @return [Array<Symbol>]
       attr_accessor :caught_variables
 
-      # @return [Array<[Object, :Symbol]>]
+      # @return [Array<[Object, Symbol]>]
       attr_accessor :caught_constants
 
       # @return [Array<String>, nil]
@@ -66,20 +80,24 @@ module Bade
 
       # Filteres caught constants by location prefixes and returns ones that should be removed.
       #
-      # @return [Array<[Object, :Symbol]>]
+      # @return [Array<[Object, Symbol]>]
       def _filtered_constants
         @caught_constants.select do |(obj, name)|
           next unless obj.const_defined?(name)
-          next true if constants_location_prefixes.nil?
 
-          konst = obj.const_get(name)
           begin
-            location = Bade.where_is(konst)
+            location = obj.const_source_location(name)
           rescue ::ArgumentError
             next
           end
 
+          next true if location.nil?
+
           path = location.first
+          next false if $LOADED_FEATURES.include?(path)
+
+          next true if constants_location_prefixes.nil?
+
           constants_location_prefixes&.any? { |prefix| path.start_with?(prefix) }
         end
       end
