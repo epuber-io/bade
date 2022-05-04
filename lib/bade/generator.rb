@@ -381,7 +381,7 @@ module Bade
                     when :code
                       value = node.value.strip
 
-                      %w[end else }].include?(value) || value.match(/^(when|elsif) /)
+                      %w[end else }].include?(value) || value.match(/^(when|elsif) /) || value.match(/^\./)
                     when :newline
                       true
                     else

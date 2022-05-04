@@ -53,6 +53,21 @@ describe Bade::Parser do
 
       assert_html expected, source
     end
+
+    it 'multiline code' do
+      source = <<~BADE
+        - def abc(text)
+        -   text
+        -     .gsub('a', '') 
+        - end
+
+        = abc('abc')
+      BADE
+
+      expected = 'bc'
+
+      assert_html expected, source
+    end
   end
 
   context 'output code' do
