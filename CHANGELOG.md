@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.5**
+
+Released 2022-05-04
+
+- Fix issues when using multiline Ruby code #35
+
+
 ## **0.3.4**
 
 Released 2022-03-29
