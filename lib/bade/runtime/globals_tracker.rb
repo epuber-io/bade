@@ -94,6 +94,7 @@ module Bade
           next true if location.nil?
 
           path = location.first
+          next false if path == false
           next false if $LOADED_FEATURES.include?(path)
 
           next true if constants_location_prefixes.nil?
