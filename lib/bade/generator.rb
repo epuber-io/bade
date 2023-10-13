@@ -28,7 +28,6 @@ module Bade
     # @return [String] string to parse with Ruby
     #
     def generate_lambda_string(document, optimize: false)
-      @document = document
       @buff = []
       @indent = 0
       @code_indent = 0
@@ -51,9 +50,6 @@ module Bade
       end
 
       buff_code 'end'
-
-
-      @document = nil
 
       @buff.join("\n")
     end
@@ -82,6 +78,8 @@ module Bade
     # @param document [Bade::Document]
     #
     def visit_document(document)
+      @document = document
+
       document.sub_documents.each do |sub_document|
         visit_document(sub_document)
       end
@@ -97,6 +95,8 @@ module Bade
       visit_node(new_root)
 
       buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
+
+      @document = nil
     end
 
     # @param current_node [Node]
