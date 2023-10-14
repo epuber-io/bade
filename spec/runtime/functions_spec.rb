@@ -5,7 +5,7 @@ require_relative '../helper'
 
 describe Bade::Runtime::RenderBinding do
   context '#__html_escaped' do
-    let(:binding) { Bade::Runtime::RenderBinding.new }
+    let(:binding) { Bade::Runtime::RenderBinding.new.local_binding }
 
     it 'supports nil values' do
       value = binding.__html_escaped(nil)

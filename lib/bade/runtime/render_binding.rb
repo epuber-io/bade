@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'base_render_binding'
 require_relative 'block'
 
 module Bade
   module Runtime
-    class RenderBinding
+    class BadeRenderBinding < BaseRenderBinding
       Location = Bade::Runtime::Location
 
       # @return [Array<Array<String>>]
@@ -26,6 +27,8 @@ module Bade
       # @param vars [Hash]
       #
       def initialize(vars = {})
+        super()
+
         __reset
 
         vars.each do |key, value|
@@ -45,12 +48,6 @@ module Bade
         @__buffs_stack = []
         @__location_stack = []
         @__mixins = Hash.new { |_hash, key| raise Bade::Runtime::KeyError.new("Undefined mixin '#{key}'", __location_stack) }
-      end
-
-      # @return [Binding]
-      #
-      def __get_binding
-        binding
       end
 
       # Shortcut for creating blocks
@@ -85,22 +82,7 @@ module Bade
 
       # @param [String] filename
       def __load(filename)
-        # Universal way to load Ruby file (production or during tests)
-        # rubocop:disable Security/Eval
-        eval(File.read(filename), __get_binding, filename)
-        # rubocop:enable Security/Eval
-      end
-
-      # @param [String] filename
-      def require_relative(filename)
-        # FakeFS does not fake `require_relative` method
-        if Object.const_defined?(:FakeFS) && Object.const_get(:FakeFS).activated?
-          # rubocop:disable Security/Eval
-          eval(File.read(filename), __get_binding, filename)
-          # rubocop:enable Security/Eval
-        else
-          Kernel.require_relative(filename)
-        end
+        @__context.load_ruby_file(filename)
       end
 
       # Escape input text with html escapes
@@ -134,5 +116,14 @@ module Bade
         __location_stack.first
       end
     end
+
+    class RenderBindingContext < BaseRenderBindingContext
+      def initialize(vars = {})
+        super(local_binding: BadeRenderBinding.new(vars))
+      end
+    end
+
+    # backward compatibility
+    RenderBinding = RenderBindingContext
   end
 end

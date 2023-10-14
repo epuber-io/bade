@@ -4,12 +4,17 @@ require_relative '../helper'
 
 # just to stop RuboCop from complaining about missing parameters
 def eval_function(text)
-  eval(text, binding, File.join(__dir__, 'template'), __LINE__ + 1)
+  eval(text, @binding_context.local_binding.__get_binding, File.join(__dir__, 'template'), __LINE__ + 1)
 end
 
 describe Bade::Runtime::GlobalsTracker do
   before(:each) do
     @sut = Bade::Runtime::GlobalsTracker.new
+    @binding_context = Bade::Runtime::RenderBindingContext.new
+  end
+
+  after(:each) do
+    @sut.clear_all
   end
 
   context 'variables' do
@@ -38,6 +43,33 @@ describe Bade::Runtime::GlobalsTracker do
     end
   end
 
+  context '_get_constants' do
+    it 'can find full paths of constants' do
+      @sut.catch do
+        eval_function(<<-RB)
+          module Abc
+            NEW_GLOBAL_CONSTANT1 = 'abc'
+          end
+
+          class Test1; end
+
+          module Abc
+            class AbcClass
+            end
+          end
+        RB
+      end
+
+      expect(@sut._get_relative_constants).to contain_exactly(
+        Bade::Runtime::GlobalsTracker::Constant.new(Bade::Runtime::BaseRenderBinding, :Abc, [
+          Bade::Runtime::GlobalsTracker::Constant.new(Bade::Runtime::BaseRenderBinding::Abc, :AbcClass),
+          Bade::Runtime::GlobalsTracker::Constant.new(Bade::Runtime::BaseRenderBinding::Abc, :NEW_GLOBAL_CONSTANT1),
+        ]),
+        Bade::Runtime::GlobalsTracker::Constant.new(Bade::Runtime::BaseRenderBinding, :Test1),
+      )
+    end
+  end
+
   context 'constants' do
     it 'will catch new constants created in given block' do
       @sut.catch do
@@ -53,7 +85,7 @@ describe Bade::Runtime::GlobalsTracker do
         RB
       end
 
-      expect(@sut.caught_constants.map { |(_, name)| name }).to contain_exactly :NEW_GLOBAL_CONSTANT1, :Test1, :Abc
+      expect(@sut.caught_constants.map { |(constant)| constant.name }).to contain_exactly :NEW_GLOBAL_CONSTANT1, :Test1, :Abc
     end
 
     it 'can remove caught constants' do
@@ -79,18 +111,30 @@ describe Bade::Runtime::GlobalsTracker do
       end.to raise_error(NameError)
     end
 
-    it 'will not remove constants from required files' do
+    it 'will remove constants from relatively required files' do
       @sut.catch do
         eval_function('require_relative "imported"')
       end
 
-      expect($LOADED_FEATURES).to include(File.join(__dir__, 'imported.rb'))
       expect(eval_function('ImportedModuleAbc.upcase("abc")')).to eq 'ABC'
 
       @sut.clear_all
 
-      expect($LOADED_FEATURES).to include(File.join(__dir__, 'imported.rb'))
-      expect(eval_function('ImportedModuleAbc.upcase("abc")')).to eq 'ABC'
+      expect do
+        eval_function('ImportedModuleAbc')
+      end.to raise_error(NameError)
+    end
+
+    it 'will not remove constants from absolutely required files' do
+      @sut.catch do
+        eval_function('require "uri"')
+      end
+
+      expect(eval_function('URI("https://example.com").host')).to eq 'example.com'
+
+      @sut.clear_all
+
+      expect(eval_function('URI("https://example.com").host')).to eq 'example.com'
     end
   end
 end

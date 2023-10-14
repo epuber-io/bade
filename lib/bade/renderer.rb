@@ -62,9 +62,13 @@ module Bade
     #
     attr_accessor :lambda_binding
 
-    # @return [RenderBinding]
+    # @return [Bade::Runtime::RenderBinding]
     #
     attr_accessor :render_binding
+
+    # @return [Bade::Runtime::RenderBindingContext]
+    #
+    attr_accessor :render_binding_context
 
     # @return [Bool]
     #
@@ -135,22 +139,31 @@ module Bade
     #
     def with_locals(locals = {})
       self.render_binding = nil
+      self.render_binding_context = nil
 
       self.locals = locals
+
       self
     end
 
     # @return [self]
     def with_binding(binding)
+      self.render_binding = nil
+      self.render_binding_context = nil
+
       self.lambda_binding = binding
+
       self
     end
 
-    # @param [RenderBinding] binding
+    # @param [Bade::Runtime::RenderBindingContext] binding
     # @return [self]
-    def with_render_binding(binding)
+    def with_render_binding_context(context)
       self.lambda_binding = nil
-      self.render_binding = binding
+
+      self.render_binding = context.local_binding
+      self.render_binding_context = context
+
       self
     end
 
@@ -186,11 +199,17 @@ module Bade
       precompiled.code_string
     end
 
-    # @return [RenderBinding]
+    # @return [Bade::Runtime::RenderBinding]
+    #
+    def render_binding
+      @render_binding ||= render_binding_context.local_binding
+    end
+
+    # @return [Bade::Runtime::RenderBindingContext]
     #
     # rubocop:disable Lint/DuplicateMethods
-    def render_binding
-      @render_binding ||= Runtime::RenderBinding.new(locals || {})
+    def render_binding_context
+      @render_binding_context ||= Runtime::RenderBindingContext.new(locals || {})
     end
     # rubocop:enable Lint/DuplicateMethods
 
