@@ -28,6 +28,7 @@ module Bade
     # @return [String] string to parse with Ruby
     #
     def generate_lambda_string(document, optimize: false)
+      @documents = []
       @buff = []
       @indent = 0
       @code_indent = 0
@@ -78,7 +79,7 @@ module Bade
     # @param document [Bade::Document]
     #
     def visit_document(document)
-      @document = document
+      @documents.append(document)
 
       document.sub_documents.each do |sub_document|
         visit_document(sub_document)
@@ -96,7 +97,7 @@ module Bade
 
       buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
 
-      @document = nil
+      @documents.pop
     end
 
     # @param current_node [Node]
@@ -162,7 +163,7 @@ module Bade
       when :newline
         # no-op
       when :import
-        base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
+        base_path = File.expand_path(current_node.value, File.dirname(@documents.last.file_path))
         load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
                       base_path
                     elsif File.exist?("#{base_path}.rb")
