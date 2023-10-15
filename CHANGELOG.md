@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## **0.3.6**
+
+Released 2023-10-15
+
+- Fix base path when using require_relative in Bade template files
+- Fix crash when location of some module is `false` instead of `String` (not sure why is that)
+
+
 ## **0.3.5**
 
 Released 2022-05-04
