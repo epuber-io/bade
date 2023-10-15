@@ -14,6 +14,8 @@ module Bade
 
     DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
+    REQUIRE_RELATIVE_REGEX = /require_relative\s+['"](.+)['"]/
+
     # @param [Document] document
     #
     # @return [String]
@@ -28,7 +30,7 @@ module Bade
     # @return [String] string to parse with Ruby
     #
     def generate_lambda_string(document, optimize: false)
-      @document = document
+      @documents = []
       @buff = []
       @indent = 0
       @code_indent = 0
@@ -52,9 +54,6 @@ module Bade
 
       buff_code 'end'
 
-
-      @document = nil
-
       @buff.join("\n")
     end
 
@@ -76,12 +75,16 @@ module Bade
     end
 
     def buff_code(text)
+      text = _fix_required_relative(text)
+
       @buff << "#{'  ' * @code_indent}#{text}"
     end
 
     # @param document [Bade::Document]
     #
     def visit_document(document)
+      @documents.append(document)
+
       document.sub_documents.each do |sub_document|
         visit_document(sub_document)
       end
@@ -97,6 +100,8 @@ module Bade
       visit_node(new_root)
 
       buff_code("# ----- end file #{document.file_path}") unless document.file_path.nil?
+
+      @documents.pop
     end
 
     # @param current_node [Node]
@@ -162,7 +167,7 @@ module Bade
       when :newline
         # no-op
       when :import
-        base_path = File.expand_path(current_node.value, File.dirname(@document.file_path))
+        base_path = File.expand_path(current_node.value, File.dirname(@documents.last.file_path))
         load_path = if base_path.end_with?('.rb') && File.exist?(base_path)
                       base_path
                     elsif File.exist?("#{base_path}.rb")
@@ -421,6 +426,22 @@ module Bade
               end
 
       location(filename: node.filename, lineno: node.lineno, label: label)
+    end
+
+    # Fix require_relative paths to be relative to the main Bade file (instead of the current file)
+    #
+    # @param [String] text
+    # @return [String]
+    #
+    def _fix_required_relative(text)
+      text.gsub(REQUIRE_RELATIVE_REGEX) do
+        relative_path = Regexp.last_match[1]
+        abs_path = File.expand_path(relative_path, File.dirname(@documents.last.file_path))
+        document_abs_path = Pathname.new(File.expand_path(File.dirname(@documents.first.file_path)))
+        new_relative_path = Pathname.new(abs_path).relative_path_from(document_abs_path).to_s
+
+        "require_relative '#{new_relative_path}'"
+      end
     end
   end
 
