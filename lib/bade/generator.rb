@@ -14,6 +14,8 @@ module Bade
 
     DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
+    REQUIRE_RELATIVE_REGEX = /require_relative\s+['"](.+)['"]/
+
     # @param [Document] document
     #
     # @return [String]
@@ -73,6 +75,8 @@ module Bade
     end
 
     def buff_code(text)
+      text = _fix_required_relative(text)
+
       @buff << "#{'  ' * @code_indent}#{text}"
     end
 
@@ -422,6 +426,22 @@ module Bade
               end
 
       location(filename: node.filename, lineno: node.lineno, label: label)
+    end
+
+    # Fix require_relative paths to be relative to the main Bade file (instead of the current file)
+    #
+    # @param [String] text
+    # @return [String]
+    #
+    def _fix_required_relative(text)
+      text.gsub(REQUIRE_RELATIVE_REGEX) do
+        relative_path = Regexp.last_match[1]
+        abs_path = File.expand_path(relative_path, File.dirname(@documents.last.file_path))
+        document_abs_path = Pathname.new(File.expand_path(File.dirname(@documents.first.file_path)))
+        new_relative_path = Pathname.new(abs_path).relative_path_from(document_abs_path).to_s
+
+        "require_relative '#{new_relative_path}'"
+      end
     end
   end
 

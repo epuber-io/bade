@@ -99,7 +99,12 @@ module Bade
           eval(File.read(filename), __get_binding, filename)
           # rubocop:enable Security/Eval
         else
-          Kernel.require_relative(filename)
+          context_path = caller_locations(1, 1).first.path
+          puts "context_path: #{context_path}"
+
+          abs_path = File.expand_path(filename, File.dirname(context_path))
+
+          Kernel.require(abs_path)
         end
       end
 
