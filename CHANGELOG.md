@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.7**
+
+Released 2023-10-15
+
+- Fix unwanted print to console
+
+
 ## **0.3.6**
 
 Released 2023-10-15
