@@ -307,7 +307,6 @@ describe Bade::Renderer, 'import feature' do
       expect do
         assert_html_from_file '', 'root.bade', print_error_if_error: false
       end.to(raise_error do |error|
-        puts error.message
         expect(error.message).to end_with(<<~MSG.rstrip)
           template backtrace:
             /abc.bade:10:in `raise_some_error3'

@@ -100,7 +100,6 @@ module Bade
           # rubocop:enable Security/Eval
         else
           context_path = caller_locations(1, 1).first.path
-          puts "context_path: #{context_path}"
 
           abs_path = File.expand_path(filename, File.dirname(context_path))
 
