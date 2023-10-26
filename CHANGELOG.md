@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.8**
+
+Released 2023-10-26
+
+- Fix dynamic values in require_relative (for example: `- require_relative "#{abs_path}/../abc`)
+
+
 ## **0.3.7**
 
 Released 2023-10-15
