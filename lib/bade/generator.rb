@@ -14,7 +14,7 @@ module Bade
 
     DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
-    REQUIRE_RELATIVE_REGEX = /require_relative\s+['"](.+)['"]/
+    REQUIRE_RELATIVE_REGEX = /require_relative\s+(['"])(.+)['"]/
 
     # @param [Document] document
     #
@@ -435,12 +435,19 @@ module Bade
     #
     def _fix_required_relative(text)
       text.gsub(REQUIRE_RELATIVE_REGEX) do
-        relative_path = Regexp.last_match[1]
-        abs_path = File.expand_path(relative_path, File.dirname(@documents.last.file_path))
-        document_abs_path = Pathname.new(File.expand_path(File.dirname(@documents.first.file_path)))
-        new_relative_path = Pathname.new(abs_path).relative_path_from(document_abs_path).to_s
+        quote = Regexp.last_match[1]
+        relative_path = Regexp.last_match[2]
 
-        "require_relative '#{new_relative_path}'"
+        should_not_process = quote === '"' && relative_path.include?('#{')
+
+        new_relative_path = relative_path
+        unless should_not_process
+          abs_path = File.expand_path(relative_path, File.dirname(@documents.last.file_path))
+          document_abs_path = Pathname.new(File.expand_path(File.dirname(@documents.first.file_path)))
+          new_relative_path = Pathname.new(abs_path).relative_path_from(document_abs_path).to_s
+        end
+
+        "require_relative #{quote}#{new_relative_path}#{quote}"
       end
     end
   end
