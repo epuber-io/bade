@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.9**
+
+Released 2023-10-27
+
+- Allow to use more versions of Psych
+
+
 ## **0.3.8**
 
 Released 2023-10-26
