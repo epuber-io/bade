@@ -22,9 +22,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'psych', '>= 2.2', '< 5.0'
+  spec.add_dependency 'psych', '>= 2.2', '< 6.0'
 
-  spec.add_development_dependency 'fakefs', '~> 1.3'
+  spec.add_development_dependency 'fakefs', '~> 2.0'
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'rubocop', '~> 1.14'
 end
