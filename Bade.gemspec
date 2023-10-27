@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'psych', '>= 2.2', '< 6.0'
 
-  spec.add_development_dependency 'fakefs', '~> 2.0'
+  spec.add_development_dependency 'fakefs', '>= 1.4', '< 3.0'
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'rubocop', '~> 1.14'
 end
