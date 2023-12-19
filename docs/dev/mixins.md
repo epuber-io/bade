@@ -21,12 +21,12 @@ Example:
 ```ruby
 
 __mixins['mixin_name'] = lambda { |__blocks, param1, key_param1: 'value1'|
-	
+
 }
 
 ```
 
-Parameter `default_block` should be there always 
+Parameter `default_block` should be there always
 
 
 ## Calling part
@@ -47,16 +47,20 @@ __mixins['mixin_name'].call(__blocks, 'param1_value', key_param1: 'value')
 
 ## call
 
-`+mixin_name(attribute1, named_attribute1 = value1)
+```
++mixin_name(attribute1, named_attribute1 = value1)
 	div
 		| normal block content to mixin OR
 	block chapter
-		p content to named block`
+		p content to named block
+```
 
 ## define
 
-`mixin mixin_name(attribute1, named_attribute1 = default_value, &chapter)
+```
+mixin mixin_name(attribute1, named_attribute1 = default_value, &chapter)
 	div.default
 		- default_block.call // calling block, can be used .nil? for inspecting if was the block defined
 	div.chapter_content
-		- chapter.call`
+		- chapter.call
+```
