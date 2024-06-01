@@ -361,7 +361,9 @@ module Bade
     #
     def visit_block_decl(current_node)
       params = formatted_mixin_params(current_node)
-      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin('#{current_node.name}', #{location_node(current_node)}, &lambda { |#{params}|"
+
+      buff_code "#{MIXINS_NAME}['#{current_node.name}'] = __create_mixin(" \
+                "'#{current_node.name}', #{location_node(current_node)}, &lambda { |#{params}|"
 
       code_indent do
         blocks_name_declaration(current_node)
@@ -438,7 +440,7 @@ module Bade
         quote = Regexp.last_match[1]
         relative_path = Regexp.last_match[2]
 
-        should_not_process = quote === '"' && relative_path.include?('#{')
+        should_not_process = quote == '"' && relative_path.include?('#{')
 
         new_relative_path = relative_path
         unless should_not_process

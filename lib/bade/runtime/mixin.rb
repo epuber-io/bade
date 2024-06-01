@@ -50,7 +50,7 @@ module Bade
           raise Block::MissingBlockDefinitionError.new(e.name, e.context, msg, render_binding.__location_stack)
         rescue RuntimeError
           raise
-        rescue Exception => e
+        rescue Exception => e # rubocop:disable Lint/RescueException
           msg = "Exception raised during execution of mixin `#{name}`: #{e}"
           raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
         end

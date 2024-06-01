@@ -33,7 +33,7 @@ def assert_html_from_renderer(renderer, expectation, print_error_if_error: true)
 
     puts renderer.lambda_string if str != expectation
     expect(str).to eq expectation
-  rescue Exception => e
+  rescue StandardError => e
     puts e if print_error_if_error
     puts renderer.lambda_string if print_error_if_error
 

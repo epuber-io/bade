@@ -4,7 +4,7 @@ require_relative '../helper'
 
 # just to stop RuboCop from complaining about missing parameters
 def eval_function(text)
-  eval(text, binding, File.join(__dir__, 'template'), __LINE__ + 1)
+  eval(text, binding, File.join(__dir__, 'template'), __LINE__ + 1) # rubocop:disable Security/Eval
 end
 
 describe Bade::Runtime::GlobalsTracker do

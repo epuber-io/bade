@@ -40,7 +40,8 @@ module Bade
       attr_accessor :clear_constants
     end
 
-    # @param clear_constants [Boolean] When set to true it will remove all constants that template created. Off by default.
+    # @param clear_constants [Boolean] When set to true it will remove all constants that template created.
+    #                                  Off by default.
     def initialize(clear_constants: Bade::Renderer.clear_constants)
       @optimize = false
       @clear_constants = clear_constants
@@ -231,7 +232,7 @@ module Bade
         end
       rescue Bade::Runtime::RuntimeError => e
         raise e
-      rescue Exception => e
+      rescue Exception => e # rubocop:disable Lint/RescueException
         msg = "Exception raised during execution of template: #{e}"
         raise Bade::Runtime::RuntimeError.wrap_existing_error(msg, e, render_binding.__location_stack)
       ensure

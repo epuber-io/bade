@@ -72,7 +72,7 @@ module Bade
 
       def clear_global_variables
         @caught_variables.each do |name|
-          eval("#{name} = nil", binding, __FILE__, __LINE__)
+          eval("#{name} = nil", binding, __FILE__, __LINE__) # rubocop:disable Security/Eval
         end
       end
 

@@ -59,7 +59,7 @@ Layout/LineLength:
 
 # WTF: why is default 10?
 Metrics/MethodLength:
-  Max: 50
+  Max: 80
 
 Metrics/ClassLength:
   Max: 300
