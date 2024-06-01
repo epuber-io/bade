@@ -58,7 +58,7 @@ describe Bade::Parser do
       source = <<~BADE
         - def abc(text)
         -   text
-        -     .gsub('a', '') 
+        -     .gsub('a', '')
         - end
 
         = abc('abc')
@@ -134,6 +134,15 @@ describe Bade::Parser do
         end.to(raise_error do |error|
           expect(error.cause).to be_a(::KeyError)
         end)
+      end
+
+      it 'escapes tag attributes' do
+        source = <<~BADE
+          div(class: 'a&b + "c"')
+        BADE
+
+        expected = '<div class="a&amp;b + &quot;c&quot;"/>'
+        assert_html expected, source
       end
     end
 

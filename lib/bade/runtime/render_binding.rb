@@ -123,7 +123,9 @@ module Bade
       end
 
       def __tag_render_attribute(name, *values)
-        values = values.compact
+        values = values
+          .compact
+          .map { |value| __html_escaped(value) }
         return if values.empty?
 
         %( #{name}="#{values.join(' ')}")
