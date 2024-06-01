@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## **0.3.11**
+
+Released 2024-06-01
+
+- Fix escaping tag attributes when in runtime the attribute is not string (_boolean_, _number_ or any other Ruby object)
+
+
 ## **0.3.10**
 
 Released 2024-06-01
