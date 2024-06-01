@@ -19,11 +19,7 @@ module Bade
     # @param [String, File] file  file instance or path to file
     #
     def self.from_yaml_file(file)
-      file = if file.is_a?(String)
-               File.new(file, 'r')
-             else
-               file
-             end
+      file = File.new(file, 'r') if file.is_a?(String)
 
       hash = if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.0')
                Psych.safe_load(file, filename: file.path, permitted_classes: [Symbol])
@@ -48,11 +44,7 @@ module Bade
     # @param [String, File] file  file instance or path to file
     #
     def write_yaml_to_file(file)
-      file = if file.is_a?(String)
-               File.new(file, 'w')
-             else
-               file
-             end
+      file = File.new(file, 'w') if file.is_a?(String)
 
       content = {
         source_file_path: source_file_path,

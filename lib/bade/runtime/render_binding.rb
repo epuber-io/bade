@@ -44,7 +44,9 @@ module Bade
       def __reset
         @__buffs_stack = []
         @__location_stack = []
-        @__mixins = Hash.new { |_hash, key| raise Bade::Runtime::KeyError.new("Undefined mixin '#{key}'", __location_stack) }
+        @__mixins = Hash.new do |_hash, key|
+          raise Bade::Runtime::KeyError.new("Undefined mixin '#{key}'", __location_stack)
+        end
       end
 
       # @return [Binding]
@@ -124,8 +126,8 @@ module Bade
 
       def __tag_render_attribute(name, *values)
         values = values
-          .compact
-          .map { |value| __html_escaped(value) }
+                 .compact
+                 .map { |value| __html_escaped(value) }
         return if values.empty?
 
         %( #{name}="#{values.join(' ')}")

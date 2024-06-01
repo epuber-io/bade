@@ -2,16 +2,14 @@
 
 unless Object.respond_to?(:const_source_location)
   class Object
-    def Object.const_source_location(name)
+    def self.const_source_location(name)
       require_relative 'utils/where'
 
       konst = const_get(name)
       is_meta = konst.is_a?(Module) || konst.is_a?(Class)
-      if is_meta
-        Bade.where_is(konst)
-      else
-        nil
-      end
+      return unless is_meta
+
+      Bade.where_is(konst)
     end
   end
 end

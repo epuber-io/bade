@@ -348,7 +348,7 @@ describe Bade::Parser do
   context 'id and classes' do
     it 'should parse both' do
       source = <<~BADE
-          a.class_name#id_name text
+        a.class_name#id_name text
       BADE
 
       expected = '<a class="class_name" id="id_name">text</a>'
@@ -357,7 +357,7 @@ describe Bade::Parser do
 
     it 'should parse both' do
       source = <<~BADE
-          a#id_name.class_name text
+        a#id_name.class_name text
       BADE
 
       expected = '<a id="id_name" class="class_name">text</a>'
@@ -368,7 +368,7 @@ describe Bade::Parser do
   context 'autoclose tag' do
     it 'should autoclose tag when there is no content' do
       source = <<~BADE
-          a
+        a
       BADE
 
       expected = '<a/>'
@@ -379,7 +379,7 @@ describe Bade::Parser do
   context 'inline html code' do
     it 'should support inline xhtml code' do
       source = <<~BADE
-          <a href="dasdsad">asdfsfds</a>
+        <a href="dasdsad">asdfsfds</a>
       BADE
 
       expected = source.strip

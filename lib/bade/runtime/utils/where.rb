@@ -46,7 +46,7 @@ module Bade
             {
               file: file,
               count: count,
-              line: line
+              line: line,
             }
           end
           .sort_by { |fc| fc[:count] }

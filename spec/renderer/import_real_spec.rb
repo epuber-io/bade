@@ -13,7 +13,7 @@ describe Bade::Renderer, 'import feature (real files)' do
     FileUtils.remove_entry(working_dir)
   end
 
-  write_file = ->(rel_path, content) do
+  write_file = lambda do |rel_path, content|
     path = File.join(working_dir, rel_path)
 
     FileUtils.mkdir_p(File.dirname(path))
@@ -69,8 +69,8 @@ describe Bade::Renderer, 'import feature (real files)' do
 
     output = Bade::Renderer.from_file(File.join(working_dir, 'text/copyright.bade'))
                            .with_locals(
-                              current_file_path: File.join(working_dir, 'text/copyright.bade'),
-                            )
+                             current_file_path: File.join(working_dir, 'text/copyright.bade'),
+                           )
                            .render(new_line: '')
 
     expect(output).to eq '<div>123</div>'

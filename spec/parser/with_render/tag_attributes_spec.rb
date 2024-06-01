@@ -108,5 +108,14 @@ describe Bade::Parser do
       expected = '<tag>(start of the text)</tag>'
       assert_html expected, source
     end
+
+    it 'escapes tag attributes' do
+      source = <<~BADE
+        tag(class: 'a&b + "c"')
+      BADE
+
+      expected = '<tag class="a&amp;b + &quot;c&quot;"/>'
+      assert_html expected, source
+    end
   end
 end

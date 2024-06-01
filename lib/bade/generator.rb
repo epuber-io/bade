@@ -14,7 +14,7 @@ module Bade
 
     DEFAULT_BLOCK_NAME = 'default_block'.freeze
 
-    REQUIRE_RELATIVE_REGEX = /require_relative\s+(['"])(.+)['"]/
+    REQUIRE_RELATIVE_REGEX = /require_relative\s+(['"])(.+)['"]/.freeze
 
     # @param [Document] document
     #

@@ -68,11 +68,11 @@ describe Bade::Parser do
     context 'arguments' do
       it 'parse mixin declaration and call with one normal parameter' do
         source = <<~BADE
-        mixin mixin_name(param)
-          div
-            &= param
+          mixin mixin_name(param)
+            div
+              &= param
 
-        +mixin_name("abc")
+          +mixin_name("abc")
         BADE
 
         expected = '<div>abc</div>'
@@ -81,15 +81,15 @@ describe Bade::Parser do
 
       it 'parse mixin declaration and call with more normal parameters' do
         source = <<~BADE
-        mixin mixin_name(param1, param2, param3)
-          div
-            &= param1
-          p
-            &= param2
-          a
-            &= param3
+          mixin mixin_name(param1, param2, param3)
+            div
+              &= param1
+            p
+              &= param2
+            a
+              &= param3
 
-        +mixin_name("abc","abc".upcase,"ASD")
+          +mixin_name("abc","abc".upcase,"ASD")
         BADE
 
         expected = '<div>abc</div><p>ABC</p><a>ASD</a>'
@@ -98,11 +98,11 @@ describe Bade::Parser do
 
       it 'parse mixin declaration with default param' do
         source = <<~BADE
-        mixin mixin_name(param = nil)
-          div
-            &= param
+          mixin mixin_name(param = nil)
+            div
+              &= param
 
-        +mixin_name("abc")
+          +mixin_name("abc")
         BADE
 
         expected = '<div>abc</div>'
@@ -111,11 +111,11 @@ describe Bade::Parser do
 
       it 'parse mixin declaration with multiple default params' do
         source = <<~BADE
-        mixin mixin_name(param1 = nil, param2 = "123", param3 = {})
-          div
-            &= param1
+          mixin mixin_name(param1 = nil, param2 = "123", param3 = {})
+            div
+              &= param1
 
-        +mixin_name("abc")
+          +mixin_name("abc")
         BADE
 
         expected = '<div>abc</div>'
@@ -124,17 +124,17 @@ describe Bade::Parser do
 
       it 'parse mixin declaration and call with several normal and several keyed parameters' do
         source = <<~BADE
-        mixin mixin_name(a, b, c: "abc", d: {})
-          a
-            &= a
-          b
-            &= b
-          c
-            &= c
-          d
-            &= d.to_s
+          mixin mixin_name(a, b, c: "abc", d: {})
+            a
+              &= a
+            b
+              &= b
+            c
+              &= c
+            d
+              &= d.to_s
 
-        +mixin_name("aa", "bb", c: "cc")
+          +mixin_name("aa", "bb", c: "cc")
         BADE
 
         expected = '<a>aa</a><b>bb</b><c>cc</c><d>{}</d>'
@@ -143,15 +143,15 @@ describe Bade::Parser do
 
       it 'parse mixin declaration and call with key-value parameter with symbols' do
         source = <<~BADE
-        mixin mixin_name(a, c: :abc, d: {})
-          a
-            &= a.inspect
-          c
-            &= c.inspect
-          d
-            &= d.to_s
+          mixin mixin_name(a, c: :abc, d: {})
+            a
+              &= a.inspect
+            c
+              &= c.inspect
+            d
+              &= d.to_s
 
-        +mixin_name(:abc, c: :cc)
+          +mixin_name(:abc, c: :cc)
         BADE
 
         expected = '<a>:abc</a><c>:cc</c><d>{}</d>'
@@ -160,11 +160,11 @@ describe Bade::Parser do
 
       it 'parse required key-value arguments' do
         source = <<~BADE
-        mixin mixin_name(a:)
-          a
-            &= a.inspect
+          mixin mixin_name(a:)
+            a
+              &= a.inspect
 
-        +mixin_name(a: :abc)
+          +mixin_name(a: :abc)
         BADE
 
         expected = '<a>:abc</a>'
@@ -173,10 +173,10 @@ describe Bade::Parser do
 
       it 'parse required key-value arguments' do
         source = <<~BADE
-        mixin mixin_name(a:, b:, c:)
-          a \#{a} \#{b} \#{c}
+          mixin mixin_name(a:, b:, c:)
+            a \#{a} \#{b} \#{c}
 
-        +mixin_name(a: "1", b: "2", c: "3")
+          +mixin_name(a: "1", b: "2", c: "3")
         BADE
 
         expected = '<a>1 2 3</a>'
@@ -185,10 +185,10 @@ describe Bade::Parser do
 
       it 'parse required key-value arguments' do
         source = <<~BADE
-        mixin mixin_name(a:, b:, c:)
-          a \#{a} \#{b} \#{c}
+          mixin mixin_name(a:, b:, c:)
+            a \#{a} \#{b} \#{c}
 
-        +mixin_name(a: "1", b: "2")
+          +mixin_name(a: "1", b: "2")
         BADE
 
         expect do
@@ -201,11 +201,11 @@ describe Bade::Parser do
 
       it 'support multiline mixin call' do
         source = <<~BADE
-        mixin m(a, b)
-          a= a
-          b= b
-        +m('a_text',
-           'b_text')
+          mixin m(a, b)
+            a= a
+            b= b
+          +m('a_text',
+             'b_text')
         BADE
 
         expected = '<a>a_text</a><b>b_text</b>'
@@ -214,17 +214,17 @@ describe Bade::Parser do
 
       it 'support complex multiline mixin calling' do
         source = <<~BADE
-        mixin chapter(title: nil, name: nil, items: nil)
-          title= title
-          name= name
-          items= items.join(' — ')
+          mixin chapter(title: nil, name: nil, items: nil)
+            title= title
+            name= name
+            items= items.join(' — ')
 
-        +chapter(title: 'PROLOG',
-           name: 'Na letišti',
-           items: [
-             'Scéna letiště',
-             'Proč studovat tradiční společnosti?',
-           ])
+          +chapter(title: 'PROLOG',
+             name: 'Na letišti',
+             items: [
+               'Scéna letiště',
+               'Proč studovat tradiční společnosti?',
+             ])
         BADE
 
         expected = '<title>PROLOG</title><name>Na letišti</name><items>Scéna letiště — Proč studovat tradiční společnosti?</items>'
@@ -462,12 +462,12 @@ describe Bade::Parser do
       context 'yield keyword' do
         it 'basic example' do
           source = <<~BADE
-          mixin m()
-            default
-              yield
+            mixin m()
+              default
+                yield
 
-          +m()
-            | text
+            +m()
+              | text
           BADE
 
           expected = '<default>text</default>'
@@ -476,12 +476,12 @@ describe Bade::Parser do
 
         it 'required example' do
           source = <<~BADE
-          mixin m()
-            default
-              yield!
+            mixin m()
+              default
+                yield!
 
-          +m()
-            | text
+            +m()
+              | text
           BADE
 
           expected = '<default>text</default>'
@@ -490,11 +490,11 @@ describe Bade::Parser do
 
         it 'required example' do
           source = <<~BADE
-          mixin m()
-            default
-              yield!
+            mixin m()
+              default
+                yield!
 
-          +m
+            +m
           BADE
 
           message = 'Mixin `m` requires block to get called of block `default_block`'

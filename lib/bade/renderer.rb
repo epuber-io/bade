@@ -251,11 +251,7 @@ module Bade
         raise LoadError.new(nil, file_path, "Don't know what to do with nil values for both content and path")
       end
 
-      content = if !file_path.nil? && content.nil?
-                  File.read(file_path)
-                else
-                  content
-                end
+      content = File.read(file_path) if !file_path.nil? && content.nil?
 
       parsed_document = parsed_documents[file_path]
       return parsed_document unless parsed_document.nil?

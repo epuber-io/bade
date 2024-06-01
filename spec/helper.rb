@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require 'rspec'
 
 require_relative '../lib/bade'
@@ -41,7 +40,6 @@ def assert_html_from_renderer(renderer, expectation, print_error_if_error: true)
     raise
   end
 end
-
 
 def assert_ast(root_node, source)
   parser = Bade::Parser.new
