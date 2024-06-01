@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## **Unreleased**
+## **0.3.10**
 
-Released YYYY-MM-DD
+Released 2024-06-01
 
 - Fix not escaping tag attributes (when using Bade's tag syntax: `div(class: '&"')` will break result XML/HTML)
 
