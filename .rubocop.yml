@@ -1,4 +1,7 @@
 AllCops:
+  Exclude:
+    - bin/**/*
+    - vendor/**/*
   TargetRubyVersion: 2.5
 
 # I want empty lines!
