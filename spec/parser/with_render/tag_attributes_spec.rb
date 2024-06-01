@@ -117,5 +117,26 @@ describe Bade::Parser do
       expected = '<tag class="a&amp;b + &quot;c&quot;"/>'
       assert_html expected, source
     end
+
+    [false, true, 1, 0].each do |value|
+      it "tag attributes can be created from other objects (#{value})" do
+        source = <<~BADE
+          tag(attr: #{value})
+        BADE
+
+        expected = %(<tag attr="#{value}"/>)
+        assert_html expected, source
+      end
+    end
+
+    it 'tag attributes can be created from other objects (custom class)' do
+      source = <<~BADE
+        - class Abc; def to_s; 'abc'; end end
+        tag(attr: Abc.new)
+      BADE
+
+      expected = %(<tag attr="abc"/>)
+      assert_html expected, source
+    end
   end
 end

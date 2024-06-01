@@ -127,6 +127,7 @@ module Bade
       def __tag_render_attribute(name, *values)
         values = values
                  .compact
+                 .map(&:to_s)
                  .map { |value| __html_escaped(value) }
         return if values.empty?
 
