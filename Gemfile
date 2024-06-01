@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'benchmark-ips', require: false
+gem 'rake', '~> 13.0'
 
 group :dev, optional: true do
   gem 'debase', require: false
